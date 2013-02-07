@@ -21,7 +21,7 @@ my $CPRFile; # output file name
 my ($name,$path,$suffix); # name, path and suffix of input file
 my $file; # input file name including path and extention (to be opened by script)
 my $Text; # input file contents
-my $OutputDir;
+my $OutputDir = $ENV{SPINTX_HOME} . "corpus/ClipTags/";
 
 # Variables to control initial lines in files to be processed, often special lines
 my ($FirstLine,$FirstUsefulLine);
@@ -90,6 +90,20 @@ else {
 # -- STARTING EXECUTION OF CONVERSION
 print STDERR "Starting conversion...\n";
 
+# generating name for output dir
+# cpr stands for compressed, cg3 for visl-cg3 (constraing grammar)
+if ($OutputFormat eq "cqp") {
+    $OutputDir .= "cqp/";
+}
+elsif ($OutputFormat eq "cg3") {
+    $OutputDir .= "cg3/";
+}
+else {
+    print STDERR "\n EXECUTION ABORTED. Unexpected ouput format. \n";
+    print STDERR " Expected formats are cg3 or cqp.\n";
+    exit;
+}
+
 foreach $file (@ARGV) {
     
     #debug levels, have to be controlled later
@@ -110,23 +124,21 @@ foreach $file (@ARGV) {
         if ($DebugLevel > 1) {
             print STDERR "DL2: File " . $file . " will be proccessed.\n";
         }
-        # generating name for output file, cpr stands for compressed
+
+        # generating name for output file
+        # cpr stands for compressed, cg3 for visl-cg3 (constraing grammar)
         if ($OutputFormat eq "cqp") {
-            $OutputDir = "CQP/";
-            $CPRFile = $path.$OutputDir.$name."cpr";
+            $CPRFile = $OutputDir.$name."cpr";
         }
         elsif ($OutputFormat eq "cg3") {
-            $OutputDir = "CG3/";
-            $CPRFile = $path.$OutputDir.$name."cg3";
+            $CPRFile = $OutputDir.$name."cg3";
         }
         else {
             print STDERR "\n EXECUTION ABORTED. Unexpected ouput format. \n";
             print STDERR " Expected formats are cg3 or cqp.\n";
-            #            print STDERR "\n Use -outformat=cg3 or cqp to declare it.\n";
             exit;
         }
-        
-        
+
         # reading contents of the file to be processed
         open (FILE,"$file");
         sysread(FILE,$Text,(-s FILE));
@@ -358,7 +370,7 @@ foreach $file (@ARGV) {
     } #end of if file ends with 'txt' extension
     # here is where each file has to be printed out
     #print STDOUT $ToPrint . "\n";
-    open(FOUT,">$CPRFile");
+    open(FOUT,">$CPRFile") || die " Could not open file $CPRFile\n Output dir is $OutputDir\n Execution aborted.\n";
     print FOUT $ToPrint;
     close(FOUT);
 

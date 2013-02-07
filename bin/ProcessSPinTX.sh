@@ -1,9 +1,11 @@
 #!/bin/bash
 
-TXTDIR="/Users/mquixal/Documents/Feina/COERLL/ClipTags"
-CG3DIR="/Users/mquixal/Documents/Feina/COERLL/ClipTags/CG3"
-CQPDIR="$TEXTDIR/CQP"
-GRAMMARS="/Users/mquixal/Documents/Feina/COERLL/Grammars"
+TXTDIR="$SPINTX_HOME/corpus/ClipTags/ori"
+CG3DIR="$SPINTX_HOME/corpus/ClipTags/cg3"
+OUTDIR="$SPINTX_HOME/corpus/ClipTags/out"
+## MQ: I comment this till I start working on integration of PAToS in environment using CWB Tools
+## CQPDIR="$TEXTDIR/CQP"
+GRAMMARS="$SPINTX_HOME/spintxPedagogicalAnntotation/grammars"
 
 
 if [ "$1" = "all" ]; then
@@ -17,7 +19,8 @@ cd "$CG3DIR"
 
 for i in *.cg3; do
   CG3OUT=`expr "$i" : '\(.*\)\.cg3'` 
-  vislcg3 -g ${GRAMMARS}/SpintxGrammar.rle -I ${i} -O ${CG3OUT}.out
+  vislcg3 -g ${GRAMMARS}/SpintxGrammar.rle -I ${i} -O ${OUTDIR}/${CG3OUT}.out
+  echo "Created file ${OUTDIR}/${CG3OUT}.out"
 done
 
 echo "Done!"
