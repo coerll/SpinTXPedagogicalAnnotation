@@ -1,0 +1,551 @@
+\documentclass[11pt]{report}
+
+%to add links but not color
+\usepackage{hyperref}
+%%Non-ASCII characters
+\usepackage[utf8]{inputenc}
+
+%LANGUAGES
+\usepackage[english]{babel}
+
+% Add draft watermark
+\usepackage{draftwatermark}
+\SetWatermarkScale{3}
+
+%To add frames to verbatim environment
+\usepackage{fancyvrb}
+
+\topmargin=-1in    % Make letterhead start about 1 inch from top of page
+\textheight=9in  % text height can be bigger for a longer letter
+\oddsidemargin=0pt % leftmargin is 1 inch
+\textwidth=6.5in   % textwidth of 6.5in leaves 1 inch for right margin
+%%\usepackage[hyphens]{url}
+
+%Bib style
+\usepackage{natbib}
+\bibpunct[: ]{(}{)}{;}{a}{,}{,}
+\begin{document}
+\title{Especificaciones para la anotación de SPinTX\\ con información lingüística para fines pedagógicos}
+\author{Martí Quixal}
+\date{Diciembre 2012 -- hoy}
+\maketitle
+\tableofcontents
+
+\chapter*{Introducción}
+Este documento describe el proceso de anotación de las transcripciones de los clips del corpus SPinTX (Spanish in Texas) con información pedagógica para facilitar el uso de los mismos en la enseñanza y el aprendizaje de español como lengua extranjera.
+
+DOCU 
+\part{Definición de LIST y SET}
+\chapter{LIST y SET basados en información morfosintáctica}
+\section{Categorías gramaticales}
+\section{Rasgos morfosintácticos}
+\chapter{LIST y SET basados en lemas}
+\section{Los LIST}
+\section{Los SET}
+\chapter{LIST y SET basados en palabras (literales)}
+\chapter{LIST y SET basados en etiquetas pedagógicas}
+\part{Secciones previas}
+\chapter{Reglas para rectificar errores de tagging}
+\paragraph*{Rule}
+\fbox{
+\parbox{.9\linewidth}{\texttt{REPLACE (CC) TARGET ("pero");}}
+}
+\begin{itemize}
+\item ETIQ.:  T: CC
+\item EJEM.:  E: \emph{pero} 
+\item DESC.:  D: Regla para cambiar a \emph{pero} la lectura de nombre por la de conjunción.
+\end{itemize}
+
+\part{Secciones principales}
+Las reglas de identificación de fenómenmos pedagógicos están ordenadas de más concretas a más generales. Así, por ejemplo, se detectan primero, cuando es posible, los distintos usos de \emph{para} (opinión, intención, destino, etc. como \emph{@Gram:Prep:Para:Opinion}...) y luego se marcan como simplemente \emph{@Gram:Prep:Para} el resto de ocurrencias de \emph{para}. Luego, se hace lo propio con otras preposiciones, hasta el punto que si para una preposición no hay reglas especiales, sus ocurrencias se marcan simplemente como \emph{@Gram:Prep}.
+
+Esta estrategia se utiliza para evitar que una misma palabra reciba por partida doble informaciones de igual granularidad. Para ello, antes de asignar una etiqueta, se comprueba que no haya otra asignada del mismo nivel. A efectos prácticos, etiquetas como \emph{@Gram:Prep:Para:Opinion}...) y \emph{@Gram:Prep:Para} se consideran del mismo nivel.
+
+Para evitar este tipo de duplicidades también se podría usar una estrategia basada en la distinción entre ADD y MAP (véase la documentación de vislcg3). Por ahora no se ha hecho, porque esto impide la asignación de múltiples etiquetas a un mismo token/una misma palabra.
+
+\chapter{Uso de las preposiciones}
+\section{Usos de para}
+Veáse \url{http://dev.coerll.utexas.edu/spanishtx/spe/html/adv11.html}.
+
+\subsection{El uso de \emph{para} para expresar el destinatario o audiencia de una acción}
+\paragraph*{Rule}
+\fbox{
+\parbox{.9\linewidth}{\texttt{ADD (@Gram:Prep:Para:Destinatario) Prep IF (-1 SerOServir + Verb) (0 Para) (NOT 0 GramPrep) (1 DetAll) (2 Personas);}}
+}
+\begin{itemize}
+\item ETIQ.:  T: Asigna @Gram:Prep:Para:Destinatario.
+\item EJEM.:  E: Fue escrito \emph{para} los estudiantes.
+\item EJEM.:  E: Es fundamental \emph{para} una persona.
+\item DESC.:  D: Requiere \emph{para + DET + NOMBRE $<+humano>$}
+\end{itemize}
+
+\paragraph*{Rule}
+\fbox{
+\parbox{.9\linewidth}{\texttt{ADD (@Gram:Prep:Para:Destinatario) Prep IF (-1 SerOServir + Verb) (0 Para) (NOT 0 GramPrep) (1 Personas);}}
+}
+\begin{itemize}
+\item ETIQ.:  T: Asigna @Gram:Prep:Para:Destinatario.
+\item EJEM.:  E: Ropa \emph{para} niños.
+\item DESC.:  D: Requiere \emph{para + NOMBRE $<+humano>$}
+\end{itemize}
+
+\subsection{El uso de \emph{para} para expresar una finalidad}
+OBSERVACIÓN: Dudo de si el uso de ``Juan es muy bueno para el fútbol'' se parece o no al de ``hemos venido antes para no quedarnos sin asiento''. De momento los pongo juntos.
+
+\paragraph*{Rule}
+\fbox{
+\parbox{.9\linewidth}{\texttt{ADD (@Gram:Prep:Para:Finalidad) Prep IF (0 Para) (NOT 0 GramPrep) (1 Infinitive);}}
+}
+\begin{itemize}
+\item ETIQ.:  T: Asigna @Gram:Prep:Para:Finalidad.
+\item EJEM.:  E: Soy muy mala \emph{para} recordar.
+\item DESC.:  D: Requiere \emph{para + INFINITIVO}
+\end{itemize}
+
+\paragraph*{Rule}
+\fbox{
+\parbox{.9\linewidth}{\texttt{ADD (@Gram:Prep:Para:Finalidad) Prep IF (0 Para) (NOT 0 GramPrep) (1 PronPersFuerte OR No) (2 Infinitive);}}
+}
+\begin{itemize}
+\item ETIQ.:  T: Asigna @Gram:Prep:Para:Finalidad.
+\item EJEM.:  E: Había que saber hablar inglés \emph{para} uno desarrollar su trabajo.
+\item DESC.:  D: Requiere \emph{para + PRONOMBRE PERSONAL NOMINATIVO + INFINITIVO}
+\end{itemize}
+
+\paragraph*{Rule}
+\fbox{
+\parbox{.9\linewidth}{\texttt{ADD (@Gram:Prep:Para:Finalidad) Prep IF (0 Para) (NOT 0 GramPrep) (1 Que);}}
+}
+\begin{itemize}
+\item ETIQ.:  T: Asigna @Gram:Prep:Para:Finalidad.
+\item EJEM.:  E: Me daba clases \emph{para} que aprendiera inglés.
+\item DESC.:  D: Requiere \emph{para + QUE}
+\end{itemize}
+
+\subsection{El uso de \emph{para} para expresar una opinión}
+\paragraph*{Rule}
+\fbox{
+\parbox{.9\linewidth}{\texttt{ADD (@Gram:Prep:Para:Opinion) Prep IF (0 Para) (NOT 0 GramPrep) (1 PronombrePersonal) (NOT 1 YoLiteral OR TuLiteral);}}
+}
+\begin{itemize}
+\item ETIQ.:  T: Asigna @Gram:Prep:Para:Opinion.
+\item EJEM.:  E: \emph{Para} mi.
+\item DESC.:  D: Requiere \emph{para + PRONOMBRE PERSONAL ACUSATIVO}
+\end{itemize}
+
+ C: Esta regla es muy floja. Habrá que revisarla.
+\subsection{Usos de \emph{para} no clasificados}
+\paragraph*{Rule}
+\fbox{
+\parbox{.9\linewidth}{\texttt{ADD (@Gram:Prep:Para) Prep IF (0 Para) (NOT 0 GramPrep);}}
+}
+\begin{itemize}
+\item ETIQ.:  T: Asigna @Gram:Prep:Para.
+\item EJEM.:  E: \emph{para} (cualquier otra ocurrencia)
+\item DESC.:  D: Requiere \emph{para}
+\end{itemize}
+
+\section{Usos de \emph{por}}
+Veáse \url{http://dev.coerll.utexas.edu/spanishtx/spe/html/adv11.html}.
+
+\subsection{Usos de \emph{por} en locuciones}
+\paragraph*{Rule}
+\fbox{
+\parbox{.9\linewidth}{\texttt{ADD (@Gram:Prep:Por:Locuciones) Prep IF (0 Por) (NOT 0 GramPrep) (1 LemasDePalabrasEnLocucionesConPor OR FormasDePalabrasEnLocucionesConPor);}}
+}
+\begin{itemize}
+\item ETIQ.:  T: Asigna @Gram:Prep:Por:Locuciones.
+\item EJEM.:  E: \emph{por ejemplo}, \emph{por eso}, \emph{por tanto}
+\item DESC.:  D: Requiere \emph{por} seguida por alguna palabra en la lista de palabras predefinidas \emph{LemasDePalabrasEnLocucionesConPor}
+\end{itemize}
+
+\paragraph*{Rule}
+\fbox{
+\parbox{.9\linewidth}{\texttt{ADD (@Gram:Prep:Por:Locuciones) Prep IF (0 Por) (NOT 0 GramPrep) (1 Lo) (2 LemasDePalabrasEnLocucionesConPor);}}
+}
+\begin{itemize}
+\item ETIQ.:  T: Asigna @Gram:Prep:Por:Locuciones.
+\item EJEM.:  E: \emph{por lo tanto}, \emph{por lo regular}
+\item DESC.:  D: Requiere \emph{por} seguida por LO y alguna palabra en la lista de palabras predefinidas \emph{LemasDePalabrasEnLocucionesConPor}
+\end{itemize}
+
+\subsection{Usos de \emph{por} no clasificados}
+\paragraph*{Rule}
+\fbox{
+\parbox{.9\linewidth}{\texttt{ADD (@Gram:Prep:Por) Prep IF (0 Por) (NOT 0 GramPrep);}}
+}
+\begin{itemize}
+\item ETIQ.:  T: Asigna @Gram:Prep:Por.
+\item EJEM.:  E: \emph{por} (cualquier ocurrencia)
+\item DESC.:  D: Requiere \emph{por}
+\end{itemize}
+
+\subsection{Usos de preposiciones no clasificados}
+\paragraph*{Rule}
+\fbox{
+\parbox{.9\linewidth}{\texttt{ADD (@Gram:Prep) Prep (NOT 0 GramPrep);}}
+}
+\begin{itemize}
+\item ETIQ.:  T: Asigna @Gram:Prep.
+\item EJEM.:  E: \emph{PREP} (cualquier ocurrencia)
+\item DESC.:  D: Requiere \emph{PREP}
+\end{itemize}
+
+\chapter{Uso de los pronombres}
+\section{Pronombres de sujeto}
+\paragraph*{Rule}
+\fbox{
+\parbox{.9\linewidth}{\texttt{ADD (@Gram:Pron:Sujeto) PronPersFuerte;}}
+}
+\begin{itemize}
+\item ETIQ.:  T: Asigna @Gram:Pron:Sujeto.
+\item EJEM.:  E: \emph{yo, tú, él, ella, ud., nosotros, vosotros, ellos, ellas, uds.} (cualquier ocurrencia)
+\item DESC.:  D: La ocurrencia de uno de ellos
+\end{itemize}
+
+\section{Pronombres de objeto directo o complemento atributivo}
+\paragraph*{Rule}
+\fbox{
+\parbox{.9\linewidth}{\texttt{ADD (@Gram:Pron:ObjetoDirecto) ElLema IF (NOT -1 Prep) (0 Articulo) (1 FiniteVerbForms) ;}}
+}
+\begin{itemize}
+\item ETIQ.:  T: Asigna @Gram:Pron:Objeto.
+\item EJEM.:  E: mí nunca me \emph{la} hicieron pero que estabamos
+\item DESC.:  D: \emph{lo, la, los, las} VERBO CONJUGADO
+\end{itemize}
+
+\section{Pronombres de objeto directo o indirecto}
+\paragraph*{Rule}
+\fbox{
+\parbox{.9\linewidth}{\texttt{ADD (@Gram:Pron:Objeto) PronPers IF (0 PronombreDeObjetoNoAmbiguos);}}
+}
+\begin{itemize}
+\item ETIQ.:  T: Asigna @Gram:Pron:Objeto.
+\item EJEM.:  E: \emph{me, te, os, nos} (cualquier ocurrencia)
+\item DESC.:  D: La ocurrencia de uno de ellos
+\end{itemize}
+
+\chapter{Formas verbales conjugadas}
+\section{Formas verbales para tiempos pretéritos}
+\subsection{Pretérito imperfecto}
+\paragraph*{Rule}
+\fbox{
+\parbox{.9\linewidth}{\texttt{ADD (@Gram:Imperf) FiniteVerbForms IF (0 FiniteVerbForms + PretImperfSimple) (NOT 0 Haber) ;}}
+}
+\begin{itemize}
+\item ETIQ.:  T: Asigna @Gram:Imperf.
+\item EJEM.:  E: \emph{cantaba, corría, temía, partía} (cualquier ocurrencia)
+\item DESC.:  D: Requiere una forma identificada como pretérito simple que no sea del verbo haber (auxiliar).
+\end{itemize}
+
+\subsection{Pretérito perfecto}
+\subsubsection{Pretérito perfecto simple}
+\paragraph*{Rule}
+\fbox{
+\parbox{.9\linewidth}{\texttt{ADD (@Gram:PretPerf) FiniteVerbForms IF (0 FiniteVerbForms + PretPerfSimple) (NOT 0 Haber) ;}}
+}
+\begin{itemize}
+\item ETIQ.:  T: Asigna @Gram:PretPerf.
+\item EJEM.:  E: \emph{cantó, corrió, anduvo, partió} (cualquier ocurrencia)
+\item DESC.:  D: Requiere una forma identificada como pretérito perfecto simple que no sea del verbo haber (auxiliar).
+\end{itemize}
+
+\subsubsection{Pretérito perfecto perifrástico o compuesto}
+\paragraph*{Rule}
+\fbox{
+\parbox{.9\linewidth}{\texttt{ADDRELATION (Gram:PerfPerif) FiniteVerbForms (0 Haber + FiniteVerbForms) TO (1 Part);}}
+}
+\begin{itemize}
+\item ETIQ.:  T: Asigna R:Gram:PerfPerif a la forma del verbo HABER
+\item EJEM.:  E: \emph{ha cantado, ha corrido, ha andado dormido} (cualquier ocurrencia)
+\item DESC.:  D: Requiere una forma finita de HABER seguida de un participio
+\end{itemize}
+
+\section{Verbos piscológicos: gustar, encantar, sorprender y otros}
+Veáse \url{http://dev.coerll.utexas.edu/spanishtx/spe/html/adv13.html}.
+
+Veáse \url{http://dev.coerll.utexas.edu/spanishtx/spe/html/beg05.html}.
+
+\subsection{Usos de \emph{gustar} para expresar gustos propios}
+\paragraph*{Rule}
+\fbox{
+\parbox{.9\linewidth}{\texttt{ADD (@Gram:Gustar:Propios) FiniteVerbForms IF (-1 Yo) (0 Gustar-Like + 3aPersAmbig);}}
+}
+\begin{itemize}
+\item ETIQ.:  T: Asigna @Gram:Gustar:Propios.
+\item EJEM.:  E: \emph{me gusta} ayudar a mis amigos 
+\item DESC.:  D: Requiere la forma ME seguida de una forma de GUSTAR en tercera persona (posiblemente ambigua)
+\end{itemize}
+
+\paragraph*{Rule}
+\fbox{
+\parbox{.9\linewidth}{\texttt{ADDRELATION (Gram:Gustar:Propios) FiniteVerbForms (-1 Yo) (0 Haber) TO (1 Gustar-Like + Part);}}
+}
+\begin{itemize}
+\item ETIQ.:  T: Asigna R:Gram:Gustar:Propios a la forma del verbo HABER
+\item EJEM.:  E: \emph{me ha gustado} ayudar a mis amigos 
+\item EJEM.:  E: \emph{me hubieras gustado} con un vestido verde 
+\item DESC.:  D: Requiere la forma ME seguida de una forma de HABER en tercera persona (posiblemente ambigua)
+\end{itemize}
+
+\subsection{Usos de \emph{gustar} para expresar gustos de tu interlocutor}
+\paragraph*{Rule}
+\fbox{
+\parbox{.9\linewidth}{\texttt{ADD (@Gram:Gustar:Interlocutor) FiniteVerbForms IF  (-1 Tu) (0 Gustar-Like + 3aPersAmbig);}}
+}
+\begin{itemize}
+\item ETIQ.:  T: @Gram:Gustar:Interlocutor
+\item EJEM.:  E: Dime, \emph{te gusta} vivir en Estados Unidos.] 
+\item DESC.:  D: Secuencia del lema TE y un forma de GUSTAR en tercera persona del singular.
+\end{itemize}
+
+\subsection{Usos de \emph{gustar} para expresar gustos de otras personas}
+\paragraph*{Rule}
+\fbox{
+\parbox{.9\linewidth}{\texttt{ADDRELATION (Gram:Gustar:Ajenos) FiniteVerbForms (0 Gustar-Like + 3aPersAmbig) TO (-1 LeLema);}}
+}
+\begin{itemize}
+\item ETIQ.:  T: R:Gram:Gustar:Ajenos a la forma del verbo GUSTAR
+\item EJEM.:  E: Dime, \emph{le gusta} vivir en Estados Unidosa tu hijo.] 
+\item DESC.:  D: Secuencia del lema LE y un forma de GUSTAR en tercera persona del singular.
+\end{itemize}
+
+\section{Expresar sorpresa}
+Veáse \url{http://dev.coerll.utexas.edu/spanishtx/spe/html/adv13.html}.
+
+\subsection{Usos de \emph{sorprender}}
+\paragraph*{Rule}
+\fbox{
+\parbox{.9\linewidth}{\texttt{ADDRELATION (Gram:ExpresarSorpresas:Propias) FiniteVerbForms (0 Sorprender-Like + 3aPersAmbig) TO (-1 Yo);}}
+}
+\begin{itemize}
+\item ETIQ.:  T: Asigna Gram:ExpresarSorpresas:Propias a la forma de SORPRENDER
+\item EJEM.:  E: Siempre \emph{me sorprende} su forma de hablar.
+\item DESC.:  D: [Espacio para describir con palabras lo que hace la regla.]
+\end{itemize}
+
+\paragraph*{Rule}
+\fbox{
+\parbox{.9\linewidth}{\texttt{ADDRELATION (Gram:ExpresarSorpresas:Interlocutor) FiniteVerbForms (0 Sorprender-Like + 3aPersAmbig) TO (-1 Tu);}}
+}
+\begin{itemize}
+\item ETIQ.:  T: Asigna Gram:ExpresarSorpresas:Interlocutor a la forma de SORPRENDER
+\item EJEM.:  E: ¿Y \emph{te sorprende} su forma de hablar?
+\item DESC.:  D: [Espacio para describir con palabras lo que hace la regla.]
+\end{itemize}
+
+\paragraph*{Rule}
+\fbox{
+\parbox{.9\linewidth}{\texttt{ADDRELATION (Gram:ExpresarSorpresas:Interlocutor) Part (0 Sorprender-Like) TO (*-1 Tu BARRIER GrupoNominal OR LimiteOracionSimple LINK 1 Haber + 3aPersAmbig);}}
+}
+\begin{itemize}
+\item ETIQ.:  T: Asigna Gram:ExpresarSorpresas:Interlocutor a la forma de HABER
+\item EJEM.:  E: ¿Hay alguna palabra mexicana que \emph{te haya sorprendido}?
+\item DESC.:  D: [Espacio para describir con palabras lo que hace la regla.]
+\end{itemize}
+
+\paragraph*{Rule}
+\fbox{
+\parbox{.9\linewidth}{\texttt{ADDRELATION (Gram:ExpresarSorpresas:Ajenas) FiniteVerbForms (0 Sorprender-Like + 3aPersAmbig) TO (-1 LeLema);}}
+}
+\begin{itemize}
+\item ETIQ.:  T: Asigna Gram:ExpresarSorpresas:Ajenas a la forma de SORPRENDER
+\item EJEM.:  E: ¿Y \emph{le sorprende} su forma de hablar?
+\item DESC.:  D: [Espacio para describir con palabras lo que hace la regla.]
+\end{itemize}
+
+\paragraph*{Rule}
+\fbox{
+\parbox{.9\linewidth}{\texttt{ADDRELATION (Gram:ExpresarSorpresas:Ajenas) Part (0 Sorprender-Like) TO (*-1 LeLema BARRIER GrupoNominal OR LimiteOracionSimple LINK 1 Haber + 3aPersAmbig);}}
+}
+\begin{itemize}
+\item ETIQ.:  T: Asigna Gram:ExpresarSorpresas:Ajenas a la forma de HABER
+\item EJEM.:  E: ¿Hay alguna palabra mexicana que \emph{le haya sorprendido}?
+\item DESC.:  D: [Espacio para describir con palabras lo que hace la regla.]
+\end{itemize}
+
+\chapter{Funciones comunicativas}
+\chapter{Pragmática}
+\section{Marcadores discursivos}
+Véase \url{http://www.cs.famaf.unc.edu.ar/~laura/shallowdisc4summ/index.html}.
+
+\subsection{Marcadores discursivos indicadores de revisión}
+\paragraph*{Rule}
+\fbox{
+\parbox{.9\linewidth}{\texttt{ADD (@Prag:MarcadoresDisc:Revision) MarcDiscRevision;}}
+}
+\begin{itemize}
+\item ETIQ.:  T: @:Prag:MarcadoresDisc:Revision
+\item EJEM.:  E: \emph{aunque}, \emph{excepto} o \emph{pero}
+\item DESC.:  D: [Espacio para describir con palabras lo que hace la regla.]
+\end{itemize}
+
+\paragraph*{Rule}
+\fbox{
+\parbox{.9\linewidth}{\texttt{ADDRELATION (Prag:MarcadoresDisc:Revision) Sin TO (1 Embargo);}}
+}
+\begin{itemize}
+\item ETIQ.:  T: R:Prag:MarcadoresDisc:Revision (relación entre el primer i el último elemento de la locución)
+\item EJEM.:  E: \emph{sin embargo}
+\item DESC.:  D: [Espacio para describir con palabras lo que hace la regla.]
+\end{itemize}
+
+\paragraph*{Rule}
+\fbox{
+\parbox{.9\linewidth}{\texttt{ADDRELATION (Prag:MarcadoresDisc:Revision) De TO (1 Hecho);}}
+}
+\begin{itemize}
+\item ETIQ.:  T: R:Prag:MarcadoresDisc:Revision (relación entre el primer i el último elemento de la locución)
+\item EJEM.:  E: \emph{de hecho}
+\item DESC.:  D: [Espacio para describir con palabras lo que hace la regla.]
+\end{itemize}
+
+\paragraph*{Rule}
+\fbox{
+\parbox{.9\linewidth}{\texttt{ADDRELATION (Prag:MarcadoresDisc:Revision) En TO (1 Realidad);}}
+}
+\begin{itemize}
+\item ETIQ.:  T: R:Prag:MarcadoresDisc:Revision (relación entre el primer i el último elemento de la locución)
+\item EJEM.:  E: \emph{en realidad}
+\item DESC.:  D: [Espacio para describir con palabras lo que hace la regla.]
+\end{itemize}
+
+\paragraph*{Rule}
+\fbox{
+\parbox{.9\linewidth}{\texttt{ADDRELATION (Prag:MarcadoresDisc:Revision) APrep (1 Pesar) TO (2 De);}}
+}
+\begin{itemize}
+\item ETIQ.:  T: R:Prag:MarcadoresDisc:Revision (relación entre el primer i el último elemento de la locución)
+\item EJEM.:  E: \emph{a pesar de}
+\item DESC.:  D: [Espacio para describir con palabras lo que hace la regla.]
+\end{itemize}
+
+\paragraph*{Rule}
+\fbox{
+\parbox{.9\linewidth}{\texttt{ADDRELATION (Prag:MarcadoresDisc:Revision) De (1 Todos) TO (2 Modos);}}
+}
+\begin{itemize}
+\item ETIQ.:  T: R:Prag:MarcadoresDisc:Revision (relación entre el primer i el último elemento de la locución)
+\item EJEM.:  E: \emph{de todos modos}
+\item DESC.:  D: [Espacio para describir con palabras lo que hace la regla.]
+\end{itemize}
+
+\paragraph*{Rule}
+\fbox{
+\parbox{.9\linewidth}{\texttt{ADDRELATION (Prag:MarcadoresDisc:Revision) Es (1 Cierto) TO (2 Que);}}
+}
+\begin{itemize}
+\item ETIQ.:  T: R:Prag:MarcadoresDisc:Revision (relación entre el primer i el último elemento de la locución)
+\item EJEM.:  E: \emph{s cierto que}
+\item DESC.:  D: [Espacio para describir con palabras lo que hace la regla.]
+\end{itemize}
+
+\subsection{Marcadores discursivos indicadores de causa}
+\paragraph*{Rule}
+\fbox{
+\parbox{.9\linewidth}{\texttt{ADD (@Prag:MarcadoresDisc:Causa) Porque;}}
+}
+\begin{itemize}
+\item ETIQ.:  T: @Prag:MarcadoresDisc:Causa
+\item DESC.:  D: [Espacio para describir con palabras lo que hace la regla.]
+\end{itemize}
+
+\paragraph*{Rule}
+\fbox{
+\parbox{.9\linewidth}{\texttt{ADDRELATION (Prag:MarcadoresDisc:Causa) Prep IF (0 Por) (1 Lo) TO (2 Tanto);}}
+}
+\paragraph*{Rule}
+\fbox{
+\parbox{.9\linewidth}{\texttt{ADDRELATION (Prag:MarcadoresDisc:Causa) Prep IF (0 Por) TO (2 Tanto OR FormasDePalabrasEnLocucionesCausalesConPor);}}
+}
+\begin{itemize}
+\item ETIQ.:  T: Asigna @Gram:Prep:Por:Locuciones.
+\item EJEM.:  E: \emph{por lo tanto}
+\item EJEM.:  E: \emph{por eso}
+\item DESC.:  D: Requiere \emph{por} seguida por LO y TANTO
+\end{itemize}
+
+\paragraph*{Rule}
+\fbox{
+\parbox{.9\linewidth}{\texttt{ADDRELATION (Prag:MarcadoresDisc:Causa) Debido TO (1 APrep);}}
+}
+\begin{itemize}
+\item ETIQ.:  T: R:Prag:MarcadoresDisc:Causa (relación entre el primer i el último elemento de la locución)
+\item DESC.:  D: [Espacio para describir con palabras lo que hace la regla.]
+\end{itemize}
+
+\paragraph*{Rule}
+\fbox{
+\parbox{.9\linewidth}{\texttt{ADDRELATION (Prag:MarcadoresDisc:Causa) Gracia (0 PL) (NOT 2 Dios) TO (1 APrep);}}
+}
+\begin{itemize}
+\item ETIQ.:  T: R:Prag:MarcadoresDisc:Causa (relación entre el primer i el último elemento de la locución)
+\item DESC.:  D: [Espacio para describir con palabras lo que hace la regla.]
+\end{itemize}
+
+\paragraph*{Rule}
+\fbox{
+\parbox{.9\linewidth}{\texttt{ADDRELATION (Prag:MarcadoresDisc:Causa) Gracia (0 PL) (1 APrep) TO (2 Dios);}}
+}
+\begin{itemize}
+\item ETIQ.:  T: R:Prag:MarcadoresDisc:Causa (relación entre el primer i el último elemento de la locución)
+\item DESC.:  D: [Espacio para describir con palabras lo que hace la regla.]
+\end{itemize}
+
+\subsection{Marcadores discursivos indicadores de igualdad}
+\paragraph*{Rule}
+\fbox{
+\parbox{.9\linewidth}{\texttt{ADD (@Prag:MarcadoresDisc:Igualdad) Adv IF (0 Ademas) (NOT 1 De);}}
+}
+\paragraph*{Rule}
+\fbox{
+\parbox{.9\linewidth}{\texttt{ADD (@Prag:MarcadoresDisc:Igualdad) Adv IF (0 Tambien);}}
+}
+OBSERVACIÓN: No añado \emph{precisamente} porque es ambiguo entre su lectura literal (preciso, justo, cierto) como modificador verbal y su lectura como marcador discursivo. Para anotarlo con fiabilidad habría que tener en cuenta su posición respecto al principio de la oración y el verbo principal. Ejemplos: \emph{sí muchas pero no sé precisamente cuál cuál sería una}, \emph{allí vivimos como un año y precisamente yo me tomé me tomaron fotos en un un estudio de fotografía}
+
+\begin{itemize}
+\item ETIQ.:  T: @:Prag:MarcadoresDisc:Igualdad
+\item EJEM.:  E: \emph{además}, \emph{también}
+\item DESC.:  D: Requiere \emph{además} o \emph{también} no seguido de DE
+\end{itemize}
+
+\paragraph*{Rule}
+\fbox{
+\parbox{.9\linewidth}{\texttt{ADDRELATION (Prag:MarcadoresDisc:Igualdad) Prep IF (0 Por) TO (1 Ejemplo);}}
+}
+\begin{itemize}
+\item ETIQ.:  T: R:Prag:MarcadoresDisc:Igualdad (relación entre el primer i el último elemento de la locución)
+\item EJEM.:  E: \emph{por ejemplo}
+\item DESC.:  D: Requiere \emph{por} seguida por alguna palabra en la lista de palabras predefinidas \emph{LemasDePalabrasEnLocucionesConPor}
+\end{itemize}
+
+\paragraph*{Rule}
+\fbox{
+\parbox{.9\linewidth}{\texttt{ADDRELATION (Prag:MarcadoresDisc:Igualdad) ConjLetraO TO (1 Sea);}}
+}
+\begin{itemize}
+\item ETIQ.:  T: R:Prag:MarcadoresDisc:Igualdad
+\item EJEM.:  E: \emph{o sea}
+\item DESC.:  D: [Espacio para describir con palabras lo que hace la regla.]
+\end{itemize}
+
+\paragraph*{Rule}
+\fbox{
+\parbox{.9\linewidth}{\texttt{ADDRELATION (Prag:MarcadoresDisc:Igualdad) No TO (1 SoloAcento);}}
+}
+\begin{itemize}
+\item ETIQ.:  T: R:Prag:MarcadoresDisc:Igualdad
+\item EJEM.:  E: porque uno \emph{no sólo} puede ayudar en el aspecto de inglés pero en el aspecto del español también
+\item DESC.:  D: [Espacio para describir con palabras lo que hace la regla.]
+\end{itemize}
+
+\paragraph*{Rule}
+\fbox{
+\parbox{.9\linewidth}{\texttt{ADDRELATION (Prag:MarcadoresDisc:NoTipificado) Tal TO (1 Vez);}}
+}
+\begin{itemize}
+\item ETIQ.:  T: R:Prag:MarcadoresDisc:NoTipificado
+\item DESC.:  D: [Espacio para describir con palabras lo que hace la regla.]
+\end{itemize}
+
+\end{document}

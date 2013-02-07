@@ -1,0 +1,476 @@
+##
+MAPPING-PREFIX = @ ;
+DELIMITERS = "<$.>" "<$?>" "<$!>" "<$:>";
+
+## -- #LATEX T: [Espacio para la etiqueta que asigna la regla.]
+## -- #LATEX E: [Espacio para incluir \emph{un ejemplo} con la parte relevante en cursiva.] 
+## -- #LATEX D: [Espacio para describir con palabras lo que hace la regla.]
+
+### Comment this to avoid problems with semicolon now
+### DELIMITERS = "<$.>" "<$?>" "<$!>" "<$:>" "<$\;>" ;
+
+#LATEX\chapter*{Introducción}
+#LATEXDOCU Este documento describe el proceso de anotación de las transcripciones de los clips del corpus SPinTX (Spanish in Texas) con información pedagógica para facilitar el uso de los mismos en la enseñanza y el aprendizaje de español como lengua extranjera.
+
+#LATEXDOCU 
+
+#LATEX\part{Definición de LIST y SET}
+#LATEX\chapter{LIST y SET basados en información morfosintáctica}
+#LATEX\section{Categorías gramaticales}
+
+## LISTS OR SETS FOR PART-OF-SPEECH TAGS
+LIST Adv = (ADV);
+LIST Prep = (PREP);
+LIST FiniteVerbForms = (VLfin) (VEfin) (VHfin) ;
+LIST FiniteFormsInPast = (VLfin Indi Pret) (VEfin Indi Pret) ;
+LIST PretImperfSimple = (Imp Indi) ;
+LIST PretPerfSimple = (Pret Indi) ;
+LIST Adj = (ADJ) (ORD) ;
+LIST Part = (VLadj) (VSadj);
+LIST Verb = (V*fin) (V*inf) (VLadj);
+LIST Infinitive = (VLinf);
+LIST PronombrePersonal = (PPX);
+LIST DetAll = (ART); # habrá que refinar la definición 
+LIST Sustantivo = (NC) (NP) (NMEA) (NMON) ;
+LIST LimiteOracionSimple = (CC) (CSUBX) (CSUBF) (CQUE) (CSUBI) ; # habrá que refinar la definición
+LIST Articulo = (ART);
+
+SET AdjOrPart = Adj OR Part ;
+SET FiniteVerbFormsOrPart = FiniteVerbForms OR Part ;
+SET GrupoNominal = Sustantivo OR Adj OR DetAll; # habrá que refinar la definición de grupo nominal
+LIST PronPers = (PPX);
+LIST PronPersClitico = (PPC);
+LIST PronPersSE = (SE);
+
+#LATEX\section{Rasgos morfosintácticos}
+## LIST MORPH FEATURES VERBS
+
+LIST PL = (Plural);
+LIST 1aPers = (1st);
+LIST 3aPers = (3rd);
+LIST 1aO3aPersAmbig = (1st_or_3rd);
+
+SET 3aPersAmbig = 3aPers OR 1aO3aPersAmbig;
+
+#LATEX\chapter{LIST y SET basados en lemas}
+#LATEX\section{Los LIST}
+## LISTS OR SETS FOR LEMMATA
+LIST APrep = ("a");
+LIST Pesar = ("pesar");
+
+LIST Por = ("por");
+LIST Para = ("para");
+LIST Haber = ("haber") ;
+LIST Personas = ("niño") ("mujer") ("hombre") ("chico") ("viejo") ("mayor") ("hijo") ("estudiante") ("muchacho") ("persona");
+LIST Ser = ("ser");
+LIST Servir = ("servir");
+LIST Bueno = ("bueno");
+LIST Malo = ("malo");
+LIST No = ("no");
+LIST Gustar-Like = ("gustar") ("interesar") ("fascinar") ("encantar");
+LIST Sorprender-Like = ("sorprender");
+LIST Yo = ("yo" PPX);
+LIST Tu = ("tú" PPX);
+LIST Nos = ("nosotros" PPX);
+LIST Os = ("vosotros" PPX);
+LIST LeLema = ("él" PPC);
+LIST PretPerfRelations = (r:PretPerifAux) (r:PretPerifMain);
+LIST Que = ("que");
+LIST Uno = ("uno");
+LIST UstedLema = ("usted");
+LIST ConjLetraO = ("o");
+LIST MarcDiscRevision = ("pero") ("aunque") ("exepto");
+LIST Sin = ("sin");
+LIST Embargo = ("embargo");
+LIST De = ("de");
+LIST Hecho = ("hecho") ("<hecho>");
+LIST En = ("en");
+LIST Realidad = ("realidad");
+LIST Cierto = ("cierto");
+LIST Debido =("deber|debido");
+LIST Porque =("porque");
+LIST Gracia =("gracia"); #now used to handle "gracias" which does not have a lemmatisation of its own, which is probably ok
+LIST Dios =("dios");
+LIST SoloAcento =("sólo");
+LIST ElLema = ("el");
+
+LIST FormasDePalabrasEnLocucionesConPor = ("<ello>") ("<eso>");
+LIST LemasDePalabrasEnLocucionesConPor = ("ejemplo") ("tanto") ("ello") ("eso");
+LIST LemasDePalabrasEnLocucionesConPorLo = ("regular") ("tanto") ("pronto");
+LIST Tanto = ("tanto");
+LIST FormasDePalabrasEnLocucionesCausalesConPor = ("<ello>") ("<eso>");
+LIST Ejemplo = ("ejemplo");
+LIST Ademas = ("además");
+LIST Tambien = ("también");
+LIST Vez = ("vez");
+LIST Tal = ("tal");
+
+#LATEX\section{Los SET}
+SET BuenoOMalo = Bueno OR Malo;
+SET PorOPara = Por OR Para;
+SET SerOServir = Ser OR Servir;
+
+#LATEX\chapter{LIST y SET basados en palabras (literales)}
+LIST YoLiteral = ("<yo>") ("<Yo>") ("<YO>") ;
+LIST TuLiteral = ("<tu>") ("<Tu>") ("<TU>") ;
+LIST ElOEllaLiterales = ("<él>") ("<Él>") ("<ÉL>") ("<ella>") ("<Ella>") ("<ELLA>") ;
+LIST NosotrosLiteral = ("<nosotros>") ("<Nosotros>") ("<NOSOTROS>") ;
+LIST VosotrosLiteral = ("<vosotros>") ("<Vosotros>") ("<VOSOTROS>") ;
+LIST EllosOEllasLiteral = ("<ellos>") ("<Ellos>") ("<ELLOS>") ("<ellas>") ("<Ellas>") ("<ELLAS>") ;
+LIST Sea = ("<sea>") ("<SEA>") ("<Sea>");
+LIST Lo = ("<lo>") ("<LO>") ("<Lo>");
+LIST Me = ("<me>") ("<ME>") ("<Me>");
+LIST SeLiteral = ("<se>") ("<SE>") ("<Se>");
+LIST NosLiteral = ("<nos>") ("<NOS>") ("<Nos>");
+LIST Te = ("<te>") ("<TE>") ("<Te>");
+LIST OsLiteral = ("<os>") ("<OS>") ("<Os>");
+
+LIST Todos = ("<todos>") ("<TODOS>") ("<Todos>");
+LIST Modos = ("<modos>") ("<MODOS>") ("<Modos>");
+LIST Es = ("<es>") ("<Es>") ("<ES>");
+SET PronPersFuerte = YoLiteral OR TuLiteral OR ElOEllaLiterales OR NosotrosLiteral OR VosotrosLiteral OR EllosOEllasLiteral OR UstedLema;
+SET PronombreDeObjetoNoAmbiguos = Me OR Te OR NosLiteral OR OsLiteral;
+
+#LATEX\chapter{LIST y SET basados en etiquetas pedagógicas}
+## PEDAGOGICAL TAGS
+LIST GramPrep = (@Gram:Prep:Por) (@Gram:Prep:Por:Locuciones) (@Gram:Prep:Para) (@Gram:Prep:Para:Opinion) (@Gram:Prep:Para:Destinatario) (@Gram:Prep:Para:Habilidad);
+
+#LATEX\part{Secciones previas}
+BEFORE-SECTIONS
+
+#LATEX\chapter{Reglas para rectificar errores de tagging}
+SUBSTITUTE (Noun NC Singular Masculine) (Conjunction CC) TARGET ("pero");
+#LATEX T: CC
+#LATEX E: \emph{pero} 
+#LATEX D: Regla para cambiar a \emph{pero} la lectura de nombre por la de conjunción. Ahora se aplica indiscriminadamente, pero podría ser conveniente controlar que antes del pero no hay un artículo. Por ejemplo: ``el pero de la cuestión es que podría romperse el motor''.
+
+#LATEX\part{Secciones principales}
+SECTION
+#LATEXDOCU Las reglas de identificación de fenómenmos pedagógicos están ordenadas de más concretas a más generales. Así, por ejemplo, se detectan primero, cuando es posible, los distintos usos de \emph{para} (opinión, intención, destino, etc. como \emph{@Gram:Prep:Para:Opinion}...) y luego se marcan como simplemente \emph{@Gram:Prep:Para} el resto de ocurrencias de \emph{para}. Luego, se hace lo propio con otras preposiciones, hasta el punto que si para una preposición no hay reglas especiales, sus ocurrencias se marcan simplemente como \emph{@Gram:Prep}.
+
+#LATEXDOCU Esta estrategia se utiliza para evitar que una misma palabra reciba por partida doble informaciones de igual granularidad. Para ello, antes de asignar una etiqueta, se comprueba que no haya otra asignada del mismo nivel. A efectos prácticos, etiquetas como \emph{@Gram:Prep:Para:Opinion}...) y \emph{@Gram:Prep:Para} se consideran del mismo nivel.
+
+#LATEXDOCU Para evitar este tipo de duplicidades también se podría usar una estrategia basada en la distinción entre ADD y MAP (véase la documentación de vislcg3). Por ahora no se ha hecho, porque esto impide la asignación de múltiples etiquetas a un mismo token/una misma palabra.
+
+#LATEX\chapter{Uso de las preposiciones}
+## SECTION -- RULES TO ADD Prep-RELATED INFORMTATION
+
+#LATEX\section{Usos de para}
+#LATEXDOCU Veáse \url{http://dev.coerll.utexas.edu/spanishtx/spe/html/adv11.html}.
+
+#LATEX\subsection{El uso de \emph{para} para expresar el destinatario o audiencia de una acción}
+ADD (@Gram:Prep:Para:Destinatario) Prep IF (-1 SerOServir + Verb) (0 Para) (NOT 0 GramPrep) (1 DetAll) (2 Personas);
+#LATEX T: Asigna @Gram:Prep:Para:Destinatario.
+#LATEX E: Fue escrito \emph{para} los estudiantes.
+#LATEX E: Es fundamental \emph{para} una persona.
+#LATEX D: Requiere \emph{para + DET + NOMBRE $<+humano>$}
+
+ADD (@Gram:Prep:Para:Destinatario) Prep IF (-1 SerOServir + Verb) (0 Para) (NOT 0 GramPrep) (1 Personas);
+#LATEX T: Asigna @Gram:Prep:Para:Destinatario.
+#LATEX E: Ropa \emph{para} niños.
+#LATEX D: Requiere \emph{para + NOMBRE $<+humano>$}
+
+#LATEX\subsection{El uso de \emph{para} para expresar una finalidad}
+## ADD (@Gram:Prep:Para:Finalidad) Prep IF (-1 BuenoOMalo) (0 Para) (NOT 0 GramPrep) (1 Infinitive);
+#LATEXREM Dudo de si el uso de ``Juan es muy bueno para el fútbol'' se parece o no al de ``hemos venido antes para no quedarnos sin asiento''. De momento los pongo juntos.
+
+ADD (@Gram:Prep:Para:Finalidad) Prep IF (0 Para) (NOT 0 GramPrep) (1 Infinitive);
+#LATEX T: Asigna @Gram:Prep:Para:Finalidad.
+#LATEX E: Soy muy mala \emph{para} recordar.
+#LATEX D: Requiere \emph{para + INFINITIVO}
+
+ADD (@Gram:Prep:Para:Finalidad) Prep IF (0 Para) (NOT 0 GramPrep) (1 PronPersFuerte OR No) (2 Infinitive);
+#LATEX T: Asigna @Gram:Prep:Para:Finalidad.
+#LATEX E: Había que saber hablar inglés \emph{para} uno desarrollar su trabajo.
+#LATEX D: Requiere \emph{para + PRONOMBRE PERSONAL NOMINATIVO + INFINITIVO}
+
+ADD (@Gram:Prep:Para:Finalidad) Prep IF (0 Para) (NOT 0 GramPrep) (1 Que);
+#LATEX T: Asigna @Gram:Prep:Para:Finalidad.
+#LATEX E: Me daba clases \emph{para} que aprendiera inglés.
+#LATEX D: Requiere \emph{para + QUE}
+
+#LATEX\subsection{El uso de \emph{para} para expresar una opinión}
+ADD (@Gram:Prep:Para:Opinion) Prep IF (0 Para) (NOT 0 GramPrep) (1 PronombrePersonal) (NOT 1 YoLiteral OR TuLiteral);
+#LATEX T: Asigna @Gram:Prep:Para:Opinion.
+#LATEX E: \emph{Para} mi.
+#LATEX D: Requiere \emph{para + PRONOMBRE PERSONAL ACUSATIVO}
+#LATEX C: Esta regla es muy floja. Habrá que revisarla.
+
+#LATEX\subsection{Usos de \emph{para} no clasificados}
+ADD (@Gram:Prep:Para) Prep IF (0 Para) (NOT 0 GramPrep);
+#LATEX T: Asigna @Gram:Prep:Para.
+#LATEX E: \emph{para} (cualquier otra ocurrencia)
+#LATEX D: Requiere \emph{para}
+
+#LATEX\section{Usos de \emph{por}}
+#LATEXDOCU Veáse \url{http://dev.coerll.utexas.edu/spanishtx/spe/html/adv11.html}.
+
+#LATEX\subsection{Usos de \emph{por} en locuciones}
+ADD (@Gram:Prep:Por:Locuciones) Prep IF (0 Por) (NOT 0 GramPrep) (1 LemasDePalabrasEnLocucionesConPor OR FormasDePalabrasEnLocucionesConPor);
+#LATEX T: Asigna @Gram:Prep:Por:Locuciones.
+#LATEX E: \emph{por ejemplo}, \emph{por eso}, \emph{por tanto}
+#LATEX D: Requiere \emph{por} seguida por alguna palabra en la lista de palabras predefinidas \emph{LemasDePalabrasEnLocucionesConPor}
+
+ADD (@Gram:Prep:Por:Locuciones) Prep IF (0 Por) (NOT 0 GramPrep) (1 Lo) (2 LemasDePalabrasEnLocucionesConPor);
+#LATEX T: Asigna @Gram:Prep:Por:Locuciones.
+#LATEX E: \emph{por lo tanto}, \emph{por lo regular}
+#LATEX D: Requiere \emph{por} seguida por LO y alguna palabra en la lista de palabras predefinidas \emph{LemasDePalabrasEnLocucionesConPor}
+
+#LATEX\subsection{Usos de \emph{por} no clasificados}
+ADD (@Gram:Prep:Por) Prep IF (0 Por) (NOT 0 GramPrep);
+#LATEX T: Asigna @Gram:Prep:Por.
+#LATEX E: \emph{por} (cualquier ocurrencia)
+#LATEX D: Requiere \emph{por}
+
+#LATEX\subsection{Usos de preposiciones no clasificados}
+ADD (@Gram:Prep) Prep (NOT 0 GramPrep);
+#LATEX T: Asigna @Gram:Prep.
+#LATEX E: \emph{PREP} (cualquier ocurrencia)
+#LATEX D: Requiere \emph{PREP}
+
+#LATEX\chapter{Uso de los pronombres}
+## SECTION -- RULES TO ADD Prep-RELATED INFORMTATION
+
+#LATEX\section{Pronombres de sujeto}
+
+ADD (@Gram:Pron:Sujeto) PronPersFuerte;
+#LATEX T: Asigna @Gram:Pron:Sujeto.
+#LATEX E: \emph{yo, tú, él, ella, ud., nosotros, vosotros, ellos, ellas, uds.} (cualquier ocurrencia)
+#LATEX D: La ocurrencia de uno de ellos
+
+#LATEX\section{Pronombres de objeto directo o complemento atributivo}
+ADD (@Gram:Pron:ObjetoDirecto) ElLema IF (NOT -1 Prep) (0 Articulo) (1 FiniteVerbForms) ;
+#LATEX T: Asigna @Gram:Pron:Objeto.
+#LATEX E: mí nunca me \emph{la} hicieron pero que estabamos
+#LATEX D: \emph{lo, la, los, las} VERBO CONJUGADO
+
+#LATEX\section{Pronombres de objeto directo, indirecto, o posesivos}
+ADD (@Gram:Pron:DirIndirOPoses) PronPers IF (0 PronombreDeObjetoNoAmbiguos);
+#LATEX T: Asigna @Gram:Pron:Objeto.
+#LATEX E: \emph{me, te, os, nos} (cualquier ocurrencia)
+#LATEX D: La ocurrencia de uno de ellos.
+
+#LATEX\section{Pronombres de objeto indirecto o posesivos}
+ADD (@Gram:Pron:IndirectoOPoses) PronPersClitico IF (0 LeLema);
+#LATEX T: Asigna @Gram:Pron:Objeto.
+#LATEX E: \emph{le, les}
+#LATEX D: La ocurrencia de uno de ellos. El pronombre ``le'' es posesivo cuando hace referencia a usted, o ustedes en su forma en plural
+
+#LATEX\section{Pronombres de objeto doble}
+ADDRELATION (Gram:Pron:ObjetoDoble) PronPers (0 PronombreDeObjetoNoAmbiguos) TO (1 ElLema + Articulo);
+ADDRELATION (Gram:Pron:ObjetoDoble) PronPersSE (0 SeLiteral) TO (1 ElLema + Articulo);
+#LATEX T: Asigna @Gram:Pron:ObjetoDoble.
+#LATEX E: \emph{se lo, se la, se los, se las, me lo, me la, me los, me las, te lo, te la, te los, te las,} etc.
+#LATEX D: La ocurrencia de cualquier combinación de dos pronombres clíticos.
+
+## SECTION -- RULES TO ADD PAST TENSE RELATED INFORMTATION
+#LATEX\chapter{Formas verbales conjugadas}
+
+#LATEX\section{Formas verbales para tiempos pretéritos}
+
+#LATEX\subsection{Pretérito imperfecto}
+# PRETÉRTIO IMPERFECTO
+ADD (@Gram:Imperf) FiniteVerbForms IF (0 FiniteVerbForms + PretImperfSimple) (NOT 0 Haber) ;
+#LATEX T: Asigna @Gram:Imperf.
+#LATEX E: \emph{cantaba, corría, temía, partía} (cualquier ocurrencia)
+#LATEX D: Requiere una forma identificada como pretérito simple que no sea del verbo haber (auxiliar).
+
+#LATEX\subsection{Pretérito perfecto}
+
+#LATEX\subsubsection{Pretérito perfecto simple}
+# PRETÉRTIO PERFECTO SIMPLE
+ADD (@Gram:PretPerf) FiniteVerbForms IF (0 FiniteVerbForms + PretPerfSimple) (NOT 0 Haber) ;
+#LATEX T: Asigna @Gram:PretPerf.
+#LATEX E: \emph{cantó, corrió, anduvo, partió} (cualquier ocurrencia)
+#LATEX D: Requiere una forma identificada como pretérito perfecto simple que no sea del verbo haber (auxiliar).
+
+#LATEX\subsubsection{Pretérito perfecto perifrástico o compuesto}
+# PRETÉRTIO PERFECTO PERIFRÁSTICO
+ADDRELATION (Gram:PerfPerif) FiniteVerbForms (0 Haber + FiniteVerbForms) TO (1 Part);
+#LATEX T: Asigna R:Gram:PerfPerif a la forma del verbo HABER
+#LATEX E: \emph{ha cantado, ha corrido, ha andado dormido} (cualquier ocurrencia)
+#LATEX D: Requiere una forma finita de HABER seguida de un participio
+
+#LATEX\section{Verbos piscológicos: gustar, encantar, sorprender y otros}
+#LATEXDOCU Veáse \url{http://dev.coerll.utexas.edu/spanishtx/spe/html/adv13.html}.
+#LATEXDOCU Veáse \url{http://dev.coerll.utexas.edu/spanishtx/spe/html/beg05.html}.
+
+#LATEX\subsection{Usos de \emph{gustar} para expresar gustos propios}
+ADDRELATION (Gram:Gustar:Propios) PronPers (0 Me OR NosLiteral) TO (1 Gustar-Like + 3aPersAmbig);
+#LATEX T: Asigna @Gram:Gustar:Propios.
+#LATEX E: \emph{me gusta} ayudar a mis amigos 
+#LATEX D: Requiere la forma ME seguida de una forma de GUSTAR en tercera persona (posiblemente ambigua)
+
+ADDRELATION (Gram:Gustar:Propios) PronPers (0 Me OR NosLiteral) (1 Haber) TO (1 Gustar-Like + Part);
+#LATEX T: Asigna R:Gram:Gustar: Propios a la forma del verbo HABER
+#LATEX E: \emph{me ha gustado} ayudar a mis amigos 
+#LATEX E: \emph{me hubieras gustado} con un vestido verde 
+#LATEX D: Requiere la forma ME seguida de una forma de HABER en tercera persona (posiblemente ambigua)
+
+#LATEX\subsection{Usos de \emph{gustar} para expresar gustos de tu interlocutor}
+ADD (@Gram:Gustar:Interlocutor) FiniteVerbForms IF  (-1 Tu) (0 Gustar-Like + 3aPersAmbig);
+#LATEX T: @Gram:Gustar:Interlocutor
+#LATEX E: Dime, \emph{te gusta} vivir en Estados Unidos.] 
+#LATEX D: Secuencia del lema TE y un forma de GUSTAR en tercera persona del singular.
+
+#LATEX\subsection{Usos de \emph{gustar} para expresar gustos de otras personas}
+ADDRELATION (Gram:Gustar:Ajenos) FiniteVerbForms (0 Gustar-Like + 3aPersAmbig) TO (-1 LeLema);
+#LATEX T: R:Gram:Gustar:Ajenos a la forma del verbo GUSTAR
+#LATEX E: Dime, \emph{le gusta} vivir en Estados Unidosa tu hijo.] 
+#LATEX D: Secuencia del lema LE y un forma de GUSTAR en tercera persona del singular.
+
+#LATEX\section{Expresar sorpresa}
+#LATEXDOCU Veáse \url{http://dev.coerll.utexas.edu/spanishtx/spe/html/adv13.html}.
+#LATEX\subsection{Usos de \emph{sorprender}}
+
+ADDRELATION (Gram:ExpresarSorpresas:Propias) FiniteVerbForms (0 Sorprender-Like + 3aPersAmbig) TO (-1 Yo);
+#LATEX T: Asigna Gram:ExpresarSorpresas:Propias a la forma de SORPRENDER
+#LATEX E: Siempre \emph{me sorprende} su forma de hablar.
+#LATEX D: [Espacio para describir con palabras lo que hace la regla.]
+
+ADDRELATION (Gram:ExpresarSorpresas:Interlocutor) FiniteVerbForms (0 Sorprender-Like + 3aPersAmbig) TO (-1 Tu);
+#LATEX T: Asigna Gram:ExpresarSorpresas:Interlocutor a la forma de SORPRENDER
+#LATEX E: ¿Y \emph{te sorprende} su forma de hablar?
+#LATEX D: [Espacio para describir con palabras lo que hace la regla.]
+
+ADDRELATION (Gram:ExpresarSorpresas:Interlocutor) Part (0 Sorprender-Like) TO (*-1 Tu BARRIER GrupoNominal OR LimiteOracionSimple LINK 1 Haber + 3aPersAmbig);
+#LATEX T: Asigna Gram:ExpresarSorpresas:Interlocutor a la forma de HABER
+#LATEX E: ¿Hay alguna palabra mexicana que \emph{te haya sorprendido}?
+#LATEX D: [Espacio para describir con palabras lo que hace la regla.]
+
+ADDRELATION (Gram:ExpresarSorpresas:Ajenas) FiniteVerbForms (0 Sorprender-Like + 3aPersAmbig) TO (-1 LeLema);
+#LATEX T: Asigna Gram:ExpresarSorpresas:Ajenas a la forma de SORPRENDER
+#LATEX E: ¿Y \emph{le sorprende} su forma de hablar?
+#LATEX D: [Espacio para describir con palabras lo que hace la regla.]
+
+ADDRELATION (Gram:ExpresarSorpresas:Ajenas) Part (0 Sorprender-Like) TO (*-1 LeLema BARRIER GrupoNominal OR LimiteOracionSimple LINK 1 Haber + 3aPersAmbig);
+#LATEX T: Asigna Gram:ExpresarSorpresas:Ajenas a la forma de HABER
+#LATEX E: ¿Hay alguna palabra mexicana que \emph{le haya sorprendido}?
+#LATEX D: [Espacio para describir con palabras lo que hace la regla.]
+
+## SECTION -- RULES TO ADD PAST GUSTAR AND SIMILAR VERBS
+#LATEX\chapter{Funciones comunicativas}
+
+## SECTION -- RULES TO ADD PAST GUSTAR AND SIMILAR VERBS
+#LATEX\chapter{Pragmática}
+
+#LATEX\section{Marcadores discursivos}
+#LATEXDOCU Véase \url{http://www.cs.famaf.unc.edu.ar/~laura/shallowdisc4summ/index.html}.
+
+#LATEX\subsection{Marcadores discursivos indicadores de revisión}
+## Prag:MarcadoresDisc:Revision
+
+ADD (@Prag:MarcadoresDisc:Revision) MarcDiscRevision;
+#LATEX T: @:Prag:MarcadoresDisc:Revision
+#LATEX E: \emph{aunque}, \emph{excepto} o \emph{pero}
+#LATEX D: [Espacio para describir con palabras lo que hace la regla.]
+# aunque
+# excepto
+# pero
+
+ADDRELATION (Prag:MarcadoresDisc:Revision) Sin TO (1 Embargo);
+#LATEX T: R:Prag:MarcadoresDisc:Revision (relación entre el primer i el último elemento de la locución)
+#LATEX E: \emph{sin embargo}
+#LATEX D: [Espacio para describir con palabras lo que hace la regla.]
+
+ADDRELATION (Prag:MarcadoresDisc:Revision) De TO (1 Hecho);
+#LATEX T: R:Prag:MarcadoresDisc:Revision (relación entre el primer i el último elemento de la locución)
+#LATEX E: \emph{de hecho}
+#LATEX D: [Espacio para describir con palabras lo que hace la regla.]
+
+ADDRELATION (Prag:MarcadoresDisc:Revision) En TO (1 Realidad);
+#LATEX T: R:Prag:MarcadoresDisc:Revision (relación entre el primer i el último elemento de la locución)
+#LATEX E: \emph{en realidad}
+#LATEX D: [Espacio para describir con palabras lo que hace la regla.]
+
+# 2 tokens (NO TRATADOS)
+# pese a
+# salvo que
+#ADDRELATION (Prag:MarcadoresDisc:Revision) No (1 Obstante);
+# no obstante
+# al contrario
+# con todo
+# ahora bien
+
+# 3 tokens
+ADDRELATION (Prag:MarcadoresDisc:Revision) APrep (1 Pesar) TO (2 De);
+#LATEX T: R:Prag:MarcadoresDisc:Revision (relación entre el primer i el último elemento de la locución)
+#LATEX E: \emph{a pesar de}
+#LATEX D: [Espacio para describir con palabras lo que hace la regla.]
+
+ADDRELATION (Prag:MarcadoresDisc:Revision) De (1 Todos) TO (2 Modos);
+#LATEX T: R:Prag:MarcadoresDisc:Revision (relación entre el primer i el último elemento de la locución)
+#LATEX E: \emph{de todos modos}
+#LATEX D: [Espacio para describir con palabras lo que hace la regla.]
+
+ADDRELATION (Prag:MarcadoresDisc:Revision) Es (1 Cierto) TO (2 Que);
+#LATEX T: R:Prag:MarcadoresDisc:Revision (relación entre el primer i el último elemento de la locución)
+#LATEX E: \emph{s cierto que}
+#LATEX D: [Espacio para describir con palabras lo que hace la regla.]
+
+# 4 tokens (NO TRATADOS)
+# el hecho es que
+
+#LATEX\subsection{Marcadores discursivos indicadores de causa}
+
+ADD (@Prag:MarcadoresDisc:Causa) Porque;
+#LATEX T: @Prag:MarcadoresDisc:Causa
+#\LATEX E: (...) y es curioso \emph{porque} hace más o menos una semana que lo vi (...)
+#LATEX D: [Espacio para describir con palabras lo que hace la regla.]
+
+ADDRELATION (Prag:MarcadoresDisc:Causa) Prep IF (0 Por) (1 Lo) TO (2 Tanto);
+ADDRELATION (Prag:MarcadoresDisc:Causa) Prep IF (0 Por) TO (2 Tanto OR FormasDePalabrasEnLocucionesCausalesConPor);
+#LATEX T: Asigna @Gram:Prep:Por:Locuciones.
+#LATEX E: \emph{por lo tanto}
+#LATEX E: \emph{por eso}
+#LATEX D: Requiere \emph{por} seguida por LO y TANTO
+
+ADDRELATION (Prag:MarcadoresDisc:Causa) Debido TO (1 APrep);
+#LATEX T: R:Prag:MarcadoresDisc:Causa (relación entre el primer i el último elemento de la locución)
+#\LATEX E: (...) mi propio negocio pues \emph{debido a} unas dificultades (...)
+#LATEX D: [Espacio para describir con palabras lo que hace la regla.]
+
+ADDRELATION (Prag:MarcadoresDisc:Causa) Gracia (0 PL) (NOT 2 Dios) TO (1 APrep);
+#LATEX T: R:Prag:MarcadoresDisc:Causa (relación entre el primer i el último elemento de la locución)
+#\LATEX E: \emph{gracias a} la tecnología este sí conservo amistades (...)
+#LATEX D: [Espacio para describir con palabras lo que hace la regla.]
+
+ADDRELATION (Prag:MarcadoresDisc:Causa) Gracia (0 PL) (1 APrep) TO (2 Dios);
+#LATEX T: R:Prag:MarcadoresDisc:Causa (relación entre el primer i el último elemento de la locución)
+#\LATEX E: y de ahí fui a la ceremonia y \emph{gracias a dios} me hice ciudadano
+#LATEX D: [Espacio para describir con palabras lo que hace la regla.]
+
+#LATEX\subsection{Marcadores discursivos indicadores de igualdad}
+## Prag:MarcadoresDisc:Igualdad
+
+ADD (@Prag:MarcadoresDisc:Igualdad) Adv IF (0 Ademas) (NOT 1 De);
+ADD (@Prag:MarcadoresDisc:Igualdad) Adv IF (0 Tambien);
+#LATEXREM No añado \emph{precisamente} porque es ambiguo entre su lectura literal (preciso, justo, cierto) como modificador verbal y su lectura como marcador discursivo. Para anotarlo con fiabilidad habría que tener en cuenta su posición respecto al principio de la oración y el verbo principal. Ejemplos: \emph{sí muchas pero no sé precisamente cuál cuál sería una}, \emph{allí vivimos como un año y precisamente yo me tomé me tomaron fotos en un un estudio de fotografía}
+#LATEX T: @:Prag:MarcadoresDisc:Igualdad
+#LATEX E: \emph{además}, \emph{también}
+#LATEX D: Requiere \emph{además} o \emph{también} no seguido de DE
+
+ADDRELATION (Prag:MarcadoresDisc:Igualdad) Prep IF (0 Por) TO (1 Ejemplo);
+#LATEX T: R:Prag:MarcadoresDisc:Igualdad (relación entre el primer i el último elemento de la locución)
+#LATEX E: \emph{por ejemplo}
+#LATEX D: Requiere \emph{por} seguida por alguna palabra en la lista de palabras predefinidas \emph{LemasDePalabrasEnLocucionesConPor}
+
+ADDRELATION (Prag:MarcadoresDisc:Igualdad) ConjLetraO TO (1 Sea);
+#LATEX T: R:Prag:MarcadoresDisc:Igualdad
+#LATEX E: \emph{o sea}
+#LATEX D: [Espacio para describir con palabras lo que hace la regla.]
+
+ADDRELATION (Prag:MarcadoresDisc:Igualdad) No TO (1 SoloAcento);
+#LATEX T: R:Prag:MarcadoresDisc:Igualdad
+#LATEX E: porque uno \emph{no sólo} puede ayudar en el aspecto de inglés pero en el aspecto del español también
+#LATEX D: [Espacio para describir con palabras lo que hace la regla.]
+
+ADDRELATION (Prag:MarcadoresDisc:NoTipificado) Tal TO (1 Vez);
+#LATEX T: R:Prag:MarcadoresDisc:NoTipificado
+#\LATEX E: noto que \emph{tal vez} sus hijos hablan el spanglish más unos más que otros
+#LATEX D: [Espacio para describir con palabras lo que hace la regla.]
+
+#\LATEX E: \emph{}
+#\LATEX E: \emph{}
+
+##AFTER-SECTIONS
