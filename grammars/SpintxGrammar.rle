@@ -96,7 +96,7 @@ LIST ElLema = ("el");
 LIST VerboSer = ("ser");
 LIST VerboSerAmbiguoConErar = ("erar|ser"); ## eras, eran, era, eres (no éramos).
 LIST VerboSerAmbiguoConIr = ("ser|ir"); ## fui, fuimos, fue, fuiste...
-
+LIST VerboEstar = ("estar");
 
 LIST FormasDePalabrasEnLocucionesConPor = ("<ello>") ("<eso>");
 LIST LemasDePalabrasEnLocucionesConPor = ("ejemplo") ("tanto") ("ello") ("eso");
@@ -146,10 +146,15 @@ LIST GramPron = (@Gram:Pron:Otros) (@Gram:Pron:ObjetoDoble);
 #LATEX\part{Secciones previas}
 BEFORE-SECTIONS
 
-#LATEX\chapter{Reglas para rectificar errores de tagging}
+#LATEX\chapter{Reglas para rectificar errores del análisis morfosintático}
 SUBSTITUTE (Noun NC Singular Masculine) (Conjunction CC) TARGET ("pero");
 #LATEX T: CC
 #LATEX E: \emph{pero} 
+#LATEX D: Regla para cambiar a \emph{pero} la lectura de nombre por la de conjunción. Ahora se aplica indiscriminadamente, pero podría ser conveniente controlar que antes del pero no hay un artículo. Por ejemplo: ``el pero de la cuestión es que podría romperse el motor''.
+
+SUBSTITUTE ("hecho" Noun NC Singular Masculine) ("hacer" Verb VLadj) TARGET ("hecho") IF (-1 Haber + Verbo);
+#LATEX T: Cambia Noun NC Singular Masculine por Verb VLadj
+#LATEX E: \emph{hecho} 
 #LATEX D: Regla para cambiar a \emph{pero} la lectura de nombre por la de conjunción. Ahora se aplica indiscriminadamente, pero podría ser conveniente controlar que antes del pero no hay un artículo. Por ejemplo: ``el pero de la cuestión es que podría romperse el motor''.
 
 #LATEX\part{Secciones principales}
@@ -378,14 +383,23 @@ ADDRELATION (Gram:ExpresarSorpresas:Ajenas) Part (0 Sorprender-Like) TO (*-1 LeL
 ADD (@Gram:Aux:Ser) Verbo (0 VerboSer OR VerboSerAmbiguoConErar);
 ADD (@Gram:Aux:Ser) Verbo (0 VerboSerAmbiguoConIr) (NOT 1 Prep);
 #LATEX T: @Gram:Aux:Ser
-#LATEX E: \emph{soy, eres}, etc. 
+#LATEX E: \emph{soy, eres,} etc. 
 #LATEX E: \emph{fui, fuimos...} NOT Prep 
 #LATEX D: Cualquier forma de \emph{ser} del pretérito indefinido no seguido de una preposición (porque entonces seguramente será del verbo ir)
 
 #LATEX\subsection{Verbo estar}
+ADD (@Gram:Aux:Estar) Verbo (0 VerboEstar);
+#LATEX T: @Gram:Aux:Estar
+#LATEX E: \emph{estoy, estás, estaban,} etc. 
+#LATEX D: Cualquier forma de \emph{estar}
+
 ### FITA
 
 #LATEX\subsection{Verbo haber}
+ADD (@Gram:Aux:Haber) Verbo (0 Haber) (NOT 1 Part);
+#LATEX T: @Gram:Aux:Haber
+#LATEX E: \emph{Había} tres personas en el ascensor. 
+#LATEX D: Cualquier forma de \emph{haber} que no vaya seguida de un participio
 
 ## SECTION -- RULES TO ADD PAST GUSTAR AND SIMILAR VERBS
 #LATEX\chapter{Funciones comunicativas}

@@ -262,9 +262,29 @@ sub PrintDataForFile {
         #$PrintToReturnForOneFileInfo .= "," . $key . "," . $HashWithCounts{$key};
     }
 
-    my @TempSortedArray;
+    my (@TempSortedArray,@GramTagsForOneFileInfo,@PragTagsForOneFileInfo);
+    my $MainCategory = "";
     @TempSortedArray = sort keys(%HashWithCounts);
-    $PrintToReturnForOneFileInfo .= join(",",@TempSortedArray );
+    
+    foreach my $t (@TempSortedArray) {
+        if ($t eq "\@Gram" | $t eq "R:Gram") {
+            $MainCategory = "Gram";
+            next;
+        }
+        elsif ($t =~ m/^(@|R:)Gram:(.*)$/ & $MainCategory eq "Gram") {
+            push(@GramTagsForOneFileInfo,$2);
+        }
+        elsif ($t eq "\@Prag" | $t eq "R:Prag") {
+            $MainCategory = "Prag";
+            next;
+        }
+        elsif ($t =~ m/^(@|R:)Prag:(.*)$/ & $MainCategory eq "Prag") {
+            $MainCategory = "Prag";
+            push(@PragTagsForOneFileInfo,$2);
+        } #KKK
+    }
+
+    $PrintToReturnForOneFileInfo .= join (",",@GramTagsForOneFileInfo) . "\t" . join (",",@PragTagsForOneFileInfo);
         
     $PrintToReturn .= "\n";
     $PrintToReturnForOneFileInfo .= "\n";
