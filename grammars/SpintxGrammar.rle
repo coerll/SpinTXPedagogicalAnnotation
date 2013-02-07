@@ -27,7 +27,7 @@ LIST PretImperfSimple = (Imp Indi) ;
 LIST PretPerfSimple = (Pret Indi) ;
 LIST Adj = (ADJ) (ORD) ;
 LIST Part = (VLadj) (VSadj);
-LIST Verb = (V*fin) (V*inf) (VLadj);
+LIST Verbo = (Verb);
 LIST Infinitive = (VLinf);
 LIST PronombrePersonal = (PPX);
 LIST DetAll = (ART); # habrá que refinar la definición 
@@ -93,6 +93,10 @@ LIST Gracia =("gracia"); #now used to handle "gracias" which does not have a lem
 LIST Dios =("dios");
 LIST SoloAcento =("sólo");
 LIST ElLema = ("el");
+LIST VerboSer = ("ser");
+LIST VerboSerAmbiguoConErar = ("erar|ser"); ## eras, eran, era, eres (no éramos).
+LIST VerboSerAmbiguoConIr = ("ser|ir"); ## fui, fuimos, fue, fuiste...
+
 
 LIST FormasDePalabrasEnLocucionesConPor = ("<ello>") ("<eso>");
 LIST LemasDePalabrasEnLocucionesConPor = ("ejemplo") ("tanto") ("ello") ("eso");
@@ -104,6 +108,9 @@ LIST Ademas = ("además");
 LIST Tambien = ("también");
 LIST Vez = ("vez");
 LIST Tal = ("tal");
+
+##de momento no se usa
+LIST VerboSaberAmbiguoConSer = ("saber|ser");
 
 #LATEX\section{Los SET}
 SET BuenoOMalo = Bueno OR Malo;
@@ -134,6 +141,7 @@ SET PronombreDeObjetoNoAmbiguos = Me OR Te OR NosLiteral OR OsLiteral;
 #LATEX\chapter{LIST y SET basados en etiquetas pedagógicas}
 ## PEDAGOGICAL TAGS
 LIST GramPrep = (@Gram:Prep:Por) (@Gram:Prep:Por:Locuciones) (@Gram:Prep:Para) (@Gram:Prep:Para:Opinion) (@Gram:Prep:Para:Destinatario) (@Gram:Prep:Para:Habilidad);
+LIST GramPron = (@Gram:Pron:Otros) (@Gram:Pron:ObjetoDoble);
 
 #LATEX\part{Secciones previas}
 BEFORE-SECTIONS
@@ -152,6 +160,8 @@ SECTION
 
 #LATEXDOCU Para evitar este tipo de duplicidades también se podría usar una estrategia basada en la distinción entre ADD y MAP (véase la documentación de vislcg3). Por ahora no se ha hecho, porque esto impide la asignación de múltiples etiquetas a un mismo token/una misma palabra.
 
+#LATEXDOCU NOTA: Ahora mismo sólo estamos asignando hasta tres niveles de descripción pedagógica. Veáse el Google Doc Pedagogical tipologies \url{https://docs.google.com/spreadsheet/ccc?key=0AlyBsKogCRnwdDd3ZWRjejZlQU5XZWl6WVVUZmtKcEE&usp=sharing}.
+
 #LATEX\chapter{Uso de las preposiciones}
 ## SECTION -- RULES TO ADD Prep-RELATED INFORMTATION
 
@@ -159,14 +169,16 @@ SECTION
 #LATEXDOCU Veáse \url{http://dev.coerll.utexas.edu/spanishtx/spe/html/adv11.html}.
 
 #LATEX\subsection{El uso de \emph{para} para expresar el destinatario o audiencia de una acción}
-ADD (@Gram:Prep:Para:Destinatario) Prep IF (-1 SerOServir + Verb) (0 Para) (NOT 0 GramPrep) (1 DetAll) (2 Personas);
-#LATEX T: Asigna @Gram:Prep:Para:Destinatario.
+##ADD (@Gram:Prep:Para:Destinatario) Prep IF (-1 SerOServir + Verb) (0 Para) (NOT 0 GramPrep) (1 DetAll) (2 Personas);
+ADD (@Gram:Prep:Para) Prep IF (-1 SerOServir + Verbo) (0 Para) (NOT 0 GramPrep) (1 DetAll) (2 Personas);
+#LATEX T: Asigna @Gram:Prep:Para.
 #LATEX E: Fue escrito \emph{para} los estudiantes.
 #LATEX E: Es fundamental \emph{para} una persona.
 #LATEX D: Requiere \emph{para + DET + NOMBRE $<+humano>$}
 
-ADD (@Gram:Prep:Para:Destinatario) Prep IF (-1 SerOServir + Verb) (0 Para) (NOT 0 GramPrep) (1 Personas);
-#LATEX T: Asigna @Gram:Prep:Para:Destinatario.
+##ADD (@Gram:Prep:Para:Destinatario) Prep IF (-1 SerOServir + Verb) (0 Para) (NOT 0 GramPrep) (1 Personas);
+ADD (@Gram:Prep:Para) Prep IF (-1 SerOServir + Verbo) (0 Para) (NOT 0 GramPrep) (1 Personas);
+#LATEX T: Asigna @Gram:Prep:Para.
 #LATEX E: Ropa \emph{para} niños.
 #LATEX D: Requiere \emph{para + NOMBRE $<+humano>$}
 
@@ -174,24 +186,28 @@ ADD (@Gram:Prep:Para:Destinatario) Prep IF (-1 SerOServir + Verb) (0 Para) (NOT 
 ## ADD (@Gram:Prep:Para:Finalidad) Prep IF (-1 BuenoOMalo) (0 Para) (NOT 0 GramPrep) (1 Infinitive);
 #LATEXREM Dudo de si el uso de ``Juan es muy bueno para el fútbol'' se parece o no al de ``hemos venido antes para no quedarnos sin asiento''. De momento los pongo juntos.
 
-ADD (@Gram:Prep:Para:Finalidad) Prep IF (0 Para) (NOT 0 GramPrep) (1 Infinitive);
-#LATEX T: Asigna @Gram:Prep:Para:Finalidad.
+###ADD (@Gram:Prep:Para:Finalidad) Prep IF (0 Para) (NOT 0 GramPrep) (1 Infinitive);
+ADD (@Gram:Prep:Para) Prep IF (0 Para) (NOT 0 GramPrep) (1 Infinitive);
+#LATEX T: Asigna @Gram:Prep:Para.
 #LATEX E: Soy muy mala \emph{para} recordar.
 #LATEX D: Requiere \emph{para + INFINITIVO}
 
-ADD (@Gram:Prep:Para:Finalidad) Prep IF (0 Para) (NOT 0 GramPrep) (1 PronPersFuerte OR No) (2 Infinitive);
-#LATEX T: Asigna @Gram:Prep:Para:Finalidad.
+## ADD (@Gram:Prep:Para:Finalidad) Prep IF (0 Para) (NOT 0 GramPrep) (1 PronPersFuerte OR No) (2 Infinitive);
+ADD (@Gram:Prep:Para) Prep IF (0 Para) (NOT 0 GramPrep) (1 PronPersFuerte OR No) (2 Infinitive);
+#LATEX T: Asigna @Gram:Prep:Para.
 #LATEX E: Había que saber hablar inglés \emph{para} uno desarrollar su trabajo.
 #LATEX D: Requiere \emph{para + PRONOMBRE PERSONAL NOMINATIVO + INFINITIVO}
 
-ADD (@Gram:Prep:Para:Finalidad) Prep IF (0 Para) (NOT 0 GramPrep) (1 Que);
-#LATEX T: Asigna @Gram:Prep:Para:Finalidad.
+## ADD (@Gram:Prep:Para:Finalidad) Prep IF (0 Para) (NOT 0 GramPrep) (1 Que);
+ADD (@Gram:Prep:Para) Prep IF (0 Para) (NOT 0 GramPrep) (1 Que);
+#LATEX T: Asigna @Gram:Prep:Para.
 #LATEX E: Me daba clases \emph{para} que aprendiera inglés.
 #LATEX D: Requiere \emph{para + QUE}
 
 #LATEX\subsection{El uso de \emph{para} para expresar una opinión}
-ADD (@Gram:Prep:Para:Opinion) Prep IF (0 Para) (NOT 0 GramPrep) (1 PronombrePersonal) (NOT 1 YoLiteral OR TuLiteral);
-#LATEX T: Asigna @Gram:Prep:Para:Opinion.
+## ADD (@Gram:Prep:Para) Prep IF (0 Para) (NOT 0 GramPrep) (1 PronombrePersonal) (NOT 1 YoLiteral OR TuLiteral);
+ADD (@Gram:Prep:Para) Prep IF (0 Para) (NOT 0 GramPrep) (1 PronombrePersonal) (NOT 1 YoLiteral OR TuLiteral);
+#LATEX T: Asigna @Gram:Prep:Para.
 #LATEX E: \emph{Para} mi.
 #LATEX D: Requiere \emph{para + PRONOMBRE PERSONAL ACUSATIVO}
 #LATEX C: Esta regla es muy floja. Habrá que revisarla.
@@ -260,6 +276,12 @@ ADD (@Gram:Pron:IndirectoOPoses) PronPersClitico IF (0 LeLema);
 ADDRELATION (Gram:Pron:ObjetoDoble) PronPers (0 PronombreDeObjetoNoAmbiguos) TO (1 ElLema + Articulo);
 ADDRELATION (Gram:Pron:ObjetoDoble) PronPersSE (0 SeLiteral) TO (1 ElLema + Articulo);
 #LATEX T: Asigna @Gram:Pron:ObjetoDoble.
+#LATEX E: \emph{se lo, se la, se los, se las, me lo, me la, me los, me las, te lo, te la, te los, te las,} etc.
+#LATEX D: La ocurrencia de cualquier combinación de dos pronombres clíticos.
+
+#LATEX\section{Pronombre se (solo)}
+ADD (@Gram:Pron:Otros) PronPersSE (0 SeLiteral) (NOT 0 GramPron) (NOT 1 FiniteVerbForms);
+#LATEX T: Asigna @Gram:Pron:Otros.
 #LATEX E: \emph{se lo, se la, se los, se las, me lo, me la, me los, me las, te lo, te la, te los, te las,} etc.
 #LATEX D: La ocurrencia de cualquier combinación de dos pronombres clíticos.
 
@@ -347,6 +369,23 @@ ADDRELATION (Gram:ExpresarSorpresas:Ajenas) Part (0 Sorprender-Like) TO (*-1 LeL
 #LATEX T: Asigna Gram:ExpresarSorpresas:Ajenas a la forma de HABER
 #LATEX E: ¿Hay alguna palabra mexicana que \emph{le haya sorprendido}?
 #LATEX D: [Espacio para describir con palabras lo que hace la regla.]
+
+## SECTION -- RULES TO ADD PAST GUSTAR AND SIMILAR VERBS
+#LATEX\section{Verbos auxiliares}
+
+#LATEX\subsection{Verbo ser}
+
+ADD (@Gram:Aux:Ser) Verbo (0 VerboSer OR VerboSerAmbiguoConErar);
+ADD (@Gram:Aux:Ser) Verbo (0 VerboSerAmbiguoConIr) (NOT 1 Prep);
+#LATEX T: @Gram:Aux:Ser
+#LATEX E: \emph{soy, eres}, etc. 
+#LATEX E: \emph{fui, fuimos...} NOT Prep 
+#LATEX D: Cualquier forma de \emph{ser} del pretérito indefinido no seguido de una preposición (porque entonces seguramente será del verbo ir)
+
+#LATEX\subsection{Verbo estar}
+### FITA
+
+#LATEX\subsection{Verbo haber}
 
 ## SECTION -- RULES TO ADD PAST GUSTAR AND SIMILAR VERBS
 #LATEX\chapter{Funciones comunicativas}

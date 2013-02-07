@@ -20,8 +20,12 @@ cd "$CG3DIR"
 for i in *.cg3; do
   CG3OUT=`expr "$i" : '\(.*\)\.cg3'` 
   vislcg3 -g ${GRAMMARS}/SpintxGrammar.rle -I ${i} -O ${OUTDIR}/${CG3OUT}.out
-  echo "Created file ${OUTDIR}/${CG3OUT}.out"
+##  echo "Created file ${OUTDIR}/${CG3OUT}.out"
 done
+
+echo "Counting/Adding up clip level information..."
+cd "$OUTDIR"
+countPedagogicalFeatures.pl -outformat solr *.out
 
 echo "Done!"
 
