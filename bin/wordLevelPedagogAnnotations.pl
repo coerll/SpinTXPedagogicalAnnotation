@@ -2,6 +2,8 @@
 
 use strict;
 use File::Basename;
+use warnings;
+use JSON;
 
 use Getopt::Long;
 
@@ -39,6 +41,7 @@ my $BooleanInWord = "FALSE";
 my (@WordReadings);
 ##my (@OneWordAnnotations,@MultiWordAnnotations,@CompletionInfo);
 
+my %HashForJSON;
 
 # TEST
 
@@ -54,7 +57,10 @@ my @MultiwordRecordCompletionInfo;
 GetOptions(\%opts, "help|?", "debug=s", "outformat=s", "silent");
 
 if ($opts{'help'}) {
-    print STDERR "\nGeneration of word-level information for the autoamtically annotated pedagogical features in SPinTX transcripts. Takes *.out file as input.\n";
+    print STDERR "\nGeneration of word-level information for the autoamtically 
+    annotated pedagogical features in SPinTX transcripts. 
+    Takes *.out file as input.
+    \n";
     print STDERR "Version: 0.1 // Author: Martí Quixal (2012 - today) \n";
     print STDERR "This code is totally free and open. Share and enjoy!\n";
     print STDERR "\n";
@@ -62,7 +68,7 @@ if ($opts{'help'}) {
     print STDERR "\n";
     print STDERR "Options:\n";
     print STDERR " -help,-? \t\t shows this help\n";
-    print STDERR " -debug \t\t shows this help\n";
+    print STDERR " -debug \t\t debug level 0 (default), 1, 2, 3 or 4\n";
     exit;
 }
 
@@ -109,7 +115,7 @@ foreach $file (@ARGV) {
         }
 
         $OutputDir = "";
-        $OutFile = $path.$OutputDir.$name."wla"; # *.wla, word level annotations file
+        $OutFile = $path.$OutputDir.$name."wla.json"; # *.wla, word level annotations file
         
         
         # reading contents of the file to be processed
@@ -237,10 +243,34 @@ foreach $file (@ARGV) {
             print STDERR "\n";
         }
         
+        my $json_string;
+        my $json_string_two;
+        my @RECORDS;
+        
+        # FITA: this needs to be generated as a hash
+        # and then converted into json
+        
+        foreach my $record (@ResultingAnnotationRecords) {
+            @RECORDS = split(/,/,$record);
+            $HashForJSON{'ClipId'} = $RECORDS[0];
+            $HashForJSON{'StartId'} = $RECORDS[1];
+            $HashForJSON{'EndId'} = $RECORDS[2];
+            $HashForJSON{'LabelName'} = $RECORDS[3];
+            $json_string_two = encode_json(\%HashForJSON);
+            undef @RECORDS;
+            $json_string .= $json_string_two ."\n"; 
+        }
+
+
         open (FOUT,">$OutFile");
-        my @s = sort {$a <=> $b} @ResultingAnnotationRecords;
-        print FOUT join("\n",@s); 
+#        my @s = sort {$a cmp $b} @ResultingAnnotationRecords;
+#        $json_string = join("\n",@s);
+        #        print FOUT $json_string . "\n"; 
+
+        print FOUT $json_string; 
+
         close (FOUT);
+        
 
     } #end of if $suffix eq "out"
     
