@@ -41,7 +41,8 @@ my $BooleanInWord = "FALSE";
 my (@WordReadings);
 ##my (@OneWordAnnotations,@MultiWordAnnotations,@CompletionInfo);
 
-my %HashForJSON;
+my %HashForJSON; #this is a silly hash used to generate data in JSON format for compatibility with DRUPAL/solr
+my $JSONStringsWholeCorpus; # this is a scalar to store the JSON data at the corpus level printed in a file at the very end of the process
 
 # TEST
 
@@ -92,7 +93,7 @@ else{
 # ---------------------------------------;
 
 # -- STARTING EXECUTION OF CONVERSION
-print STDERR "Starting conversion...\n";
+print STDERR "Generating word level annotation files in JSON format...\n";
 
 foreach $file (@ARGV) {
     
@@ -243,8 +244,8 @@ foreach $file (@ARGV) {
             print STDERR "\n";
         }
         
-        my $json_string;
-        my $json_string_two;
+        my $JSONStringsWholeFile;
+        my $JSONStringOneLiner;
         my @RECORDS;
         
         # FITA: this needs to be generated as a hash
@@ -252,13 +253,26 @@ foreach $file (@ARGV) {
         
         foreach my $record (@ResultingAnnotationRecords) {
             @RECORDS = split(/,/,$record);
-            $HashForJSON{'ClipId'} = $RECORDS[0];
-            $HashForJSON{'StartId'} = $RECORDS[1];
-            $HashForJSON{'EndId'} = $RECORDS[2];
-            $HashForJSON{'LabelName'} = $RECORDS[3];
-            $json_string_two = encode_json(\%HashForJSON);
+            $HashForJSON{'clip'} = $RECORDS[0];
+            $HashForJSON{'start'} = $RECORDS[1];
+            $HashForJSON{'end'} = $RECORDS[2];
+
+            my $ TempLabel = $RECORDS[3];
+            my ($PedagogicalType, $PedagogicalTag);
+            
+            if ($TempLabel =~ m/^([^:]+):(.+)$/ig){
+                $PedagogicalType = $1;
+                $PedagogicalTag = $2;
+            }
+            
+            $HashForJSON{'type'} = $PedagogicalType;
+            $HashForJSON{'tag'} = $PedagogicalTag;
+            
+            $JSONStringOneLiner = encode_json(\%HashForJSON);
+            $JSONStringsWholeFile .= $JSONStringOneLiner ."\n"; 
+
             undef @RECORDS;
-            $json_string .= $json_string_two ."\n"; 
+
         }
 
 
@@ -266,15 +280,25 @@ foreach $file (@ARGV) {
 #        my @s = sort {$a cmp $b} @ResultingAnnotationRecords;
 #        $json_string = join("\n",@s);
         #        print FOUT $json_string . "\n"; 
-
-        print FOUT $json_string; 
-
+        print FOUT $JSONStringsWholeFile; 
         close (FOUT);
+        
+        $JSONStringsWholeCorpus .= $JSONStringsWholeFile;
         
 
     } #end of if $suffix eq "out"
     
 } ## end of foreach $file
+
+open (FOUT,">ClipsWLAOneFile.json");
+#        my @s = sort {$a cmp $b} @ResultingAnnotationRecords;
+#        $json_string = join("\n",@s);
+#        print FOUT $json_string . "\n"; 
+print FOUT $JSONStringsWholeCorpus; 
+close (FOUT);
+
+print STDERR "Done!\n";
+
 
 ###############
 # SUBROUTINES #
@@ -312,13 +336,17 @@ sub ProcessReadingsForPreviousWord {
                 #if it has an @-symbol at the beginning it is a pedagogical feature annotation                    
                 if ($Annotation =~ m/^@(.*)$/) {
                     #one word annotation
-                    print STDERR "In 1-word annotation: " . $Annotation . "\n";
+                    if ($DebugLevel > 2) {
+                        print STDERR "In 1-word annotation: " . $Annotation . "\n";
+                    }
                     $AnnotationRecord = join(",",$ClipId,$TTId,$TTId,$1);
                     push(@ResultingAnnotationRecords,$AnnotationRecord);
                 }
                 elsif  ($Annotation =~ m/^R:([^0-9]*):[0-9]+$/) {
                     #first word in multi word annotation
-                    print STDERR "In n-word annotation: " . $Annotation . "\n";
+                    if ($DebugLevel > 2) {
+                        print STDERR "In n-word annotation: " . $Annotation . "\n";
+                    }
                     $AnnotationRecord = join(",",$ClipId,$TTId,$Annotation,$1);
                     push(@PendingAnnotationRecords,$AnnotationRecord);
                     # TODO/REM: this is now a next but should be more sophisticated
@@ -349,21 +377,6 @@ sub ProcessReadingsForPreviousWord {
     
     return (@ResultingAnnotationRecords,@PendingAnnotationRecords,@MultiwordRecordCompletionInfo);
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 

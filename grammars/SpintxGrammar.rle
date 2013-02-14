@@ -34,7 +34,7 @@ LIST DetAll = (ART); # habrá que refinar la definición
 LIST Sustantivo = (NC) (NP) (NMEA) (NMON) ;
 LIST LimiteOracionSimple = (CC) (CSUBX) (CSUBF) (CQUE) (CSUBI) ; # habrá que refinar la definición
 LIST Articulo = (ART);
-
+LIST Conjuncion = (Conjunction);
 SET AdjOrPart = Adj OR Part ;
 SET FiniteVerbFormsOrPart = FiniteVerbForms OR Part ;
 SET GrupoNominal = Sustantivo OR Adj OR DetAll; # habrá que refinar la definición de grupo nominal
@@ -125,16 +125,23 @@ LIST NosotrosLiteral = ("<nosotros>") ("<Nosotros>") ("<NOSOTROS>") ;
 LIST VosotrosLiteral = ("<vosotros>") ("<Vosotros>") ("<VOSOTROS>") ;
 LIST EllosOEllasLiteral = ("<ellos>") ("<Ellos>") ("<ELLOS>") ("<ellas>") ("<Ellas>") ("<ELLAS>") ;
 LIST Sea = ("<sea>") ("<SEA>") ("<Sea>");
-LIST Lo = ("<lo>") ("<LO>") ("<Lo>");
+LIST LoLiteral = ("<lo>") ("<LO>") ("<Lo>");
 LIST Me = ("<me>") ("<ME>") ("<Me>");
 LIST SeLiteral = ("<se>") ("<SE>") ("<Se>");
 LIST NosLiteral = ("<nos>") ("<NOS>") ("<Nos>");
 LIST Te = ("<te>") ("<TE>") ("<Te>");
 LIST OsLiteral = ("<os>") ("<OS>") ("<Os>");
 
+LIST LosLiteral = ("<los>") ("<Los>") ("<LOS>");
+LIST ElDetLiteral = ("<el>") ("<El>") ("<EL>");
+LIST LaLiteral = ("<la>") ("<LA>") ("<La>");
+LIST LasLiteral = ("<las>") ("<LAS>") ("<Las>");
+
 LIST Todos = ("<todos>") ("<TODOS>") ("<Todos>");
 LIST Modos = ("<modos>") ("<MODOS>") ("<Modos>");
 LIST Es = ("<es>") ("<Es>") ("<ES>");
+
+SET DetArtDefinidosLiterales = ElDetLiteral OR LosLiteral OR LasLiteral OR LaLiteral;
 SET PronPersFuerte = YoLiteral OR TuLiteral OR ElOEllaLiterales OR NosotrosLiteral OR VosotrosLiteral OR EllosOEllasLiteral OR UstedLema;
 SET PronombreDeObjetoNoAmbiguos = Me OR Te OR NosLiteral OR OsLiteral;
 
@@ -167,6 +174,21 @@ SECTION
 
 #LATEXDOCU NOTA: Ahora mismo sólo estamos asignando hasta tres niveles de descripción pedagógica. Veáse el Google Doc Pedagogical tipologies \url{https://docs.google.com/spreadsheet/ccc?key=0AlyBsKogCRnwdDd3ZWRjejZlQU5XZWl6WVVUZmtKcEE&usp=sharing}.
 
+#LATEX\chapter{Uso de los determinantes}
+## SECTION -- RULES TO ADD Determiner-RELATED INFORMTATION
+#LATEX\section{Usos de los artículos definidos}
+#LATEXDOCU Identificaremos los usos de los artículos definidos \emph{el, la, los, las}, y el artículo (en algunas gramáticas considerado pronombre) \emph{lo} cuando va seguido de un adjetivo.
+
+ADD (@Gram:Det:Art) Articulo IF (0 DetArtDefinidosLiterales) (NOT 1 FiniteVerbForms OR PronombreDeObjetoNoAmbiguos OR SeLiteral);
+#LATEX T: Asigna @Gram:Det:Art
+#LATEX E: \emph{el, la, los, las}
+#LATEX D: Cualquier ocurrencia no seguida de un verbo finito o un pronombre clítico, porque treetagger no distingue entre su lectura como determinante y la pronominal.
+
+ADD (@Gram:Det:Art) Articulo IF (0 LoLiteral) (*1 Adj BARRIER FiniteVerbForms OR Conjuncion OR LimiteOracionSimple) ;
+#LATEX T: Asigna @Gram:Det:Art
+#LATEX E: \emph{lo} + ADJETIVO
+#LATEX D: Cualquier ocurrencia de LO seguida de un adjetivo (con un adv opcional en medio).
+
 #LATEX\chapter{Uso de las preposiciones}
 ## SECTION -- RULES TO ADD Prep-RELATED INFORMTATION
 
@@ -176,7 +198,7 @@ SECTION
 #LATEX\subsection{El uso de \emph{para} para expresar el destinatario o audiencia de una acción}
 ##ADD (@Gram:Prep:Para:Destinatario) Prep IF (-1 SerOServir + Verb) (0 Para) (NOT 0 GramPrep) (1 DetAll) (2 Personas);
 ADD (@Gram:Prep:Para) Prep IF (-1 SerOServir + Verbo) (0 Para) (NOT 0 GramPrep) (1 DetAll) (2 Personas);
-#LATEX T: Asigna @Gram:Prep:Para.
+#LATEX T: Asigna @Gram:Prep:Para
 #LATEX E: Fue escrito \emph{para} los estudiantes.
 #LATEX E: Es fundamental \emph{para} una persona.
 #LATEX D: Requiere \emph{para + DET + NOMBRE $<+humano>$}
@@ -232,7 +254,7 @@ ADD (@Gram:Prep:Por:Locuciones) Prep IF (0 Por) (NOT 0 GramPrep) (1 LemasDePalab
 #LATEX E: \emph{por ejemplo}, \emph{por eso}, \emph{por tanto}
 #LATEX D: Requiere \emph{por} seguida por alguna palabra en la lista de palabras predefinidas \emph{LemasDePalabrasEnLocucionesConPor}
 
-ADD (@Gram:Prep:Por:Locuciones) Prep IF (0 Por) (NOT 0 GramPrep) (1 Lo) (2 LemasDePalabrasEnLocucionesConPor);
+ADD (@Gram:Prep:Por:Locuciones) Prep IF (0 Por) (NOT 0 GramPrep) (1 LoLiteral) (2 LemasDePalabrasEnLocucionesConPor);
 #LATEX T: Asigna @Gram:Prep:Por:Locuciones.
 #LATEX E: \emph{por lo tanto}, \emph{por lo regular}
 #LATEX D: Requiere \emph{por} seguida por LO y alguna palabra en la lista de palabras predefinidas \emph{LemasDePalabrasEnLocucionesConPor}
@@ -261,19 +283,19 @@ ADD (@Gram:Pron:Sujeto) PronPersFuerte;
 
 #LATEX\section{Pronombres de objeto directo o complemento atributivo}
 ADD (@Gram:Pron:ObjetoDirecto) ElLema IF (NOT -1 Prep) (0 Articulo) (1 FiniteVerbForms) ;
-#LATEX T: Asigna @Gram:Pron:Objeto.
+#LATEX T: Asigna @Gram:Pron:ObjetoDirecto
 #LATEX E: mí nunca me \emph{la} hicieron pero que estabamos
 #LATEX D: \emph{lo, la, los, las} VERBO CONJUGADO
 
 #LATEX\section{Pronombres de objeto directo, indirecto, o posesivos}
 ADD (@Gram:Pron:DirIndirOPoses) PronPers IF (0 PronombreDeObjetoNoAmbiguos);
-#LATEX T: Asigna @Gram:Pron:Objeto.
+#LATEX T: Asigna @Gram:Pron:DirIndirOPoses
 #LATEX E: \emph{me, te, os, nos} (cualquier ocurrencia)
 #LATEX D: La ocurrencia de uno de ellos.
 
 #LATEX\section{Pronombres de objeto indirecto o posesivos}
 ADD (@Gram:Pron:IndirectoOPoses) PronPersClitico IF (0 LeLema);
-#LATEX T: Asigna @Gram:Pron:Objeto.
+#LATEX T: Asigna @Gram:Pron:IndirectoOPoses
 #LATEX E: \emph{le, les}
 #LATEX D: La ocurrencia de uno de ellos. El pronombre ``le'' es posesivo cuando hace referencia a usted, o ustedes en su forma en plural
 
@@ -471,7 +493,7 @@ ADD (@Prag:MarcadoresDisc:Causa) Porque;
 #\LATEX E: (...) y es curioso \emph{porque} hace más o menos una semana que lo vi (...)
 #LATEX D: [Espacio para describir con palabras lo que hace la regla.]
 
-ADDRELATION (Prag:MarcadoresDisc:Causa) Prep IF (0 Por) (1 Lo) TO (2 Tanto);
+ADDRELATION (Prag:MarcadoresDisc:Causa) Prep IF (0 Por) (1 LoLiteral) TO (2 Tanto);
 ADDRELATION (Prag:MarcadoresDisc:Causa) Prep IF (0 Por) TO (2 Tanto OR FormasDePalabrasEnLocucionesCausalesConPor);
 #LATEX T: Asigna @Gram:Prep:Por:Locuciones.
 #LATEX E: \emph{por lo tanto}

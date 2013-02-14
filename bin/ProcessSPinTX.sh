@@ -27,5 +27,7 @@ echo "Counting/Adding up clip level information..."
 cd "$OUTDIR"
 countPedagogicalFeatures.pl -outformat solr *.out
 
+echo "Generating word level annotation files in JSON format..."
+wordLevelPedagogAnnotations.pl *.out
 echo "Done!"
 

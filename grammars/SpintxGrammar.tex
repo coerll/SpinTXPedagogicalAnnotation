@@ -45,15 +45,17 @@ DOCU
 \chapter{LIST y SET basados en palabras (literales)}
 \chapter{LIST y SET basados en etiquetas pedagógicas}
 \part{Secciones previas}
-\chapter{Reglas para rectificar errores de tagging}
-\paragraph*{Rule}
-\fbox{
-\parbox{.9\linewidth}{\texttt{REPLACE (CC) TARGET ("pero");}}
-}
+\chapter{Reglas para rectificar errores del análisis morfosintático}
 \begin{itemize}
 \item ETIQ.:  T: CC
 \item EJEM.:  E: \emph{pero} 
-\item DESC.:  D: Regla para cambiar a \emph{pero} la lectura de nombre por la de conjunción.
+\item DESC.:  D: Regla para cambiar a \emph{pero} la lectura de nombre por la de conjunción. Ahora se aplica indiscriminadamente, pero podría ser conveniente controlar que antes del pero no hay un artículo. Por ejemplo: ``el pero de la cuestión es que podría romperse el motor''.
+\end{itemize}
+
+\begin{itemize}
+\item ETIQ.:  T: Cambia Noun NC Singular Masculine por Verb VLadj
+\item EJEM.:  E: \emph{hecho} 
+\item DESC.:  D: Regla para cambiar a \emph{pero} la lectura de nombre por la de conjunción. Ahora se aplica indiscriminadamente, pero podría ser conveniente controlar que antes del pero no hay un artículo. Por ejemplo: ``el pero de la cuestión es que podría romperse el motor''.
 \end{itemize}
 
 \part{Secciones principales}
@@ -63,6 +65,32 @@ Esta estrategia se utiliza para evitar que una misma palabra reciba por partida 
 
 Para evitar este tipo de duplicidades también se podría usar una estrategia basada en la distinción entre ADD y MAP (véase la documentación de vislcg3). Por ahora no se ha hecho, porque esto impide la asignación de múltiples etiquetas a un mismo token/una misma palabra.
 
+NOTA: Ahora mismo sólo estamos asignando hasta tres niveles de descripción pedagógica. Veáse el Google Doc Pedagogical tipologies \url{https://docs.google.com/spreadsheet/ccc?key=0AlyBsKogCRnwdDd3ZWRjejZlQU5XZWl6WVVUZmtKcEE&usp=sharing}.
+
+\chapter{Uso de los determinantes}
+\section{Usos de los artículos definidos}
+Identificaremos los usos de los artículos definidos \emph{el, la, los, las}, y el artículo (en algunas gramáticas considerado pronombre) \emph{lo} cuando va seguido de un adjetivo.
+
+\paragraph*{Rule}
+\fbox{
+\parbox{.9\linewidth}{\texttt{ADD (@Gram:Det:Art) Articulo IF (0 DetArtDefinidosLiterales) (NOT 1 FiniteVerbForms OR PronombreDeObjetoNoAmbiguos OR SeLiteral);}}
+}
+\begin{itemize}
+\item ETIQ.:  T: Asigna @Gram:Det:Art
+\item EJEM.:  E: \emph{el, la, los, las}
+\item DESC.:  D: Cualquier ocurrencia no seguida de un verbo finito o un pronombre clítico, porque treetagger no distingue entre su lectura como determinante y la pronominal.
+\end{itemize}
+
+\paragraph*{Rule}
+\fbox{
+\parbox{.9\linewidth}{\texttt{ADD (@Gram:Det:Art) Articulo IF (0 LoLiteral) (*1 Adj BARRIER FiniteVerbForms OR Conjuncion OR LimiteOracionSimple) ;}}
+}
+\begin{itemize}
+\item ETIQ.:  T: Asigna @Gram:Det:Art
+\item EJEM.:  E: \emph{lo} + ADJETIVO
+\item DESC.:  D: Cualquier ocurrencia de LO seguida de un adjetivo (con un adv opcional en medio).
+\end{itemize}
+
 \chapter{Uso de las preposiciones}
 \section{Usos de para}
 Veáse \url{http://dev.coerll.utexas.edu/spanishtx/spe/html/adv11.html}.
@@ -70,10 +98,10 @@ Veáse \url{http://dev.coerll.utexas.edu/spanishtx/spe/html/adv11.html}.
 \subsection{El uso de \emph{para} para expresar el destinatario o audiencia de una acción}
 \paragraph*{Rule}
 \fbox{
-\parbox{.9\linewidth}{\texttt{ADD (@Gram:Prep:Para:Destinatario) Prep IF (-1 SerOServir + Verb) (0 Para) (NOT 0 GramPrep) (1 DetAll) (2 Personas);}}
+\parbox{.9\linewidth}{\texttt{ADD (@Gram:Prep:Para) Prep IF (-1 SerOServir + Verbo) (0 Para) (NOT 0 GramPrep) (1 DetAll) (2 Personas);}}
 }
 \begin{itemize}
-\item ETIQ.:  T: Asigna @Gram:Prep:Para:Destinatario.
+\item ETIQ.:  T: Asigna @Gram:Prep:Para
 \item EJEM.:  E: Fue escrito \emph{para} los estudiantes.
 \item EJEM.:  E: Es fundamental \emph{para} una persona.
 \item DESC.:  D: Requiere \emph{para + DET + NOMBRE $<+humano>$}
@@ -81,10 +109,10 @@ Veáse \url{http://dev.coerll.utexas.edu/spanishtx/spe/html/adv11.html}.
 
 \paragraph*{Rule}
 \fbox{
-\parbox{.9\linewidth}{\texttt{ADD (@Gram:Prep:Para:Destinatario) Prep IF (-1 SerOServir + Verb) (0 Para) (NOT 0 GramPrep) (1 Personas);}}
+\parbox{.9\linewidth}{\texttt{ADD (@Gram:Prep:Para) Prep IF (-1 SerOServir + Verbo) (0 Para) (NOT 0 GramPrep) (1 Personas);}}
 }
 \begin{itemize}
-\item ETIQ.:  T: Asigna @Gram:Prep:Para:Destinatario.
+\item ETIQ.:  T: Asigna @Gram:Prep:Para.
 \item EJEM.:  E: Ropa \emph{para} niños.
 \item DESC.:  D: Requiere \emph{para + NOMBRE $<+humano>$}
 \end{itemize}
@@ -94,30 +122,30 @@ OBSERVACIÓN: Dudo de si el uso de ``Juan es muy bueno para el fútbol'' se pare
 
 \paragraph*{Rule}
 \fbox{
-\parbox{.9\linewidth}{\texttt{ADD (@Gram:Prep:Para:Finalidad) Prep IF (0 Para) (NOT 0 GramPrep) (1 Infinitive);}}
+\parbox{.9\linewidth}{\texttt{ADD (@Gram:Prep:Para) Prep IF (0 Para) (NOT 0 GramPrep) (1 Infinitive);}}
 }
 \begin{itemize}
-\item ETIQ.:  T: Asigna @Gram:Prep:Para:Finalidad.
+\item ETIQ.:  T: Asigna @Gram:Prep:Para.
 \item EJEM.:  E: Soy muy mala \emph{para} recordar.
 \item DESC.:  D: Requiere \emph{para + INFINITIVO}
 \end{itemize}
 
 \paragraph*{Rule}
 \fbox{
-\parbox{.9\linewidth}{\texttt{ADD (@Gram:Prep:Para:Finalidad) Prep IF (0 Para) (NOT 0 GramPrep) (1 PronPersFuerte OR No) (2 Infinitive);}}
+\parbox{.9\linewidth}{\texttt{ADD (@Gram:Prep:Para) Prep IF (0 Para) (NOT 0 GramPrep) (1 PronPersFuerte OR No) (2 Infinitive);}}
 }
 \begin{itemize}
-\item ETIQ.:  T: Asigna @Gram:Prep:Para:Finalidad.
+\item ETIQ.:  T: Asigna @Gram:Prep:Para.
 \item EJEM.:  E: Había que saber hablar inglés \emph{para} uno desarrollar su trabajo.
 \item DESC.:  D: Requiere \emph{para + PRONOMBRE PERSONAL NOMINATIVO + INFINITIVO}
 \end{itemize}
 
 \paragraph*{Rule}
 \fbox{
-\parbox{.9\linewidth}{\texttt{ADD (@Gram:Prep:Para:Finalidad) Prep IF (0 Para) (NOT 0 GramPrep) (1 Que);}}
+\parbox{.9\linewidth}{\texttt{ADD (@Gram:Prep:Para) Prep IF (0 Para) (NOT 0 GramPrep) (1 Que);}}
 }
 \begin{itemize}
-\item ETIQ.:  T: Asigna @Gram:Prep:Para:Finalidad.
+\item ETIQ.:  T: Asigna @Gram:Prep:Para.
 \item EJEM.:  E: Me daba clases \emph{para} que aprendiera inglés.
 \item DESC.:  D: Requiere \emph{para + QUE}
 \end{itemize}
@@ -125,10 +153,10 @@ OBSERVACIÓN: Dudo de si el uso de ``Juan es muy bueno para el fútbol'' se pare
 \subsection{El uso de \emph{para} para expresar una opinión}
 \paragraph*{Rule}
 \fbox{
-\parbox{.9\linewidth}{\texttt{ADD (@Gram:Prep:Para:Opinion) Prep IF (0 Para) (NOT 0 GramPrep) (1 PronombrePersonal) (NOT 1 YoLiteral OR TuLiteral);}}
+\parbox{.9\linewidth}{\texttt{ADD (@Gram:Prep:Para) Prep IF (0 Para) (NOT 0 GramPrep) (1 PronombrePersonal) (NOT 1 YoLiteral OR TuLiteral);}}
 }
 \begin{itemize}
-\item ETIQ.:  T: Asigna @Gram:Prep:Para:Opinion.
+\item ETIQ.:  T: Asigna @Gram:Prep:Para.
 \item EJEM.:  E: \emph{Para} mi.
 \item DESC.:  D: Requiere \emph{para + PRONOMBRE PERSONAL ACUSATIVO}
 \end{itemize}
@@ -161,7 +189,7 @@ Veáse \url{http://dev.coerll.utexas.edu/spanishtx/spe/html/adv11.html}.
 
 \paragraph*{Rule}
 \fbox{
-\parbox{.9\linewidth}{\texttt{ADD (@Gram:Prep:Por:Locuciones) Prep IF (0 Por) (NOT 0 GramPrep) (1 Lo) (2 LemasDePalabrasEnLocucionesConPor);}}
+\parbox{.9\linewidth}{\texttt{ADD (@Gram:Prep:Por:Locuciones) Prep IF (0 Por) (NOT 0 GramPrep) (1 LoLiteral) (2 LemasDePalabrasEnLocucionesConPor);}}
 }
 \begin{itemize}
 \item ETIQ.:  T: Asigna @Gram:Prep:Por:Locuciones.
@@ -209,20 +237,57 @@ Veáse \url{http://dev.coerll.utexas.edu/spanishtx/spe/html/adv11.html}.
 \parbox{.9\linewidth}{\texttt{ADD (@Gram:Pron:ObjetoDirecto) ElLema IF (NOT -1 Prep) (0 Articulo) (1 FiniteVerbForms) ;}}
 }
 \begin{itemize}
-\item ETIQ.:  T: Asigna @Gram:Pron:Objeto.
+\item ETIQ.:  T: Asigna @Gram:Pron:ObjetoDirecto
 \item EJEM.:  E: mí nunca me \emph{la} hicieron pero que estabamos
 \item DESC.:  D: \emph{lo, la, los, las} VERBO CONJUGADO
 \end{itemize}
 
-\section{Pronombres de objeto directo o indirecto}
+\section{Pronombres de objeto directo, indirecto, o posesivos}
 \paragraph*{Rule}
 \fbox{
-\parbox{.9\linewidth}{\texttt{ADD (@Gram:Pron:Objeto) PronPers IF (0 PronombreDeObjetoNoAmbiguos);}}
+\parbox{.9\linewidth}{\texttt{ADD (@Gram:Pron:DirIndirOPoses) PronPers IF (0 PronombreDeObjetoNoAmbiguos);}}
 }
 \begin{itemize}
-\item ETIQ.:  T: Asigna @Gram:Pron:Objeto.
+\item ETIQ.:  T: Asigna @Gram:Pron:DirIndirOPoses
 \item EJEM.:  E: \emph{me, te, os, nos} (cualquier ocurrencia)
-\item DESC.:  D: La ocurrencia de uno de ellos
+\item DESC.:  D: La ocurrencia de uno de ellos.
+\end{itemize}
+
+\section{Pronombres de objeto indirecto o posesivos}
+\paragraph*{Rule}
+\fbox{
+\parbox{.9\linewidth}{\texttt{ADD (@Gram:Pron:IndirectoOPoses) PronPersClitico IF (0 LeLema);}}
+}
+\begin{itemize}
+\item ETIQ.:  T: Asigna @Gram:Pron:IndirectoOPoses
+\item EJEM.:  E: \emph{le, les}
+\item DESC.:  D: La ocurrencia de uno de ellos. El pronombre ``le'' es posesivo cuando hace referencia a usted, o ustedes en su forma en plural
+\end{itemize}
+
+\section{Pronombres de objeto doble}
+\paragraph*{Rule}
+\fbox{
+\parbox{.9\linewidth}{\texttt{ADDRELATION (Gram:Pron:ObjetoDoble) PronPers (0 PronombreDeObjetoNoAmbiguos) TO (1 ElLema + Articulo);}}
+}
+\paragraph*{Rule}
+\fbox{
+\parbox{.9\linewidth}{\texttt{ADDRELATION (Gram:Pron:ObjetoDoble) PronPersSE (0 SeLiteral) TO (1 ElLema + Articulo);}}
+}
+\begin{itemize}
+\item ETIQ.:  T: Asigna @Gram:Pron:ObjetoDoble.
+\item EJEM.:  E: \emph{se lo, se la, se los, se las, me lo, me la, me los, me las, te lo, te la, te los, te las,} etc.
+\item DESC.:  D: La ocurrencia de cualquier combinación de dos pronombres clíticos.
+\end{itemize}
+
+\section{Pronombre se (solo)}
+\paragraph*{Rule}
+\fbox{
+\parbox{.9\linewidth}{\texttt{ADD (@Gram:Pron:Otros) PronPersSE (0 SeLiteral) (NOT 0 GramPron) (NOT 1 FiniteVerbForms);}}
+}
+\begin{itemize}
+\item ETIQ.:  T: Asigna @Gram:Pron:Otros.
+\item EJEM.:  E: \emph{se lo, se la, se los, se las, me lo, me la, me los, me las, te lo, te la, te los, te las,} etc.
+\item DESC.:  D: La ocurrencia de cualquier combinación de dos pronombres clíticos.
 \end{itemize}
 
 \chapter{Formas verbales conjugadas}
@@ -269,7 +334,7 @@ Veáse \url{http://dev.coerll.utexas.edu/spanishtx/spe/html/beg05.html}.
 \subsection{Usos de \emph{gustar} para expresar gustos propios}
 \paragraph*{Rule}
 \fbox{
-\parbox{.9\linewidth}{\texttt{ADD (@Gram:Gustar:Propios) FiniteVerbForms IF (-1 Yo) (0 Gustar-Like + 3aPersAmbig);}}
+\parbox{.9\linewidth}{\texttt{ADDRELATION (Gram:Gustar:Propios) PronPers (0 Me OR NosLiteral) TO (1 Gustar-Like + 3aPersAmbig);}}
 }
 \begin{itemize}
 \item ETIQ.:  T: Asigna @Gram:Gustar:Propios.
@@ -279,10 +344,10 @@ Veáse \url{http://dev.coerll.utexas.edu/spanishtx/spe/html/beg05.html}.
 
 \paragraph*{Rule}
 \fbox{
-\parbox{.9\linewidth}{\texttt{ADDRELATION (Gram:Gustar:Propios) FiniteVerbForms (-1 Yo) (0 Haber) TO (1 Gustar-Like + Part);}}
+\parbox{.9\linewidth}{\texttt{ADDRELATION (Gram:Gustar:Propios) PronPers (0 Me OR NosLiteral) (1 Haber) TO (1 Gustar-Like + Part);}}
 }
 \begin{itemize}
-\item ETIQ.:  T: Asigna R:Gram:Gustar:Propios a la forma del verbo HABER
+\item ETIQ.:  T: Asigna R:Gram:Gustar: Propios a la forma del verbo HABER
 \item EJEM.:  E: \emph{me ha gustado} ayudar a mis amigos 
 \item EJEM.:  E: \emph{me hubieras gustado} con un vestido verde 
 \item DESC.:  D: Requiere la forma ME seguida de una forma de HABER en tercera persona (posiblemente ambigua)
@@ -362,6 +427,45 @@ Veáse \url{http://dev.coerll.utexas.edu/spanishtx/spe/html/adv13.html}.
 \item ETIQ.:  T: Asigna Gram:ExpresarSorpresas:Ajenas a la forma de HABER
 \item EJEM.:  E: ¿Hay alguna palabra mexicana que \emph{le haya sorprendido}?
 \item DESC.:  D: [Espacio para describir con palabras lo que hace la regla.]
+\end{itemize}
+
+\section{Verbos auxiliares}
+\subsection{Verbo ser}
+\paragraph*{Rule}
+\fbox{
+\parbox{.9\linewidth}{\texttt{ADD (@Gram:Aux:Ser) Verbo (0 VerboSer OR VerboSerAmbiguoConErar);}}
+}
+\paragraph*{Rule}
+\fbox{
+\parbox{.9\linewidth}{\texttt{ADD (@Gram:Aux:Ser) Verbo (0 VerboSerAmbiguoConIr) (NOT 1 Prep);}}
+}
+\begin{itemize}
+\item ETIQ.:  T: @Gram:Aux:Ser
+\item EJEM.:  E: \emph{soy, eres,} etc. 
+\item EJEM.:  E: \emph{fui, fuimos...} NOT Prep 
+\item DESC.:  D: Cualquier forma de \emph{ser} del pretérito indefinido no seguido de una preposición (porque entonces seguramente será del verbo ir)
+\end{itemize}
+
+\subsection{Verbo estar}
+\paragraph*{Rule}
+\fbox{
+\parbox{.9\linewidth}{\texttt{ADD (@Gram:Aux:Estar) Verbo (0 VerboEstar);}}
+}
+\begin{itemize}
+\item ETIQ.:  T: @Gram:Aux:Estar
+\item EJEM.:  E: \emph{estoy, estás, estaban,} etc. 
+\item DESC.:  D: Cualquier forma de \emph{estar}
+\end{itemize}
+
+\subsection{Verbo haber}
+\paragraph*{Rule}
+\fbox{
+\parbox{.9\linewidth}{\texttt{ADD (@Gram:Aux:Haber) Verbo (0 Haber) (NOT 1 Part);}}
+}
+\begin{itemize}
+\item ETIQ.:  T: @Gram:Aux:Haber
+\item EJEM.:  E: \emph{Había} tres personas en el ascensor. 
+\item DESC.:  D: Cualquier forma de \emph{haber} que no vaya seguida de un participio
 \end{itemize}
 
 \chapter{Funciones comunicativas}
@@ -452,7 +556,7 @@ Véase \url{http://www.cs.famaf.unc.edu.ar/~laura/shallowdisc4summ/index.html}.
 
 \paragraph*{Rule}
 \fbox{
-\parbox{.9\linewidth}{\texttt{ADDRELATION (Prag:MarcadoresDisc:Causa) Prep IF (0 Por) (1 Lo) TO (2 Tanto);}}
+\parbox{.9\linewidth}{\texttt{ADDRELATION (Prag:MarcadoresDisc:Causa) Prep IF (0 Por) (1 LoLiteral) TO (2 Tanto);}}
 }
 \paragraph*{Rule}
 \fbox{
