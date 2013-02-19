@@ -22,7 +22,7 @@ following the established documentation format)
 Installation
 ------------
 
-See INSTALL for installation instructions (sorry, the INSTALL file is in the to-do list!)
+See INSTALL for installation instructions.
 
 Further Documentation
 ---------------------
