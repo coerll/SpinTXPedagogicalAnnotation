@@ -17,10 +17,12 @@ my $OutputFormat; #to store the format in which the output file will be printed
 # variables to handle file names, paths and contents
 my $RuleFile; # input file name
 my $OutFile; # output file name (one output file for all input files)
+my $PDFFile; # output file name (one output file for all input files)
 my ($name,$path,$suffix); # name, path and suffix of input file
 my $file; # input file name including path and extention (to be opened by script)
 my $Text; # input file contents
-my $OutputDir;
+my $OutputDir = $ENV{SPINTX_HOME} . "spintxPedagogicalAnntotation/";
+
 
 # Variables to control initial lines in files to be processed, often special lines
 my (@ALLLINES); # array with all the lines in a file to be processed
@@ -70,7 +72,7 @@ else {
 
 # ---------------------------------------;
 
-print STDERR "Starting generation of documentation...\n";
+print STDERR "Generating docs ...\n";
 
 $ToPrint = "\\documentclass[11pt]{report}\n\n";
 
@@ -130,8 +132,9 @@ foreach $file (@ARGV) {
         }
         # generating name for output file, cpr stands for compressed
         if ($OutputFormat eq "pdf") {
-            $OutputDir = "";
-            $OutFile = $path.$OutputDir.$name."tex";
+            $OutputDir .= "docs/";
+            $OutFile = $OutputDir.$name."tex";
+            $PDFFile = $OutputDir.$name."pdf";
         }
         else {
             print STDERR "\n EXECUTION ABORTED. Unexpected ouput format. \n";
@@ -180,12 +183,19 @@ open (FOUT,">$OutFile");
 print FOUT $ToPrint;
 close (FOUT);
 
-system ("pdflatex $OutFile");
-system ("pdflatex $OutFile");
-system ("pdflatex $OutFile");
+print STDERR "\n LATEX file in: ". $OutFile;
 
-print STDERR "\n\nOutput file is: ". $OutFile . "\n";
-print STDERR "And the corresponding PDF file.\n";
+print STDERR "\n\n Generating PDF files.";
+system ("pdflatex -output-directory $OutputDir $OutFile &> latex.patos.screen.log1");
+system ("pdflatex -output-directory $OutputDir $OutFile &> latex.patos.screen.log2");
+system ("pdflatex -output-directory $OutputDir $OutFile &> latex.patos.screen.log3");
+system ("pdflatex -output-directory $OutputDir $OutFile &> latex.patos.screen.log4");
+# system ("bibtex $OutFile &> bibtex.screen.log");
+
+print STDERR "\n";
+system ("mv -v *.patos.screen.log* $OutputDir");
+#
+print STDERR "\n\n PDF file in: ". $OutputDir . "\n";
 
 ##-------------------
 ## SUB ROUTINES

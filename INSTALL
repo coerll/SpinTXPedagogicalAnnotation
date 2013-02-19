@@ -1,0 +1,27 @@
+PAToS INSTALLATION GUIDE
+========================
+
+To use PATOs, the following is required:
+
+Requirments
+-----------
+To use PATOs, the following is required:
+
+- PERL (I used version 5.12.4)
+- VISLCG3 (a.k.a. CG3; use the latest version)
+- bash scripting language
+- latex (optionally, see below)
+
+If you want to be able to generate a PDF file with the rule specifications 
+using the documentation syntax proposed in the CG3 grammar you will need
+LaTeX (a document markup language for TeX typesetting, see 
+http://en.wikipedia.org/wiki/LaTeX).
+
+Installation
+------------
+
+1) Download the code in the repository in a folder of your choice.
+2) Create a $SPINTX_HOME environment variable in your .profile file
+ (unix-like systems).
+3) Ensure that all the programms required can be executed from the
+ command line.
