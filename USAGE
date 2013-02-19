@@ -1,0 +1,27 @@
+PAToS BASIC COMMAND LINE ORDERS
+===============================
+
+See docs/PATos-DataFlowDiagram.odg for a graphical representation of
+PAToS data flow.
+
+ProcessSPinTX.sh
+  This script executes all the scripts and processess needed to generate:
+   a) the pedagogically annotated files ($SPINTX_HOME/corpus/out)
+   b) the clip (or file) level breakdown of occurring pedagogical phenomena
+     ($SPINTX_HOME/corpus/stats)
+   c) the word level stand-off annotations list in JSON format
+     ($SPINTX_HOME/corpus/wla)
+
+   command_line$ ProcessSPinTX.sh all
+    -> executes all process
+   command_line$ ProcessSPinTX.sh
+    -> executes all process but the ttagger2OtherFormats.pl script (see below)
+
+countPedagogicalFeatures.pl
+
+ttagger2OtherFormats.pl
+
+wordLevelPedagogAnnotations.pl
+
+GrammarDocuSPinTX.pl
+
