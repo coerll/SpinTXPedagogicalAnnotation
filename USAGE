@@ -4,6 +4,10 @@ PAToS BASIC COMMAND LINE ORDERS
 See docs/PATos-DataFlowDiagram.odg for a graphical representation of
 PAToS data flow.
 
+NOTE: before executing any script you need to be sure that the folder
+ $SPINTX_HOME/corpus/ori contains at least one *.txt file using the 
+ SPinTX project format for tagged and lemmatized files.
+
 ProcessSPinTX.sh
   This script executes all the scripts and processess needed to generate:
    a) the pedagogically annotated files ($SPINTX_HOME/corpus/out)
@@ -14,14 +18,27 @@ ProcessSPinTX.sh
 
    command_line$ ProcessSPinTX.sh all
     -> executes all process
+   
    command_line$ ProcessSPinTX.sh
     -> executes all process but the ttagger2OtherFormats.pl script (see below)
 
 countPedagogicalFeatures.pl
+  Execute the following command line to obtain some help:
+
+   command_line$ countPedagogicalFeatures.pl -help
 
 ttagger2OtherFormats.pl
+  Execute the following command line to obtain some help:
+
+   command_line$ ttagger2OtherFormats.pl -help
 
 wordLevelPedagogAnnotations.pl
+  Execute the following command line to obtain some help:
+
+   command_line$ wordLevelPedagogAnnotations.pl -help
 
 GrammarDocuSPinTX.pl
+  Execute the following command line to obtain some help:
+
+   command_line$ GrammarDocuSPinTX.pl -help
 

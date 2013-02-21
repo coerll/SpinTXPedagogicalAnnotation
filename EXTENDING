@@ -1,0 +1,21 @@
+GUIDE TO EXTEND PAToS
+=====================
+
+1. Annotating new pedagogical (or for the matter linguistic) phenomena
+----------------------------------------------------------------------
+
+1. Get acquainted with the linguistic apparatus:
+  a) Execute ProcessSPinTX.sh all
+  b) Take a look at the files in $SPINTX_HOME/corpus/cg3. These files
+  use the format and contain the information on which you can base your 
+  annotation.
+  c) Take a look at the VISL-CG3 documentation on the web to get used
+  to CG3 file structure and rule syntax. See 
+  http://www.divvun.no/doc/tools/docu-vislcg3.html
+
+2. Make a copy of the file SpintxGrammar.rle in 
+  $SPINTX_HOME/spintxPedagogicalAnntotation/grammars.
+
+3. Start by creating a simple rule using for instance the operator ADD.
+
+

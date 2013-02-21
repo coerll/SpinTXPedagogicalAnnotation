@@ -6,8 +6,18 @@ use warnings;
 use JSON;
 
 use Getopt::Long;
+use Time::localtime;
 
 # ---------------------------------------;
+# Reading configuration paths from the enviroment variable $SPINTX_HOME as set in ~/.profile (in unix-like OS)
+my $OutputDir = $ENV{SPINTX_HOME} . "corpus/ClipTags/";
+
+my $OutputDirWLA = $OutputDir . "wla/"; #we will dump results in the wla folder under corpus/ClipTags
+my $OutputDirStats = $OutputDir . "stats/";
+
+my $OneFileJSON = $OutputDirWLA."ClipsWLAOneFile.json" ;
+my $StatsFileForRecord = $OutputDirStats . timestamp() . "_ClipsWLAOneFile" . ".json";
+
 
 # ---------------------------------------;
 # VARIABLE DEFINITION
@@ -25,7 +35,6 @@ my $OutFile; # output file name (one output file for all input files)
 my ($name,$path,$suffix); # name, path and suffix of input file
 my $file; # input file name including path and extention (to be opened by script)
 my $Text; # input file contents
-my $OutputDir;
 
 # Variables to control initial lines in files to be processed, often special lines
 my (@ALLLINES); # array with all the lines in a file to be processed
@@ -42,7 +51,8 @@ my (@WordReadings);
 ##my (@OneWordAnnotations,@MultiWordAnnotations,@CompletionInfo);
 
 my %HashForJSON; #this is a silly hash used to generate data in JSON format for compatibility with DRUPAL/solr
-my $JSONStringsWholeCorpus; # this is a scalar to store the JSON data at the corpus level printed in a file at the very end of the process
+my @JSONStringsWholeCorpus; # this is a scalar to store the JSON data at the corpus level printed in a file at the very end of the process
+my @JSONStringsWholeFileArray;
 
 # TEST
 
@@ -55,7 +65,7 @@ my @MultiwordRecordCompletionInfo;
 # ---------------------------------------;
 
 
-GetOptions(\%opts, "help|?", "debug=s", "outformat=s", "silent");
+GetOptions(\%opts, "help|?", "debug=s", "silent");
 
 if ($opts{'help'}) {
     print STDERR "\nGeneration of word-level information for the autoamtically 
@@ -79,16 +89,6 @@ if ($opts{'debug'}) {
 else{
 	$DebugLevel = 0;
 }
-
-#if ($opts{'outformat'}) {
-#	$OutputFormat = $opts{'outformat'};
-#}
-#else {
-#	print STDERR "\n EXECUTION ABORTED. An ouput format is required. \n";
-#	print STDERR " Expected format is solr.\n";
-#	print STDERR "\n Use -outformat=solr to declare it.\n";
-#    exit;
-#}
 
 # ---------------------------------------;
 
@@ -115,8 +115,7 @@ foreach $file (@ARGV) {
             print STDERR "DL2: File " . $file . " will be proccessed.\n";
         }
 
-        $OutputDir = "";
-        $OutFile = $path.$OutputDir.$name."wla.json"; # *.wla, word level annotations file
+        $OutFile = $OutputDirWLA.$name."wla.json"; # *.wla, word level annotations file
         
         
         # reading contents of the file to be processed
@@ -269,33 +268,34 @@ foreach $file (@ARGV) {
             $HashForJSON{'tag'} = $PedagogicalTag;
             
             $JSONStringOneLiner = encode_json(\%HashForJSON);
-            $JSONStringsWholeFile .= $JSONStringOneLiner ."\n"; 
+	    push(@JSONStringsWholeFileArray,$JSONStringOneLiner);
+            #$JSONStringsWholeFile .= $JSONStringOneLiner .",\n";
 
             undef @RECORDS;
 
         }
 
-
-        open (FOUT,">$OutFile");
-#        my @s = sort {$a cmp $b} @ResultingAnnotationRecords;
-#        $json_string = join("\n",@s);
-        #        print FOUT $json_string . "\n"; 
-        print FOUT $JSONStringsWholeFile; 
+        open (FOUT,">", $OutFile) || warn (" WARNING: Could not open $OutFile.\n") ;
+        print FOUT "["; 
+        print FOUT join(",",@JSONStringsWholeFileArray); 
+        print FOUT "]"; 
         close (FOUT);
         
-        $JSONStringsWholeCorpus .= $JSONStringsWholeFile;
+        @JSONStringsWholeCorpus = (@JSONStringsWholeCorpus,@JSONStringsWholeFileArray);
+	undef @JSONStringsWholeFileArray;
         
 
     } #end of if $suffix eq "out"
     
 } ## end of foreach $file
 
-open (FOUT,">ClipsWLAOneFile.json");
-#        my @s = sort {$a cmp $b} @ResultingAnnotationRecords;
-#        $json_string = join("\n",@s);
-#        print FOUT $json_string . "\n"; 
-print FOUT $JSONStringsWholeCorpus; 
+open (FOUT,">", $OneFileJSON) || warn (" WARNING: Could not open $OneFileJSON with write permission.\n") ;;
+        print FOUT "["; 
+        print FOUT join(",",@JSONStringsWholeCorpus); 
+        print FOUT "]"; 
 close (FOUT);
+
+system ("cp -v $OneFileJSON $StatsFileForRecord");
 
 print STDERR "Done!\n";
 
@@ -379,8 +379,22 @@ sub ProcessReadingsForPreviousWord {
 }
 
 
+###--------------------------------------------------------------;
+###--------------------------------------------------------------;
 
+########################
+## SUBROUTINE TO ADD TIMESTAMP TO FILE NAMES
+########################
 
+sub timestamp {
+    my $t = localtime;
+    return sprintf( "%04d-%02d-%02d_%02d-%02d-%02d",
+    $t->year + 1900, $t->mon + 1, $t->mday,
+    $t->hour, $t->min, $t->sec );
+}
+
+## SAMPLE USAGE
+##print '[' . timestamp() . ']: my message'. "\n";
 
 
 

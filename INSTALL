@@ -1,16 +1,15 @@
 PAToS INSTALLATION GUIDE
 ========================
 
-To use PATOs, the following is required:
-
 Requirments
 -----------
 To use PATOs, the following is required:
 
 - PERL (I used version 5.12.4)
-- VISLCG3 (a.k.a. CG3; use the latest version)
+- VISLCG3 (a.k.a. CG3; use the latest version, see 
+  http://www.divvun.no/doc/tools/docu-vislcg3.html)
 - bash scripting language
-- latex (optionally, see below)
+- latex (optional, see below)
 
 If you want to be able to generate a PDF file with the rule specifications 
 using the documentation syntax proposed in the CG3 grammar you will need
@@ -20,8 +19,32 @@ http://en.wikipedia.org/wiki/LaTeX).
 Installation
 ------------
 
-1) Download the code in the repository in a folder of your choice.
+1) Download the code in the repository in a folder of your choice. This
+ will be the $SPINTX_HOME. After downloading the code from github, this 
+ folder should now have a "spintxPedagogicalAnntotation" folder.
+
 2) Create a $SPINTX_HOME environment variable in your .profile file
- (unix-like systems).
+ (unix-like systems). Add this line to the file:
+
+     export SPINTX_HOME=/Users/mquixal/Documents/Feina/COERLL/dev/
+
 3) Ensure that all the programms required can be executed from the
- command line.
+ command line. Add this line to ~/.profile:
+
+     export PATH=[The/Home/Folder/For/PAToS]/bin:$PATH
+
+Note: it is often the case that there is already a line similar to the previous 
+doing the same for other paths. If this is the case, just add the new path to 
+the corresponding line and do not delete any of the existing paths. Be sure to 
+end with no slash and with a colon, as in the example. After adding the line 
+run source .profile or restart the terminal window.
+
+4) Create a directory called "corpus" in $SPINTX_HOME, sister to "spintxPedagogicalAnntotation".
+
+    mkdir corpus
+
+Under corpus create the following folders too:
+
+    mkdir ori cg3 cqp out wla stats
+
+5) See USAGE file.
