@@ -19,6 +19,8 @@ DELIMITERS = "<$.>" "<$?>" "<$!>" "<$:>";
 #LATEX\section{Categorías gramaticales}
 
 ## LISTS OR SETS FOR PART-OF-SPEECH TAGS
+LIST ArtPronDemo = (DM);
+LIST Nombre = (Noun);
 LIST Adv = (ADV);
 LIST Prep = (PREP);
 LIST FiniteVerbForms = (VLfin) (VEfin) (VHfin) ;
@@ -41,8 +43,8 @@ SET GrupoNominal = Sustantivo OR Adj OR DetAll; # habrá que refinar la definici
 LIST PronPers = (PPX);
 LIST PronPersClitico = (PPC);
 LIST PronPersSE = (SE);
-LIST PalabraEnIngles = (English);
-LIST PalabraEnEspanol = (Spanish);
+LIST PalabraEnIngles = (lang:en);
+LIST PalabraEnEspanol = (lang:es);
 
 #LATEX\section{Rasgos morfosintácticos}
 ## LIST MORPH FEATURES VERBS
@@ -111,6 +113,7 @@ LIST Ademas = ("además");
 LIST Tambien = ("también");
 LIST Vez = ("vez");
 LIST Tal = ("tal");
+LIST EsteEseAquel = ("ese") ("este") ("aquel");
 
 ##de momento no se usa
 LIST VerboSaberAmbiguoConSer = ("saber|ser");
@@ -134,6 +137,10 @@ LIST SeLiteral = ("<se>") ("<SE>") ("<Se>");
 LIST NosLiteral = ("<nos>") ("<NOS>") ("<Nos>");
 LIST Te = ("<te>") ("<TE>") ("<Te>");
 LIST OsLiteral = ("<os>") ("<OS>") ("<Os>");
+LIST EsteLiteral = ("<este>") ("<ESTE>") ("<Este>");
+LIST EstoLiteral = ("<esto>") ("<ESTO>") ("<Esto>");
+LIST EsoLiteral = ("<eso>") ("<ESO>") ("<Eso>");
+LIST AquelloLiteral = ("<aquello>") ("<AQUELLO>") ("<Aquello>");
 
 LIST LosLiteral = ("<los>") ("<Los>") ("<LOS>");
 LIST ElDetLiteral = ("<el>") ("<El>") ("<EL>");
@@ -147,6 +154,7 @@ LIST Es = ("<es>") ("<Es>") ("<ES>");
 SET DetArtDefinidosLiterales = ElDetLiteral OR LosLiteral OR LasLiteral OR LaLiteral;
 SET PronPersFuerte = YoLiteral OR TuLiteral OR ElOEllaLiterales OR NosotrosLiteral OR VosotrosLiteral OR EllosOEllasLiteral OR UstedLema;
 SET PronombreDeObjetoNoAmbiguos = Me OR Te OR NosLiteral OR OsLiteral;
+SET EstoEsoAquello = EstoLiteral OR EsoLiteral OR AquelloLiteral;
 
 #LATEX\chapter{LIST y SET basados en etiquetas pedagógicas}
 ## PEDAGOGICAL TAGS
@@ -166,6 +174,12 @@ SUBSTITUTE ("hecho" Noun NC Singular Masculine) ("hacer" Verb VLadj) TARGET ("he
 #LATEX T: Cambia Noun NC Singular Masculine por Verb VLadj
 #LATEX E: \emph{hecho} 
 #LATEX D: Regla para cambiar a \emph{pero} la lectura de nombre por la de conjunción. Ahora se aplica indiscriminadamente, pero podría ser conveniente controlar que antes del pero no hay un artículo. Por ejemplo: ``el pero de la cuestión es que podría romperse el motor''.
+
+SUBSTITUTE ("ranchar" Verb VLfin Pres Indi Sing 1st) ("rancho" Noun NC Singular Masculine) TARGET ("ranchar");
+#LATEX T: Cambia Verb VLfin Pres Indi Sing 1st por Noun NC Singular Masculine en la palabra ``rancho''.
+#LATEX E: \emph{rancho} 
+#LATEX D: Lo hace de forma indiscriminada. Quizá en el futuro habrá que cambiarla, refinarla.
+
 
 #LATEX\part{Secciones principales}
 SECTION
@@ -188,6 +202,11 @@ ADD (@Gram:Det:Art) Articulo IF (0 DetArtDefinidosLiterales) (NOT 1 FiniteVerbFo
 #LATEX D: Cualquier ocurrencia no seguida de un verbo finito o un pronombre clítico, porque treetagger no distingue entre su lectura como determinante y la pronominal.
 
 ADD (@Gram:Det:Art) Articulo IF (0 LoLiteral) (*1 Adj BARRIER FiniteVerbForms OR Conjuncion OR LimiteOracionSimple) ;
+#LATEX T: Asigna @Gram:Det:Art
+#LATEX E: \emph{lo} + ADJETIVO
+#LATEX D: Cualquier ocurrencia de LO seguida de un adjetivo (con un adv opcional en medio).
+
+ADD (@Gram:Det:Demo) ArtPronDemo IF (-1 Prep OR FiniteVerbForms) (0 EsteEseAquel) (NOT 0 EstoEsoAquello) (1 Nombre) ;
 #LATEX T: Asigna @Gram:Det:Art
 #LATEX E: \emph{lo} + ADJETIVO
 #LATEX D: Cualquier ocurrencia de LO seguida de un adjetivo (con un adv opcional en medio).
@@ -546,18 +565,25 @@ ADDRELATION (Prag:MarcadoresDisc:NoTipificado) Tal TO (1 Vez);
 #LATEX E: noto que \emph{tal vez} sus hijos hablan el spanglish más unos más que otros
 #LATEX D: [Espacio para describir con palabras lo que hace la regla.]
 
+#LATEX\subsection{Elementos discursivos usadors para ganar tiempo}
+## Prag:MarcadoresDisc:Revision
+
+ADD (@Prag:RecuDiscurso:GanarTiempo) ArtPronDemo IF (NOT -1 Prep) (0 EsteLiteral) (NOT 1 Nombre);
+#LATEX T: @Prag:ElementosDiscurso:GanarTiempo
+#LATEX E: \emph{Este} en mi niñez era un poco más soñadora mucho más soñadora de hecho (...)
+#LATEX D: Anota ocurrencies de ESTE que no vayan precedidas de una preposición ni seguidas de un sustantivo.
 
 ## SECTION -- RULES TO ADD PAST GUSTAR AND SIMILAR VERBS
 #LATEX\chapter{Estructuras características del habla en hablantes de herencia}
 
 #LATEX\section{Estructuras derivadas del contacto entre lenguas}
-
-#LATEX\subsection{Expresiones mixtas}
-#LATEXDOCU Incluímos aquí expresiones que mezclan palabras en ambas lenguas, en este caso el español y el inglés.
 ## Herit:Contacto:Mixtas
 
+#LATEX\subsection{Expresiones con cambio de código}
+#LATEXDOCU Incluímos aquí expresiones que mezclan palabras en ambas lenguas, en este caso el español y el inglés. En la bibliografía especializada se utiliza el término inglés ``code switching''.
+
 ## TO DO: NEEDS DIFFERENT INPUT TO WORK
-## ADDRELATION (Herit:Contacto:Mixtas) Verbo IF (0 ListaVerbosCorpusParaContactoMixtos) TO (*1 PalabraEnIngles BARRIER PalabraEnEspanol);
+ADDRELATION (Herit:Contacto:Mixtas) Verbo IF (0 ListaVerbosCorpusParaContactoMixtos) TO (*1 PalabraEnIngles BARRIER PalabraEnEspanol);
 #LATEX T: R:Herit:Contacto:Mixtas
 #LATEX E: \emph{hacer request}, \emph{comer turkey}
 #LATEX D: Anota secuencias de un verbo seguid de una o más palabras en inglés. Por ahora lo limitamos a ser, hacer, decir y comer porque TreeTagger anota como verbo algunas palabras que no lo son y no queremos generar ruido para los usuarios.

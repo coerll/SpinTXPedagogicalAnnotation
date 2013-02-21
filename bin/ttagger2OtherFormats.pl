@@ -45,6 +45,7 @@ my $StartTime; #starting time in video clip
 my $EndTime; #ending time in video clip
 my $Lang; #language (now only useful for English fragments in Spanish interviews in SPinTX)
 my ($Tense,$Mood,$Number,$Person,$Gender); #morpho-syntactic features
+my $LangForCGCohort; ## variable to store the format in which the language in which the word is will be printed for a CG-like reading (lang:LANGUAGE, e.g., lang:es and lang:en for Spanish and English)
 my ($ClipId,$WordId,$TranscriptLineId); # localization indexes to be compatible with other annotating modules within SPinTX
 my @ListOfAllTokeInfos; # a list I created for convenience in handling them when passed to subroutines
 
@@ -262,10 +263,10 @@ foreach $file (@ARGV) {
             if ($Number eq "") {$Number = "NA"} #default punctuation value
             if ($Person eq "") {$Person = "NA"} #default punctuation value
             if ($Gender eq "") {$Gender = "NA"} #default punctuation value
-
+            $LangForCGCohort = "lang:".$Lang;
             # for convenience (in calling some subroutines later
             # we put all token level infos in list but in my preferred order
-            @ListOfAllTokeInfos = ($word, $lemma, $POSTag, $SimplePOSTag, $punct, $Tense, $Mood, $Number, $Person, $Gender, $Lang, $StartTime, $EndTime, $WordId, $ClipId);
+            @ListOfAllTokeInfos = ($word, $lemma, $POSTag, $SimplePOSTag, $punct, $Tense, $Mood, $Number, $Person, $Gender, $LangForCGCohort, $StartTime, $EndTime, $WordId, $ClipId);
             
             # we handle the first line
             if ($FileLineCounter == 1) {
