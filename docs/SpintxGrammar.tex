@@ -58,6 +58,12 @@ DOCU
 \item DESC.:  D: Regla para cambiar a \emph{pero} la lectura de nombre por la de conjunción. Ahora se aplica indiscriminadamente, pero podría ser conveniente controlar que antes del pero no hay un artículo. Por ejemplo: ``el pero de la cuestión es que podría romperse el motor''.
 \end{itemize}
 
+\begin{itemize}
+\item ETIQ.:  T: Cambia Verb VLfin Pres Indi Sing 1st por Noun NC Singular Masculine en la palabra ``rancho''.
+\item EJEM.:  E: \emph{rancho} 
+\item DESC.:  D: Lo hace de forma indiscriminada. Quizá en el futuro habrá que cambiarla, refinarla.
+\end{itemize}
+
 \part{Secciones principales}
 Las reglas de identificación de fenómenmos pedagógicos están ordenadas de más concretas a más generales. Así, por ejemplo, se detectan primero, cuando es posible, los distintos usos de \emph{para} (opinión, intención, destino, etc. como \emph{@Gram:Prep:Para:Opinion}...) y luego se marcan como simplemente \emph{@Gram:Prep:Para} el resto de ocurrencias de \emph{para}. Luego, se hace lo propio con otras preposiciones, hasta el punto que si para una preposición no hay reglas especiales, sus ocurrencias se marcan simplemente como \emph{@Gram:Prep}.
 
@@ -89,6 +95,17 @@ Identificaremos los usos de los artículos definidos \emph{el, la, los, las}, y 
 \item ETIQ.:  T: Asigna @Gram:Det:Art
 \item EJEM.:  E: \emph{lo} + ADJETIVO
 \item DESC.:  D: Cualquier ocurrencia de LO seguida de un adjetivo (con un adv opcional en medio).
+\end{itemize}
+
+\section{Usos de los determinantes demostrativos}
+\paragraph*{Rule}
+\fbox{
+\parbox{.9\linewidth}{\texttt{ADD (@Gram:Det:Demo) ArtPronDemo IF (-1 Prep OR FiniteVerbForms) (0 EsteEseAquel) (NOT 0 EstoEsoAquello) (1 Nombre) ;}}
+}
+\begin{itemize}
+\item ETIQ.:  T: Asigna @Gram:Det:Demo
+\item EJEM.:  E: Prep/Verbo \emph{este/ese/aquel} (LEMMA) + Nombre
+\item DESC.:  D: Cualquier ocurrencia de un demostrativo precedida de una preposición o un verbo conjugado y seguido de un nombre.
 \end{itemize}
 
 \chapter{Uso de las preposiciones}
@@ -593,6 +610,7 @@ Véase \url{http://www.cs.famaf.unc.edu.ar/~laura/shallowdisc4summ/index.html}.
 }
 \begin{itemize}
 \item ETIQ.:  T: R:Prag:MarcadoresDisc:Causa (relación entre el primer i el último elemento de la locución)
+\item EJEM.:  E: y de ahí fui a la ceremonia y \emph{gracias a dios} me hice ciudadano
 \item DESC.:  D: [Espacio para describir con palabras lo que hace la regla.]
 \end{itemize}
 
@@ -649,7 +667,34 @@ OBSERVACIÓN: No añado \emph{precisamente} porque es ambiguo entre su lectura l
 }
 \begin{itemize}
 \item ETIQ.:  T: R:Prag:MarcadoresDisc:NoTipificado
+\item EJEM.:  E: noto que \emph{tal vez} sus hijos hablan el spanglish más unos más que otros
 \item DESC.:  D: [Espacio para describir con palabras lo que hace la regla.]
+\end{itemize}
+
+\subsection{Elementos discursivos usadors para ganar tiempo}
+\paragraph*{Rule}
+\fbox{
+\parbox{.9\linewidth}{\texttt{ADD (@Prag:RecuDiscurso:GanarTiempo) ArtPronDemo IF (NOT -1 Prep) (0 EsteLiteral) (NOT 1 Nombre);}}
+}
+\begin{itemize}
+\item ETIQ.:  T: @Prag:ElementosDiscurso:GanarTiempo
+\item EJEM.:  E: \emph{Este} en mi niñez era un poco más soñadora mucho más soñadora de hecho (...)
+\item DESC.:  D: Anota ocurrencies de ESTE que no vayan precedidas de una preposición ni seguidas de un sustantivo.
+\end{itemize}
+
+\chapter{Estructuras características del habla en hablantes de herencia}
+\section{Estructuras derivadas del contacto entre lenguas}
+\subsection{Expresiones con cambio de código}
+Incluímos aquí expresiones que mezclan palabras en ambas lenguas, en este caso el español y el inglés. En la bibliografía especializada se utiliza el término inglés ``code switching''.
+
+\paragraph*{Rule}
+\fbox{
+\parbox{.9\linewidth}{\texttt{ADDRELATION (Herit:Contacto:Mixtas) Verbo IF (0 ListaVerbosCorpusParaContactoMixtos) TO (*1 PalabraEnIngles BARRIER PalabraEnEspanol);}}
+}
+\begin{itemize}
+\item ETIQ.:  T: R:Herit:Contacto:Mixtas
+\item EJEM.:  E: \emph{hacer request}, \emph{comer turkey}
+\item DESC.:  D: Anota secuencias de un verbo seguid de una o más palabras en inglés. Por ahora lo limitamos a ser, hacer, decir y comer porque TreeTagger anota como verbo algunas palabras que no lo son y no queremos generar ruido para los usuarios.
 \end{itemize}
 
 \end{document}

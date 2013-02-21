@@ -1,4 +1,3 @@
-##
 MAPPING-PREFIX = @ ;
 DELIMITERS = "<$.>" "<$?>" "<$!>" "<$:>";
 
@@ -206,10 +205,12 @@ ADD (@Gram:Det:Art) Articulo IF (0 LoLiteral) (*1 Adj BARRIER FiniteVerbForms OR
 #LATEX E: \emph{lo} + ADJETIVO
 #LATEX D: Cualquier ocurrencia de LO seguida de un adjetivo (con un adv opcional en medio).
 
+#LATEX\section{Usos de los determinantes demostrativos}
+
 ADD (@Gram:Det:Demo) ArtPronDemo IF (-1 Prep OR FiniteVerbForms) (0 EsteEseAquel) (NOT 0 EstoEsoAquello) (1 Nombre) ;
-#LATEX T: Asigna @Gram:Det:Art
-#LATEX E: \emph{lo} + ADJETIVO
-#LATEX D: Cualquier ocurrencia de LO seguida de un adjetivo (con un adv opcional en medio).
+#LATEX T: Asigna @Gram:Det:Demo
+#LATEX E: Prep/Verbo \emph{este/ese/aquel} (LEMMA) + Nombre
+#LATEX D: Cualquier ocurrencia de un demostrativo precedida de una preposición o un verbo conjugado y seguido de un nombre.
 
 #LATEX\chapter{Uso de las preposiciones}
 ## SECTION -- RULES TO ADD Prep-RELATED INFORMTATION
@@ -532,7 +533,7 @@ ADDRELATION (Prag:MarcadoresDisc:Causa) Gracia (0 PL) (NOT 2 Dios) TO (1 APrep);
 
 ADDRELATION (Prag:MarcadoresDisc:Causa) Gracia (0 PL) (1 APrep) TO (2 Dios);
 #LATEX T: R:Prag:MarcadoresDisc:Causa (relación entre el primer i el último elemento de la locución)
-#\LATEX E: y de ahí fui a la ceremonia y \emph{gracias a dios} me hice ciudadano
+#LATEX E: y de ahí fui a la ceremonia y \emph{gracias a dios} me hice ciudadano
 #LATEX D: [Espacio para describir con palabras lo que hace la regla.]
 
 #LATEX\subsection{Marcadores discursivos indicadores de igualdad}
