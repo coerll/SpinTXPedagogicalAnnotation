@@ -41,6 +41,8 @@ SET GrupoNominal = Sustantivo OR Adj OR DetAll; # habrá que refinar la definici
 LIST PronPers = (PPX);
 LIST PronPersClitico = (PPC);
 LIST PronPersSE = (SE);
+LIST PalabraEnIngles = (English);
+LIST PalabraEnEspanol = (Spanish);
 
 #LATEX\section{Rasgos morfosintácticos}
 ## LIST MORPH FEATURES VERBS
@@ -97,6 +99,7 @@ LIST VerboSer = ("ser");
 LIST VerboSerAmbiguoConErar = ("erar|ser"); ## eras, eran, era, eres (no éramos).
 LIST VerboSerAmbiguoConIr = ("ser|ir"); ## fui, fuimos, fue, fuiste...
 LIST VerboEstar = ("estar");
+LIST ListaVerbosCorpusParaContactoMixtos = ("ser") ("decir") ("hacer") ("hacerse");
 
 LIST FormasDePalabrasEnLocucionesConPor = ("<ello>") ("<eso>");
 LIST LemasDePalabrasEnLocucionesConPor = ("ejemplo") ("tanto") ("ello") ("eso");
@@ -415,8 +418,6 @@ ADD (@Gram:Aux:Estar) Verbo (0 VerboEstar);
 #LATEX E: \emph{estoy, estás, estaban,} etc. 
 #LATEX D: Cualquier forma de \emph{estar}
 
-### FITA
-
 #LATEX\subsection{Verbo haber}
 ADD (@Gram:Aux:Haber) Verbo (0 Haber) (NOT 1 Part);
 #LATEX T: @Gram:Aux:Haber
@@ -542,10 +543,26 @@ ADDRELATION (Prag:MarcadoresDisc:Igualdad) No TO (1 SoloAcento);
 
 ADDRELATION (Prag:MarcadoresDisc:NoTipificado) Tal TO (1 Vez);
 #LATEX T: R:Prag:MarcadoresDisc:NoTipificado
-#\LATEX E: noto que \emph{tal vez} sus hijos hablan el spanglish más unos más que otros
+#LATEX E: noto que \emph{tal vez} sus hijos hablan el spanglish más unos más que otros
 #LATEX D: [Espacio para describir con palabras lo que hace la regla.]
 
-#\LATEX E: \emph{}
-#\LATEX E: \emph{}
+
+## SECTION -- RULES TO ADD PAST GUSTAR AND SIMILAR VERBS
+#LATEX\chapter{Estructuras características del habla en hablantes de herencia}
+
+#LATEX\section{Estructuras derivadas del contacto entre lenguas}
+
+#LATEX\subsection{Expresiones mixtas}
+#LATEXDOCU Incluímos aquí expresiones que mezclan palabras en ambas lenguas, en este caso el español y el inglés.
+## Herit:Contacto:Mixtas
+
+## TO DO: NEEDS DIFFERENT INPUT TO WORK
+## ADDRELATION (Herit:Contacto:Mixtas) Verbo IF (0 ListaVerbosCorpusParaContactoMixtos) TO (*1 PalabraEnIngles BARRIER PalabraEnEspanol);
+#LATEX T: R:Herit:Contacto:Mixtas
+#LATEX E: \emph{hacer request}, \emph{comer turkey}
+#LATEX D: Anota secuencias de un verbo seguid de una o más palabras en inglés. Por ahora lo limitamos a ser, hacer, decir y comer porque TreeTagger anota como verbo algunas palabras que no lo son y no queremos generar ruido para los usuarios.
+
+### FITA: no s'està mapejant la info de llengua i per tant la regla anterior no funciona
+### 02/21/2013
 
 ##AFTER-SECTIONS
