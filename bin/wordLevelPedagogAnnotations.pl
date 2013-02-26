@@ -46,6 +46,7 @@ my $ToPrintAtTheEndIncremental = "";
 my $FileLineCounter = 0;
 my %FeatureCounter; #hash where pedagogical feature counts are stored
 my %FeatureCounterAllFiles; #hash where pedagogical feature counts are stored
+my %LemmaCounter;
 my $BooleanInWord = "FALSE";
 my (@WordReadings);
 ##my (@OneWordAnnotations,@MultiWordAnnotations,@CompletionInfo);
@@ -247,17 +248,23 @@ foreach $file (@ARGV) {
         my $JSONStringOneLiner;
         my @RECORDS;
         
-        # FITA: this needs to be generated as a hash
-        # and then converted into json
+        # the following foreach creates a hash that we later convert
+        # into JSON format using PERL's json lib
         
         foreach my $record (@ResultingAnnotationRecords) {
+            
+            #each record in the array has the info clip, start and end token id
             @RECORDS = split(/,/,$record);
             $HashForJSON{'clip'} = $RECORDS[0];
             $HashForJSON{'start'} = $RECORDS[1];
             $HashForJSON{'end'} = $RECORDS[2];
 
-            my $ TempLabel = $RECORDS[3];
+            my $TempLabel = $RECORDS[3];
             my ($PedagogicalType, $PedagogicalTag);
+            
+            # the Hierarchy tag has to be split: the first level is internally called
+            # type, and the second and optionally the third are called tag (and are printed 
+            # together if there is second and third)
             
             if ($TempLabel =~ m/^([^:]+):(.+)$/ig){
                 $PedagogicalType = $1;
@@ -267,22 +274,36 @@ foreach $file (@ARGV) {
             $HashForJSON{'type'} = $PedagogicalType;
             $HashForJSON{'tag'} = $PedagogicalTag;
             
+            # this line encode the info in json format
             $JSONStringOneLiner = encode_json(\%HashForJSON);
-	    push(@JSONStringsWholeFileArray,$JSONStringOneLiner);
-            #$JSONStringsWholeFile .= $JSONStringOneLiner .",\n";
+            
+            # this line adds all the strings in json format in one single array
+            # there is one of these arrays for each clip file
+            push(@JSONStringsWholeFileArray,$JSONStringOneLiner);
 
+            # we make sure the @RECORDS array is emptied / initialized after each iteration
             undef @RECORDS;
 
         }
 
+        # this prints the list of annotations for one single file in json format
         open (FOUT,">", $OutFile) || warn (" WARNING: Could not open $OutFile.\n") ;
         print FOUT "["; 
         print FOUT join(",",@JSONStringsWholeFileArray); 
         print FOUT "]"; 
         close (FOUT);
         
+        foreach my $LemmaPOSPair (keys(%LemmaCounter)) {
+            print STDERR $LemmaPOSPair . " : " . $LemmaCounter{$LemmaPOSPair};
+            print STDERR "\n";
+        }
+        
+        # the following line concatenates each file´s info into a larger array
+        # later used to print the one-file-for-the-whole-corpus clip level annotations list
         @JSONStringsWholeCorpus = (@JSONStringsWholeCorpus,@JSONStringsWholeFileArray);
-	undef @JSONStringsWholeFileArray;
+        
+        # we make sure the @JSONStringsWholeFileArray array is emptied / initialized after each iteration
+        undef @JSONStringsWholeFileArray;
         
 
     } #end of if $suffix eq "out"
@@ -313,24 +334,51 @@ sub ProcessReadingsForPreviousWord {
     
     # variables used while processing the different readings
     my $AnnotationRecord;
-#    my @ResultingAnnotationRecords;
-#    my @PendingAnnotationRecords;
-#    my @MultiwordRecordCompletionInfo;
+    my @AllItemsInReading;
+    my ($Lemma,$POSTag);
     
     foreach my $Reading (@ReadingsToBeProcessed) {
+        
+        @AllItemsInReading = split(/ /,$Reading);
+        
+        if ($DebugLevel > 2) {
+            print STDERR join("|",@AllItemsInReading);
+            print STDERR "\n";
+        }
+        $Lemma = $AllItemsInReading[0];
+        $POSTag = $AllItemsInReading[1];
+        
+        $Lemma =~ s/\"(.+)\"/$1/ig;
+
+        if ($DebugLevel > 2) {
+            print STDERR "Lemma: " . $Lemma . "\n";
+            print STDERR "POSTag: " . $POSTag . "\n";
+        }
+        
+        $LemmaCounter{$Lemma."|".$POSTag}++;
+        
         if ($Reading =~ m/(@|R|ID:)/) {
             
             @AllLemmaAnnotations = split(/ /,$Reading);
+            
+            # this foreach is used to identify the tokentag id (ttid) and the clip id 
+            # for the relevant annotation line
             foreach my $Annotation (@AllLemmaAnnotations) {
                 if ($Annotation =~ m/^tt-[0-9]+$/) {
                     $TTId = $Annotation;
                 }
                 elsif ($Annotation =~ m/^[A-Z]{2}[0-9]{3}_[0-9]{4}_.*$/) {
                     $ClipId = $Annotation;
-                    # FITA Seria		 millor treure-ho del nom del fitxer... però no n'estic segur
                 }
             }            
 
+            # this foreach process the information of the pedagogical/metlinguistic tag
+            # if it is a @-tag it stores it in the array @ResultingAnnotationRecords, which
+            # does not require further processing. If it is an R-tag it stores in @PendingAnnotationRecords
+            # and if it is an ID-tag it stores it in @MultiwordRecordCompletionInfo.
+            # the two latter arrays are processed in the main routine so that
+            # the starting and ending ttid is correctly stated in the resulting list.
+            
             foreach my $Annotation (@AllLemmaAnnotations) {
                 
                 #if it has an @-symbol at the beginning it is a pedagogical feature annotation                    
@@ -349,9 +397,6 @@ sub ProcessReadingsForPreviousWord {
                     }
                     $AnnotationRecord = join(",",$ClipId,$TTId,$Annotation,$1);
                     push(@PendingAnnotationRecords,$AnnotationRecord);
-                    # TODO/REM: this is now a next but should be more sophisticated
-                    # it should allow for further search in here but avoid storing ID:XX by using a boolean or something similar
-
                 }
                 elsif  ($Annotation =~ m/^ID:.*$/) {
                     #last word in multi word annotation
@@ -362,6 +407,7 @@ sub ProcessReadingsForPreviousWord {
             }
         } #end of if $reading has @, R or ID
         else { next; }
+        
     }# end of foreach $reading
 
     if ($DebugLevel > 4) {
