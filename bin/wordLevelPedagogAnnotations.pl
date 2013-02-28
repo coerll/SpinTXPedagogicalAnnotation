@@ -1,5 +1,6 @@
 #!/usr/bin/perl
 
+use utf8;
 use strict;
 use File::Basename;
 use warnings;
@@ -21,6 +22,11 @@ my $StatsFileForRecord = $OutputDirStats . timestamp() . "_ClipsWLAOneFile" . ".
 
 # ---------------------------------------;
 # VARIABLE DEFINITION
+
+my @POSFilterForVocabListGeneration = ("Adjective","Noun","Verb");
+my @ListOfStopWords = ("UNK|Noun","UNK|Adjective");
+my @VocabList;
+#my %StopWordList = map { $_ => 1 } @ListOfStopWords;
 
 # -- VARIABLE DEFINITION
 
@@ -46,7 +52,8 @@ my $ToPrintAtTheEndIncremental = "";
 my $FileLineCounter = 0;
 my %FeatureCounter; #hash where pedagogical feature counts are stored
 my %FeatureCounterAllFiles; #hash where pedagogical feature counts are stored
-my %LemmaCounter;
+my %LemmaList;
+my %LemmaTypeCounter;
 my $BooleanInWord = "FALSE";
 my (@WordReadings);
 ##my (@OneWordAnnotations,@MultiWordAnnotations,@CompletionInfo);
@@ -60,6 +67,7 @@ my @JSONStringsWholeFileArray;
 my @ResultingAnnotationRecords;
 my @PendingAnnotationRecords;
 my @MultiwordRecordCompletionInfo;
+my ($LemmaInPair,$POSInPair,$TTIDInPair,$ClipIDInPair);
 
 # ---------------------------------------;
 # STARTING WITH READING OPTIONS
@@ -286,6 +294,108 @@ foreach $file (@ARGV) {
 
         }
 
+        my $LemmaPOSPair;
+
+        # FITA: alerta, que ara mateix no estic tenint en compte el TTID, ni el clip ID i serà important!!!
+        #        foreach $LemmaPOSPair (sort {$LemmaList{$b} <=> $LemmaList{$a}} keys(%LemmaList)) {
+        foreach $LemmaPOSPair (keys(%LemmaList)) {
+            
+            ($LemmaInPair,$POSInPair,$TTIDInPair,$ClipIDInPair) = split(/\|/,$LemmaPOSPair);
+            
+#            print STDERR $LemmaPOSPair . " : " . $LemmaList{$LemmaPOSPair};
+#            print STDERR "\n";
+#            print STDERR $LemmaInPair. " " .$POSInPair;
+#            print STDERR "\n";
+
+            
+            foreach my $FilterTag (@POSFilterForVocabListGeneration) {
+                if ($POSInPair eq $FilterTag) {
+                    
+                    #if ($LemmaInPair eq 'ser') { print STDERR "in stop word list\n"};
+#                    print STDERR $LemmaPOSPair . " : " . $LemmaList{$LemmaPOSPair};
+#                    print STDERR "\n";
+                    push (@VocabList,$LemmaPOSPair);
+                    $LemmaTypeCounter{$LemmaInPair."|".$POSInPair}++;
+                  
+                }
+            }
+        }# end of foreach $LemmaPOSPair (keys(%LemmaList)) {
+        
+        if ($DebugLevel > 3){
+            print STDERR "ALL LEMMAS TO BE PRINTED";
+            print STDERR join("\n",@VocabList);
+            print STDERR "\n";
+        }
+        foreach $_ (@VocabList){
+
+            #each record in the array has the info clip, start and end token id
+            
+            @RECORDS = split(/\|/,$_);
+            
+            my $JSONClip = "\"clip\":". "\"" . $RECORDS[3] . "\",";
+            my $JSONStart = "\"start\":". "\"" . $RECORDS[2];
+            my $JSONEnd = "\"end\":". "\"" . $RECORDS[2] . "\",";
+            my $JSONType = "\"type\":". "\"Vocab\",";
+            my $JSONTag = "\"tag\":". "\"" . $RECORDS[0].":".$RECORDS[1] . "\",";
+
+            if ($JSONTag =~ m/.*UNK\:[Adjective|Noun|Vern].*/){
+                next;
+            }
+            else{
+                
+                if ($DebugLevel > 3) {
+                    print STDERR "clip " . $RECORDS[3];
+                    print STDERR "\n";
+                    print STDERR "start " . $RECORDS[2];
+                    print STDERR "\n";
+                    print STDERR "end " . $RECORDS[2];
+                    print STDERR "\n";
+                    print STDERR "tag " . "Vocab";
+                    print STDERR "\n";
+                    print STDERR "type " . $RECORDS[0].":".$RECORDS[1];
+                    print STDERR "\n";
+                }
+                
+                #$json_text = JSON::XS->new->utf8->encode ($perl_scalar)
+                
+                #            $HashForJSON{'start'} = $RECORDS[2];
+                #            $HashForJSON{'end'} = $RECORDS[2];
+                #            $HashForJSON{'tag'} = "Vocab";
+                #            #$HashForJSON{'type'} = $RECORDS[0].":".$RECORDS[1];
+                #            $HashForJSON{'type'} = utf8->encode ($RECORDS[0].":".$RECORDS[1]);
+                
+                # this line encode the info in json format
+                
+                #            $JSONStringOneLiner = encode_json(\%HashForJSON);
+                $JSONStringOneLiner = "{" . $JSONClip . $JSONTag . $JSONType . $JSONEnd . $JSONStart ."}" ;
+                
+                # this line adds all the strings in json format in one single array
+                # there is one of these arrays for each clip file
+
+            }
+            push(@JSONStringsWholeFileArray,$JSONStringOneLiner);
+            # we make sure the @RECORDS array is emptied / initialized after each iteration
+            undef @RECORDS;
+
+        }
+        
+        if ($DebugLevel > 2) {
+            print STDERR "ALL LEMMA COUNTS TO BE PRINTED";
+        }
+        foreach $_ (sort {$LemmaTypeCounter{$b} <=> $LemmaTypeCounter{$a}} keys(%LemmaTypeCounter)) {
+            unless ($LemmaTypeCounter{$_} == 1) {
+                if ($_ eq "UNK|Adjective" || $_ eq "UNK|Noun" || $_ eq "UNK|Verb"){
+                    next;
+                }
+                else{
+                    if ($DebugLevel > 2) {
+                        print STDERR $_ . " : " . $LemmaTypeCounter{$_} ;
+                        print STDERR "\n";
+                    }
+                }
+            }
+        }
+        
         # this prints the list of annotations for one single file in json format
         open (FOUT,">", $OutFile) || warn (" WARNING: Could not open $OutFile.\n") ;
         print FOUT "["; 
@@ -293,18 +403,16 @@ foreach $file (@ARGV) {
         print FOUT "]"; 
         close (FOUT);
         
-        foreach my $LemmaPOSPair (keys(%LemmaCounter)) {
-            print STDERR $LemmaPOSPair . " : " . $LemmaCounter{$LemmaPOSPair};
-            print STDERR "\n";
-        }
-        
+
         # the following line concatenates each file´s info into a larger array
         # later used to print the one-file-for-the-whole-corpus clip level annotations list
         @JSONStringsWholeCorpus = (@JSONStringsWholeCorpus,@JSONStringsWholeFileArray);
         
         # we make sure the @JSONStringsWholeFileArray array is emptied / initialized after each iteration
         undef @JSONStringsWholeFileArray;
-        
+        undef %LemmaTypeCounter;
+        undef %LemmaList;
+            
 
     } #end of if $suffix eq "out"
     
@@ -342,35 +450,41 @@ sub ProcessReadingsForPreviousWord {
         @AllItemsInReading = split(/ /,$Reading);
         
         if ($DebugLevel > 2) {
+            print STDERR "ALL ELEMENTS IN COHORT";
             print STDERR join("|",@AllItemsInReading);
             print STDERR "\n";
         }
         $Lemma = $AllItemsInReading[0];
+        $Lemma =~ s/^\t(.+)/$1/;
         $POSTag = $AllItemsInReading[1];
+
+        # this foreach is used to identify the tokentag id (ttid) and the clip id 
+        # for the relevant annotation line
+        foreach my $Annotation (@AllItemsInReading) {
+            if ($Annotation =~ m/^tt-[0-9]+$/) {
+                $TTId = $Annotation;
+            }
+            elsif ($Annotation =~ m/^[A-Z]{2}[0-9]{3}_[0-9]{4}_.*$/) {
+                $ClipId = $Annotation;
+            }
+        }            
         
         $Lemma =~ s/\"(.+)\"/$1/ig;
 
         if ($DebugLevel > 2) {
             print STDERR "Lemma: " . $Lemma . "\n";
             print STDERR "POSTag: " . $POSTag . "\n";
+            print STDERR "ttID: " . $TTId . "\n";
+            print STDERR "clipID: " . $ClipId . "\n";
         }
         
-        $LemmaCounter{$Lemma."|".$POSTag}++;
+        unless ($POSTag eq "Punct") {
+            $LemmaList{$Lemma."|".$POSTag."|".$TTId."|".$ClipId}++;
+        }
         
         if ($Reading =~ m/(@|R|ID:)/) {
             
             @AllLemmaAnnotations = split(/ /,$Reading);
-            
-            # this foreach is used to identify the tokentag id (ttid) and the clip id 
-            # for the relevant annotation line
-            foreach my $Annotation (@AllLemmaAnnotations) {
-                if ($Annotation =~ m/^tt-[0-9]+$/) {
-                    $TTId = $Annotation;
-                }
-                elsif ($Annotation =~ m/^[A-Z]{2}[0-9]{3}_[0-9]{4}_.*$/) {
-                    $ClipId = $Annotation;
-                }
-            }            
 
             # this foreach process the information of the pedagogical/metlinguistic tag
             # if it is a @-tag it stores it in the array @ResultingAnnotationRecords, which
@@ -444,3 +558,10 @@ sub timestamp {
 
 
 
+########################
+## SUBROUTINE TO ORDER HASH VALUES IN DESCENDING ORDER
+########################
+
+#sub hashValueDescendingNum {
+#    $grades{$b} <=> $grades{$a};
+#}
