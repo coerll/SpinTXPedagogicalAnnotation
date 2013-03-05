@@ -23,11 +23,13 @@ for i in *.cg3; do
 ##  echo "Created file ${OUTDIR}/${CG3OUT}.out"
 done
 
-echo "Counting/Adding up clip level information..."
-cd "$OUTDIR"
-countPedagogicalFeatures.pl -outformat solr *.out
+if [ "$1" = "all" ]; then
+  echo "Counting/Adding up clip level information..."
+  cd "$OUTDIR"
+  countPedagogicalFeatures.pl -outformat solr *.out
 
-echo "Generating word level annotation files in JSON format..."
-wordLevelPedagogAnnotations.pl *.out
-echo "Done!"
+  echo "Generating word level annotation files in JSON format..."
+  wordLevelPedagogAnnotations.pl *.out
+  echo "Done!"
+fi
 

@@ -44,10 +44,11 @@ my $Speaker; #speaker
 my $StartTime; #starting time in video clip
 my $EndTime; #ending time in video clip
 my $Lang; #language (now only useful for English fragments in Spanish interviews in SPinTX)
+my $InterviewID;
 my ($Tense,$Mood,$Number,$Person,$Gender); #morpho-syntactic features
 my $LangForCGCohort; ## variable to store the format in which the language in which the word is will be printed for a CG-like reading (lang:LANGUAGE, e.g., lang:es and lang:en for Spanish and English)
 my ($ClipId,$WordId,$TranscriptLineId); # localization indexes to be compatible with other annotating modules within SPinTX
-my @ListOfAllTokeInfos; # a list I created for convenience in handling them when passed to subroutines
+my @ListOfAllTokenInfos; # a list I created for convenience in handling them when passed to subroutines
 
 # ---------------------------------------;
 
@@ -108,7 +109,7 @@ else {
 foreach $file (@ARGV) {
     
     #debug levels, have to be controlled later
-    if ($DebugLevel == 1) {
+    if ($DebugLevel > 0) {
         print STDERR "Reading new file...\n";
     }
     if ($DebugLevel > 1) {
@@ -203,13 +204,14 @@ foreach $file (@ARGV) {
             $lemma = $line[5]; #lemma
             $POSTag = $line[3]; #pos
             $SimplePOSTag = $line[4]; #puncutation
-            $punct = $line[6]; #puncutation
-            $Speaker = $line[7]; #speaker
-            $StartTime = $line[8]; #starting time in video clip
-            $EndTime = $line[9]; #ending time in video clip
-            $TranscriptLineId = $line[10]; #Line Id added from Jan 2013 on
+            #$punct = $line[6]; #puncutation #As of March 5 punctuation is no longer a property of the token but a token in itself
+            $Speaker = $line[6]; #speaker
+            $StartTime = $line[7]; #starting time in video clip
+            $EndTime = $line[8]; #ending time in video clip
+            $TranscriptLineId = $line[9]; #Line Id added from Jan 2013 on
             $TranscriptLineId = "SRTLine" . $TranscriptLineId;
-            $Lang = $line[11]; #language (now only useful for English fragments in Spanish interviews in SPinTX)
+            $Lang = $line[10]; #language (now only useful for English fragments in Spanish interviews in SPinTX)
+            $InterviewID = $line[11]; #as of March 5 interview ID is added as a token property
             $Tense = $line[12]; #tense for verbs
             $Mood = $line[13]; #mood for verbs
             $Number = $line[14]; #number
@@ -220,14 +222,15 @@ foreach $file (@ARGV) {
                 $lemma = "UNK";
             }
 
-            if ($punct eq "" || $punct eq"_") {
-                $punct = "BL"
-            } #default punctuation value
-            else
-            {
-                $punct =~ s/^_//ig;
-                $punct =~ s/_$//ig;
-            }
+            # March 5: punctuation is now a token in itself
+#            if ($punct eq "" || $punct eq"_") {
+#                $punct = "BL"
+#            } #default punctuation value
+#            else
+#            {
+#                $punct =~ s/^_//ig;
+#                $punct =~ s/_$//ig;
+#            }
             if ($Speaker eq ">>i") {
                 $Speaker = "int";
             }
@@ -266,7 +269,14 @@ foreach $file (@ARGV) {
             $LangForCGCohort = "lang:".$Lang;
             # for convenience (in calling some subroutines later
             # we put all token level infos in list but in my preferred order
-            @ListOfAllTokeInfos = ($word, $lemma, $POSTag, $SimplePOSTag, $punct, $Tense, $Mood, $Number, $Person, $Gender, $LangForCGCohort, $StartTime, $EndTime, $WordId, $ClipId);
+            @ListOfAllTokenInfos = ($word, $lemma, $POSTag, $SimplePOSTag, $punct, $Tense, $Mood, $Number, $Person, $Gender, $LangForCGCohort, $StartTime, $EndTime, $WordId, $ClipId);
+            
+            #debug line
+            if ($DebugLevel > 4) {
+                print STDERR " Line: " . $FDGLine . "\n";
+                print STDERR " Yields: " . join("|",@ListOfAllTokenInfos) . "\n";
+                
+            }
             
             # we handle the first line
             if ($FileLineCounter == 1) {
@@ -279,12 +289,12 @@ foreach $file (@ARGV) {
                     # Call sub PrintTokenLevelInformation (returns string for printout)
                     # Requires an $OutputFormat and a @ListOfElements
                     # $ToPrint .= &PrintTokenLevelInformation($OutputFormat, $word, $lemma, $POSTag, $punct, $StartTime, $EndTime, $Tense, $Mood, $Number, $Person, $Gender, $Lang);
-                    $ToPrint .= &PrintTokenLevelInformation($OutputFormat,@ListOfAllTokeInfos);
+                    $ToPrint .= &PrintTokenLevelInformation($OutputFormat,@ListOfAllTokenInfos);
                 }
                 elsif ($Lang eq "en") {
                     $ToPrint .= "<speaker type=\"". $Speaker . "\">\n";
                     $ToPrint .= "<lang code=\"". $Lang . "\">\n";
-                    $ToPrint .= &PrintTokenLevelInformation($OutputFormat,@ListOfAllTokeInfos);
+                    $ToPrint .= &PrintTokenLevelInformation($OutputFormat,@ListOfAllTokenInfos);
                     # we start a lang loop
                     $InLangLoop = "TRUE";
                 }
@@ -298,12 +308,12 @@ foreach $file (@ARGV) {
                 
                 #if the current word is in Spanish
                 if ($Lang eq "es"){
-                    $ToPrint .= &PrintTokenLevelInformation($OutputFormat,@ListOfAllTokeInfos);
+                    $ToPrint .= &PrintTokenLevelInformation($OutputFormat,@ListOfAllTokenInfos);
 #                    $ToPrint .= $word."\t".$lemma."\t".$POSTag . "\t".$punct . "\t" . $StartTime.  "\t" . $EndTime . "\t".$Tense . "\t".$Mood . "\t".$Number . "\t".$Person . "\t".$Gender . "\t".$Lang ."\n";
                 }
                 elsif ($Lang eq "en"){
                     $ToPrint .= "<lang code=\"". $Lang . "\">\n";
-                    $ToPrint .= &PrintTokenLevelInformation($OutputFormat,@ListOfAllTokeInfos);
+                    $ToPrint .= &PrintTokenLevelInformation($OutputFormat,@ListOfAllTokenInfos);
 #                   $ToPrint .= $word."\t".$lemma."\t".$POSTag . "\t".$punct . "\t" . $StartTime.  "\t" . $EndTime . "\t".$Tense . "\t".$Mood . "\t".$Number . "\t".$Person . "\t".$Gender . "\t".$Lang ."\n";
                     $InLangLoop = "TRUE";
                 }
@@ -315,14 +325,14 @@ foreach $file (@ARGV) {
                 #if the current word is in Spanish, then we need to close the tag
                 if ($Lang eq "es"){
                     $ToPrint .= "</lang>\n";
-                    $ToPrint .= &PrintTokenLevelInformation($OutputFormat,@ListOfAllTokeInfos);
+                    $ToPrint .= &PrintTokenLevelInformation($OutputFormat,@ListOfAllTokenInfos);
 #                   $ToPrint .= $word."\t".$lemma."\t".$POSTag . "\t".$punct . "\t" . $StartTime.  "\t" . $EndTime . "\t".$Tense . "\t".$Mood . "\t".$Number . "\t".$Person . "\t".$Gender . "\t".$Lang ."\n";
                     # and we close the lang loop, set boolean to false
                     $InLangLoop = "FALSE";
                 }
                 #if the current word is in English, we print and keep on processing
                 elsif ($Lang eq "en"){
-                    $ToPrint .= &PrintTokenLevelInformation($OutputFormat,@ListOfAllTokeInfos);
+                    $ToPrint .= &PrintTokenLevelInformation($OutputFormat,@ListOfAllTokenInfos);
 #                   $ToPrint .= $word."\t".$lemma."\t".$POSTag . "\t".$punct . "\t" . $StartTime.  "\t" . $EndTime . "\t".$Tense . "\t".$Mood . "\t".$Number . "\t".$Person . "\t".$Gender . "\t".$Lang ."\n";
                 }
             }
@@ -333,7 +343,7 @@ foreach $file (@ARGV) {
                 # we first close the open speaker look and open a new one, and keep on processing
                 $ToPrint .= "</speaker>\n";
                 $ToPrint .= "<speaker type=\"". $Speaker . "\">\n";
-                $ToPrint .= &PrintTokenLevelInformation($OutputFormat,@ListOfAllTokeInfos);
+                $ToPrint .= &PrintTokenLevelInformation($OutputFormat,@ListOfAllTokenInfos);
 #                $ToPrint .= $word."\t".$lemma."\t".$POSTag . "\t".$punct . "\t" . $StartTime.  "\t" . $EndTime . "\t".$Tense . "\t".$Mood . "\t".$Number . "\t".$Person . "\t".$Gender . "\t".$Lang ."\n";
             }
             
@@ -344,7 +354,7 @@ foreach $file (@ARGV) {
                 $ToPrint .= "</lang>\n";
                 $ToPrint .= "</speaker>\n";
                 $ToPrint .= "<speaker type=\"". $Speaker . "\">\n";
-                $ToPrint .= &PrintTokenLevelInformation($OutputFormat,@ListOfAllTokeInfos);
+                $ToPrint .= &PrintTokenLevelInformation($OutputFormat,@ListOfAllTokenInfos);
 #                $ToPrint .= $word."\t".$lemma."\t".$POSTag . "\t".$punct . "\t" . $StartTime.  "\t" . $EndTime . "\t".$Tense . "\t".$Mood . "\t".$Number . "\t".$Person . "\t".$Gender . "\t".$Lang ."\n";
 
                 # and we close the lang loop, set boolean to false
@@ -398,6 +408,8 @@ sub PrintTokenLevelInformation{
     my ($OutputFormat) = shift(@_);
     my (@ListOfTokenInfos) = (@_);
     my $TokenLevelString = "";
+    my ($Word, $Lemma, $PoSTag, $SimplePoSTag);
+
     
     if ($OutputFormat eq "cqp") {
         #        $word."\t".$lemma."\t".$POSTag . "\t".$punct . "\t" . $StartTime.  "\t" . $EndTime . "\t".$Tense . "\t".$Mood . "\t".$Number . "\t".$Person . "\t".$Gender . "\t".$Lang ."\n";
@@ -407,17 +419,31 @@ sub PrintTokenLevelInformation{
         
     }
     elsif ($OutputFormat eq "cg3") {
-        my $Word = shift(@ListOfTokenInfos);
-        my $Lemma = shift(@ListOfTokenInfos);
-        my $PoSTag = shift(@ListOfTokenInfos);
-        my $SimplePoSTag = shift(@ListOfTokenInfos);
-        my $Punct = shift(@ListOfTokenInfos);
+        $Word = shift(@ListOfTokenInfos);
+        $Lemma = shift(@ListOfTokenInfos);
+        $PoSTag = shift(@ListOfTokenInfos);
+        $SimplePoSTag = shift(@ListOfTokenInfos);
+#        my $Punct; # = shift(@ListOfTokenInfos);
 
 
-        $TokenLevelString = "\"<". $Word. ">\"". "\n";
-        $TokenLevelString .= "\t\"". $Lemma. "\"";
-        $TokenLevelString .= " ". $SimplePoSTag . " ". $PoSTag;
-
+        if ($SimplePoSTag eq "Punctuation") {
+            
+            if ($Word eq "." | $Word eq "?" | $Word eq "!" | $Word eq "¿" | $Word eq "¡" | $Word eq ":" | $Word eq ";") {
+                $TokenLevelString .= "\"<\$" . $Word. ">\"\n";
+                $TokenLevelString .= "\t\"" . $Lemma. "\""; # Punct Clause\n";
+            }
+            else {
+                $TokenLevelString = "\"<". $Word. ">\"". "\n";
+                $TokenLevelString .= "\t\"". $Lemma. "\"";
+            }
+            $TokenLevelString .= " ". $SimplePoSTag . " ". $PoSTag;
+        
+        }
+        else {
+            $TokenLevelString = "\"<". $Word. ">\"". "\n";
+            $TokenLevelString .= "\t\"". $Lemma. "\"";
+            $TokenLevelString .= " ". $SimplePoSTag . " ". $PoSTag;
+        }
 
         foreach my $item (@ListOfTokenInfos) {
             unless ($item eq "NA"){$TokenLevelString .= " ". $item	};
@@ -426,23 +452,19 @@ sub PrintTokenLevelInformation{
         $TokenLevelString .= "\n";
         
         # DELIMITERS = "<$.>" "<$?>" "<$!>" "<$:>" "<$\;>" ;
-        unless ($Punct eq "BL") {
-            if ($Punct eq "." | $Punct eq "?" | $Punct eq "!" | $Punct eq "¿" | $Punct eq "¡" | $Punct eq ":" | $Punct eq ";") {
-                $TokenLevelString .= "\"<\$" . $Punct. ">\"\n";
-                $TokenLevelString .= "\t\"" . $Punct. "\" Punct Clause\n";
-            }
-            elsif ($Punct eq "._¿" | $Punct eq ",_¿") {
-                my ($a,$b) = split (/_/,$Punct);
-                $TokenLevelString .= "\"<\$" . $a. ">\"\n";
-                $TokenLevelString .= "\t\"" . $a. "\" Punct Clause\n";
-                $TokenLevelString .= "\"<\$" . $b. ">\"\n";
-                $TokenLevelString .= "\t\"" . $b. "\" Punct Clause\n";
-            }
-            else {
-                $TokenLevelString .= "\"<" . $Punct. ">\"\n";
-                $TokenLevelString .= "\t\"" . $Punct. "\" Punct Nonclause\n";
-            }
-        } #end of unless for handling punctuation
+#        unless ($Punct eq "BL") {
+#            elsif ($Punct eq "._¿" | $Punct eq ",_¿") {
+#                my ($a,$b) = split (/_/,$Punct);
+#                $TokenLevelString .= "\"<\$" . $a. ">\"\n";
+#                $TokenLevelString .= "\t\"" . $a. "\" Punct Clause\n";
+#                $TokenLevelString .= "\"<\$" . $b. ">\"\n";
+#                $TokenLevelString .= "\t\"" . $b. "\" Punct Clause\n";
+#            }
+#            else {
+#                $TokenLevelString .= "\"<" . $Punct. ">\"\n";
+#                $TokenLevelString .= "\t\"" . $Punct. "\" Punct Nonclause\n";
+#            }
+#        } #end of unless for handling punctuation
       
     }
     
