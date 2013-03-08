@@ -61,6 +61,8 @@ my (@WordReadings);
 my %HashForJSON; #this is a silly hash used to generate data in JSON format for compatibility with DRUPAL/solr
 my @JSONStringsWholeCorpus; # this is a scalar to store the JSON data at the corpus level printed in a file at the very end of the process
 my @JSONStringsWholeFileArray;
+my $VocabListSingleFileForWholeCorpusToPrint = "ClipId\tVocab\n";
+my @ForVocabListSingleFileForWholeCorpus;
 
 # TEST
 
@@ -382,12 +384,37 @@ foreach $file (@ARGV) {
         if ($DebugLevel > 2) {
             print STDERR "ALL LEMMA COUNTS TO BE PRINTED";
         }
+
+        #Using file name to add clip id to clip level summary of vocab info
+        # kind of dirty... I know, I apologize and hope to do it better in the future
+        $name =~ s/\.$//;
+        
+        if ($DebugLevel > 2) {
+            print STDERR " List of vocab items for Clip ID: " . $name . "\n" ;
+        }
+        
+        #we add the clip id as the starting item of the row
+        # for this clip in vocab info summary file
+        
+        $VocabListSingleFileForWholeCorpusToPrint .= $name . "\t";
+
         foreach $_ (sort {$LemmaTypeCounter{$b} <=> $LemmaTypeCounter{$a}} keys(%LemmaTypeCounter)) {
+            
+            #we exclude vocabulary that only occurs once
             unless ($LemmaTypeCounter{$_} == 1) {
+
+                #we exclude vocabulary in a stop word list
+                #now we exclude words marked as UNK by TreeTagger
                 if ($_ eq "UNK|Adjective" || $_ eq "UNK|Noun" || $_ eq "UNK|Verb"){
                     next;
                 }
+
+                #we append the remainding vocab items and prepare them for
+                # the one file vocab info summary
                 else{
+                    
+                    push(@ForVocabListSingleFileForWholeCorpus,$_);
+                    
                     if ($DebugLevel > 2) {
                         print STDERR $_ . " : " . $LemmaTypeCounter{$_} ;
                         print STDERR "\n";
@@ -404,6 +431,8 @@ foreach $file (@ARGV) {
         close (FOUT);
         
 
+        $VocabListSingleFileForWholeCorpusToPrint .= join(",",@ForVocabListSingleFileForWholeCorpus);
+        $VocabListSingleFileForWholeCorpusToPrint .= "\n";
         # the following line concatenates each file´s info into a larger array
         # later used to print the one-file-for-the-whole-corpus clip level annotations list
         @JSONStringsWholeCorpus = (@JSONStringsWholeCorpus,@JSONStringsWholeFileArray);
@@ -415,7 +444,8 @@ foreach $file (@ARGV) {
     undef %LemmaTypeCounter;
     undef %LemmaList;
     undef @VocabList;
-
+    undef @ForVocabListSingleFileForWholeCorpus;
+    
 } ## end of foreach $file
 
 open (FOUT,">", $OneFileJSON) || warn (" WARNING: Could not open $OneFileJSON with write permission.\n") ;;
@@ -423,6 +453,10 @@ open (FOUT,">", $OneFileJSON) || warn (" WARNING: Could not open $OneFileJSON wi
         print FOUT join(",",@JSONStringsWholeCorpus); 
         print FOUT "]"; 
 close (FOUT);
+
+open (FOUT2,">", "SpintxMetadataVocab.csv") || warn (" WARNING: Could not open $OneFileJSON with write permission.\n") ;
+print FOUT2 $VocabListSingleFileForWholeCorpusToPrint; 
+close (FOUT2);
 
 system ("cp -v $OneFileJSON $StatsFileForRecord");
 
