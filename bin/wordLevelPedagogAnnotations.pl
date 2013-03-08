@@ -323,7 +323,7 @@ foreach $file (@ARGV) {
         
         if ($DebugLevel > 3){
             print STDERR "ALL LEMMAS TO BE PRINTED";
-            print STDERR join("\n",@VocabList);
+            print STDERR join(",",@VocabList);
             print STDERR "\n";
         }
         foreach $_ (@VocabList){
@@ -399,7 +399,7 @@ foreach $file (@ARGV) {
         # this prints the list of annotations for one single file in json format
         open (FOUT,">", $OutFile) || warn (" WARNING: Could not open $OutFile.\n") ;
         print FOUT "["; 
-        print FOUT join(",",@JSONStringsWholeFileArray); 
+        print FOUT join("\n",@JSONStringsWholeFileArray); 
         print FOUT "]"; 
         close (FOUT);
         
@@ -408,14 +408,14 @@ foreach $file (@ARGV) {
         # later used to print the one-file-for-the-whole-corpus clip level annotations list
         @JSONStringsWholeCorpus = (@JSONStringsWholeCorpus,@JSONStringsWholeFileArray);
         
-        # we make sure the @JSONStringsWholeFileArray array is emptied / initialized after each iteration
-        undef @JSONStringsWholeFileArray;
-        undef %LemmaTypeCounter;
-        undef %LemmaList;
-            
-
     } #end of if $suffix eq "out"
     
+    # we make sure the @JSONStringsWholeFileArray array is emptied / initialized after each iteration
+    undef @JSONStringsWholeFileArray;
+    undef %LemmaTypeCounter;
+    undef %LemmaList;
+    undef @VocabList;
+
 } ## end of foreach $file
 
 open (FOUT,">", $OneFileJSON) || warn (" WARNING: Could not open $OneFileJSON with write permission.\n") ;;

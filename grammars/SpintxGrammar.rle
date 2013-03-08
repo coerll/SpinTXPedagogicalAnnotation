@@ -163,6 +163,8 @@ LIST GramPron = (@Gram:Pron:Otros) (@Gram:Pron:ObjetoDoble);
 #LATEX\part{Secciones previas}
 BEFORE-SECTIONS
 
+SUBSTITUTE ("por" Adverb ADV) ("por" Preposition PREP) TARGET ("por");
+
 #LATEX\chapter{Reglas para rectificar errores del análisis morfosintático}
 SUBSTITUTE (Noun NC Singular Masculine) (Conjunction CC) TARGET ("pero");
 #LATEX T: CC
@@ -272,13 +274,15 @@ ADD (@Gram:Prep:Para) Prep IF (0 Para) (NOT 0 GramPrep);
 #LATEXDOCU Veáse \url{http://dev.coerll.utexas.edu/spanishtx/spe/html/adv11.html}.
 
 #LATEX\subsection{Usos de \emph{por} en locuciones}
-ADD (@Gram:Prep:Por:Locuciones) Prep IF (0 Por) (NOT 0 GramPrep) (1 LemasDePalabrasEnLocucionesConPor OR FormasDePalabrasEnLocucionesConPor);
-#LATEX T: Asigna @Gram:Prep:Por:Locuciones.
+##ADD (@Gram:Prep:Por:Locuciones) Prep IF (0 Por) (NOT 0 GramPrep) (1 LemasDePalabrasEnLocucionesConPor OR FormasDePalabrasEnLocucionesConPor);
+ADD (@Gram:Prep:Por) Prep IF (0 Por) (NOT 0 GramPrep) (1 LemasDePalabrasEnLocucionesConPor OR FormasDePalabrasEnLocucionesConPor);
+#LATEX T: Asigna @Gram:Prep:Por
 #LATEX E: \emph{por ejemplo}, \emph{por eso}, \emph{por tanto}
 #LATEX D: Requiere \emph{por} seguida por alguna palabra en la lista de palabras predefinidas \emph{LemasDePalabrasEnLocucionesConPor}
 
-ADD (@Gram:Prep:Por:Locuciones) Prep IF (0 Por) (NOT 0 GramPrep) (1 LoLiteral) (2 LemasDePalabrasEnLocucionesConPor);
-#LATEX T: Asigna @Gram:Prep:Por:Locuciones.
+##ADD (@Gram:Prep:Por:Locuciones) Prep IF (0 Por) (NOT 0 GramPrep) (1 LoLiteral) (2 LemasDePalabrasEnLocucionesConPor);
+ADD (@Gram:Prep:Por) Prep IF (0 Por) (NOT 0 GramPrep) (1 LoLiteral) (2 LemasDePalabrasEnLocucionesConPor);
+#LATEX T: Asigna @Gram:Prep:Por.
 #LATEX E: \emph{por lo tanto}, \emph{por lo regular}
 #LATEX D: Requiere \emph{por} seguida por LO y alguna palabra en la lista de palabras predefinidas \emph{LemasDePalabrasEnLocucionesConPor}
 
@@ -516,7 +520,7 @@ ADD (@Prag:MarcadoresDisc:Causa) Porque;
 
 ADDRELATION (Prag:MarcadoresDisc:Causa) Prep IF (0 Por) (1 LoLiteral) TO (2 Tanto);
 ADDRELATION (Prag:MarcadoresDisc:Causa) Prep IF (0 Por) TO (2 Tanto OR FormasDePalabrasEnLocucionesCausalesConPor);
-#LATEX T: Asigna @Gram:Prep:Por:Locuciones.
+#LATEX T: Asigna @Prag:MarcadoresDisc:Causa.
 #LATEX E: \emph{por lo tanto}
 #LATEX E: \emph{por eso}
 #LATEX D: Requiere \emph{por} seguida por LO y TANTO
@@ -593,3 +597,13 @@ ADDRELATION (Herit:Contacto:Mixtas) Verbo IF (0 ListaVerbosCorpusParaContactoMix
 ### 02/21/2013
 
 ##AFTER-SECTIONS
+
+
+#ADD (@Gram:Prep:Por:Locuciones) Prep IF (0 Por) (1 FormasFrecEnLocPor);
+
+
+#ADDRELATION (Gram:PerfPerif) VerboConjugado (0 Haber) TO (1 Participio);
+
+
+#ADD (@Gram:Det:Art) Articulo IF (0 Lo) (*1 Adj BARRIER NPBoundary);
+
