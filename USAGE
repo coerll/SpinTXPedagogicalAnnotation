@@ -15,7 +15,7 @@ This script executes all the scripts and processess needed to generate:
    b) the clip (or file) level breakdown of occurring pedagogical phenomena
      ($SPINTX_HOME/corpus/stats)
    c) the word level stand-off annotations list in JSON format
-     ($SPINTX_HOME/corpus/wla)
+     ($SPINTX_HOME/corpus/ClipsWLA)
 
  - EXECUTION
    command_line$ ProcessSPinTX.sh help
@@ -32,11 +32,11 @@ This script executes all the scripts and processess needed to generate:
 	  These are the files that are the actual input to the whole process. They are SPinTX tree-tagged files in CG3 format.
 	- *.out files in $SPINTX_HOME/corpus/out/ folder
 	  These are the files that result from applying our CG3-based pedagogical annotation grammar to the *.cg3 files
-	- *.wla.json files in $SPINTX_HOME/corpus/wla folder
+	- *.wla.json files in $SPINTX_HOME/corpus/ClipsWLA folder
 	  These are the files for the visual/activity enhancment of clip transcriptions (or in general texts) in the Corpus to Classroom website of the SPinTX project
     
     WORD LEVEL - one file for the whole corpus
-	- ClipsWLAOneFile.csv in $SPINTX_HOME/corpus/wla folder
+	- ClipsWLAOneFile.csv in $SPINTX_HOME/corpus/ClipsWLA folder
 	  This is a file that contains the pedagogical annotations for visual/activity enhancement for all the clips in a given corpus
 
     CLIP LEVEL
