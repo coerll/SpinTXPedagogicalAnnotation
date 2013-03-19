@@ -16,8 +16,10 @@ my $OutputDir = $ENV{SPINTX_HOME} . "corpus/ClipTags/";
 my $OutputDirWLA = $OutputDir . "wla/"; #we will dump results in the wla folder under corpus/ClipTags
 my $OutputDirStats = $OutputDir . "stats/";
 
-my $OneFileJSON = $OutputDirWLA."ClipsWLAOneFile.json" ;
-my $StatsFileForRecord = $OutputDirStats . timestamp() . "_ClipsWLAOneFile" . ".json";
+my $OneFileJSON = $OutputDirWLA."ClipsWLAOneFile.json" ; #output file name for whole corpus info in JSON format
+my $OneFileCSV = $OutputDirWLA."ClipsWLAOneFile.csv" ; #output file name for whole corpus info in CSV format
+my $StatsFileForRecord = $OutputDirStats . timestamp() . "_ClipsWLAOneFile" . ".csv";
+my $StatsFileVocab = $OutputDirStats . timestamp() . "_SpintxVocabMetadata" . ".csv";
 
 
 # ---------------------------------------;
@@ -42,6 +44,7 @@ my ($name,$path,$suffix); # name, path and suffix of input file
 my $file; # input file name including path and extention (to be opened by script)
 my $Text; # input file contents
 
+
 # Variables to control initial lines in files to be processed, often special lines
 my (@ALLLINES); # array with all the lines in a file to be processed
 
@@ -60,7 +63,9 @@ my (@WordReadings);
 
 my %HashForJSON; #this is a silly hash used to generate data in JSON format for compatibility with DRUPAL/solr
 my @JSONStringsWholeCorpus; # this is a scalar to store the JSON data at the corpus level printed in a file at the very end of the process
+my @CSVStringsWholeCorpus; # this is a scalar to store the JSON data at the corpus level printed in a file at the very end of the process
 my @JSONStringsWholeFileArray;
+my @CSVStringsWholeFileArray;
 my $VocabListSingleFileForWholeCorpusToPrint = "ClipId\tVocab\n";
 my @ForVocabListSingleFileForWholeCorpus;
 
@@ -256,6 +261,7 @@ foreach $file (@ARGV) {
         
         my $JSONStringsWholeFile;
         my $JSONStringOneLiner;
+        my $CSVStringOneLiner;
         my @RECORDS;
         
         # the following foreach creates a hash that we later convert
@@ -286,10 +292,14 @@ foreach $file (@ARGV) {
             
             # this line encode the info in json format
             $JSONStringOneLiner = encode_json(\%HashForJSON);
-            
+
+            # this line encode the info in CSV format
+            $CSVStringOneLiner = join ("\t",@RECORDS);
+
             # this line adds all the strings in json format in one single array
             # there is one of these arrays for each clip file
             push(@JSONStringsWholeFileArray,$JSONStringOneLiner);
+            push(@CSVStringsWholeFileArray,$CSVStringOneLiner);
 
             # we make sure the @RECORDS array is emptied / initialized after each iteration
             undef @RECORDS;
@@ -331,6 +341,8 @@ foreach $file (@ARGV) {
         foreach $_ (@VocabList){
 
             #each record in the array has the info clip, start and end token id
+            #initially I used a json encoder for perl, but I did not manage that
+            #it respected utf-8 characters so I implemented this maually
             
             @RECORDS = split(/\|/,$_);
             
@@ -358,24 +370,18 @@ foreach $file (@ARGV) {
                     print STDERR "\n";
                 }
                 
-                #$json_text = JSON::XS->new->utf8->encode ($perl_scalar)
-                
-                #            $HashForJSON{'start'} = $RECORDS[2];
-                #            $HashForJSON{'end'} = $RECORDS[2];
-                #            $HashForJSON{'tag'} = "Vocab";
-                #            #$HashForJSON{'type'} = $RECORDS[0].":".$RECORDS[1];
-                #            $HashForJSON{'type'} = utf8->encode ($RECORDS[0].":".$RECORDS[1]);
-                
-                # this line encode the info in json format
-                
-                #            $JSONStringOneLiner = encode_json(\%HashForJSON);
                 $JSONStringOneLiner = "{" . $JSONClip . $JSONTag . $JSONType . $JSONEnd . $JSONStart ."}" ;
+                
+                $CSVStringOneLiner = $RECORDS[3] . "\t" . $RECORDS[2] . "\t" . $RECORDS[2] . "\tVocab:" . $RECORDS[1] . ":" .$RECORDS[0]; 
                 
                 # this line adds all the strings in json format in one single array
                 # there is one of these arrays for each clip file
 
             }
+ 
             push(@JSONStringsWholeFileArray,$JSONStringOneLiner);
+            push(@CSVStringsWholeFileArray,$CSVStringOneLiner);
+            
             # we make sure the @RECORDS array is emptied / initialized after each iteration
             undef @RECORDS;
 
@@ -413,7 +419,12 @@ foreach $file (@ARGV) {
                 # the one file vocab info summary
                 else{
                     
-                    push(@ForVocabListSingleFileForWholeCorpus,$_);
+                    # some dirty splitting and concat operations to
+                    #obtain the output of lemma-tag pair infos in the wished format
+                    my @LemmaTagPairParts = split (/\|/,$_);
+                    my $NewLemmaTagPairParts = $LemmaTagPairParts[1].":".$LemmaTagPairParts[0];
+                    
+                    push(@ForVocabListSingleFileForWholeCorpus,$NewLemmaTagPairParts);
                     
                     if ($DebugLevel > 2) {
                         print STDERR $_ . " : " . $LemmaTypeCounter{$_} ;
@@ -423,6 +434,9 @@ foreach $file (@ARGV) {
             }
         }
         
+        $VocabListSingleFileForWholeCorpusToPrint .= join(",",@ForVocabListSingleFileForWholeCorpus);
+        $VocabListSingleFileForWholeCorpusToPrint .= "\n";
+
         # this prints the list of annotations for one single file in json format
         open (FOUT,">", $OutFile) || warn (" WARNING: Could not open $OutFile.\n") ;
         print FOUT "["; 
@@ -430,17 +444,17 @@ foreach $file (@ARGV) {
         print FOUT "]"; 
         close (FOUT);
         
-
-        $VocabListSingleFileForWholeCorpusToPrint .= join(",",@ForVocabListSingleFileForWholeCorpus);
-        $VocabListSingleFileForWholeCorpusToPrint .= "\n";
         # the following line concatenates each file´s info into a larger array
         # later used to print the one-file-for-the-whole-corpus clip level annotations list
         @JSONStringsWholeCorpus = (@JSONStringsWholeCorpus,@JSONStringsWholeFileArray);
+        
+        @CSVStringsWholeCorpus = (@CSVStringsWholeCorpus,@CSVStringsWholeFileArray);
         
     } #end of if $suffix eq "out"
     
     # we make sure the @JSONStringsWholeFileArray array is emptied / initialized after each iteration
     undef @JSONStringsWholeFileArray;
+    undef @CSVStringsWholeFileArray;
     undef %LemmaTypeCounter;
     undef %LemmaList;
     undef @VocabList;
@@ -454,11 +468,17 @@ open (FOUT,">", $OneFileJSON) || warn (" WARNING: Could not open $OneFileJSON wi
         print FOUT "]"; 
 close (FOUT);
 
-open (FOUT2,">", "SpintxMetadataVocab.csv") || warn (" WARNING: Could not open $OneFileJSON with write permission.\n") ;
+open (FOUT3,">", $OneFileCSV) || warn (" WARNING: Could not open $OneFileCSV with write permission.\n") ; 
+print FOUT3 join("\n",@CSVStringsWholeCorpus); 
+close (FOUT3);
+
+open (FOUT2,">", "SpintxMetadataVocab.csv") || warn (" WARNING: Could not open SpintxMetadataVocab.csv with write permission.\n") ;
 print FOUT2 $VocabListSingleFileForWholeCorpusToPrint; 
 close (FOUT2);
 
-system ("cp -v $OneFileJSON $StatsFileForRecord");
+#system ("cp -v $OneFileJSON $StatsFileForRecord");
+system ("cp -v $OneFileCSV $StatsFileForRecord");
+system ("cp -v SpintxMetadataVocab.csv $StatsFileVocab");
 
 print STDERR "Done!\n";
 

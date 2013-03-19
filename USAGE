@@ -9,20 +9,43 @@ NOTE: before executing any script you need to be sure that the folder
  SPinTX project format for tagged and lemmatized files.
 
 ProcessSPinTX.sh
-  This script executes all the scripts and processess needed to generate:
+----------------
+This script executes all the scripts and processess needed to generate:
    a) the pedagogically annotated files ($SPINTX_HOME/corpus/out)
    b) the clip (or file) level breakdown of occurring pedagogical phenomena
      ($SPINTX_HOME/corpus/stats)
    c) the word level stand-off annotations list in JSON format
      ($SPINTX_HOME/corpus/wla)
 
-   command_line$ ProcessSPinTX.sh all
-    -> executes all process
+ - EXECUTION
+   command_line$ ProcessSPinTX.sh help
+    -> provides a mini help page
    
-   command_line$ ProcessSPinTX.sh
-    -> executes all process but the ttagger2OtherFormats.pl script (see below)
+   command_line$ ProcessSPinTX.sh all
+    -> executes all processess
+
+ - OUTPUT (it has several output files and these can be obtained upon demand,
+   but these are the most useful):
+    
+    WORD LEVEL - one file per clip
+	- *.cg3 files in $SPINTX_HOME/corpus/cg3/ folder
+	  These are the files that are the actual input to the whole process. They are SPinTX tree-tagged files in CG3 format.
+	- *.out files in $SPINTX_HOME/corpus/out/ folder
+	  These are the files that result from applying our CG3-based pedagogical annotation grammar to the *.cg3 files
+	- *.wla.json files in $SPINTX_HOME/corpus/wla folder
+	  These are the files for the visual/activity enhancment of clip transcriptions (or in general texts) in the Corpus to Classroom website of the SPinTX project
+    
+    WORD LEVEL - one file for the whole corpus
+	- ClipsWLAOneFile.csv in $SPINTX_HOME/corpus/wla folder
+	  This is a file that contains the pedagogical annotations for visual/activity enhancement for all the clips in a given corpus
+
+    CLIP LEVEL
+	- SpintxPedagogicalMetadata.csv in $SPINTX_HOME/corpus/out/
+	- SpintxMetadataVocab.csv in $SPINTX_HOME/corpus/out/
+	  The two previous files contain the clip level information (which relates each clip with a given pedagogical phenomenon). The information at the level of vocabulary is separated from the other types of informations because of the way it was originally implemented, not for any fundamental reason.
 
 countPedagogicalFeatures.pl
+
   Execute the following command line to obtain some help:
 
    command_line$ countPedagogicalFeatures.pl -help
