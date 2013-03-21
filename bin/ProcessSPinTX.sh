@@ -51,3 +51,9 @@ if [[ "$1" == "all" ]] || [[ "$1" = "json" ]]; then
   echo "Done!"
 fi
 
+cut -f 2 ${OUTDIR}/SpintxMetadataVocab.tsv > ${OUTDIR}/JustVocabCol.txt
+paste ${OUTDIR}/SpintxPedagogicalMetadata.tsv ${OUTDIR}/JustVocabCol.txt > ${OUTDIR}/ClipMetadataPedagogical.tsv
+
+## split -l 10000 ${CLIPSWLA}/ClipsWLAOneFile.tsv ${CLIPSWLA}/ForTokenTagsPedagogical
+
+

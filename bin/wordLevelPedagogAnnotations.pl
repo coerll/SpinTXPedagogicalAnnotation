@@ -17,9 +17,9 @@ my $OutputDirWLA = $OutputDir . "ClipsWLA/"; #we will dump results in the wla fo
 my $OutputDirStats = $OutputDir . "stats/";
 
 my $OneFileJSON = $OutputDirWLA."ClipsWLAOneFile.json" ; #output file name for whole corpus info in JSON format
-my $OneFileCSV = $OutputDirWLA."ClipsWLAOneFile.csv" ; #output file name for whole corpus info in CSV format
-my $StatsFileForRecord = $OutputDirStats . timestamp() . "_ClipsWLAOneFile" . ".csv";
-my $StatsFileVocab = $OutputDirStats . timestamp() . "_SpintxVocabMetadata" . ".csv";
+my $OneFileCSV = $OutputDirWLA."ClipsWLAOneFile.tsv" ; #output file name for whole corpus info in CSV format
+my $StatsFileForRecord = $OutputDirStats . timestamp() . "_ClipsWLAOneFile" . ".tsv";
+my $StatsFileVocab = $OutputDirStats . timestamp() . "_SpintxVocabMetadata" . ".tsv";
 
 
 # ---------------------------------------;
@@ -294,7 +294,10 @@ foreach $file (@ARGV) {
             $JSONStringOneLiner = encode_json(\%HashForJSON);
 
             # this line encode the info in CSV format
-            $CSVStringOneLiner = join ("\t",@RECORDS);
+            # $CSVStringOneLiner = join ("\t",@RECORDS);
+            # clip_id \t tag \t tag_type \t tt-start \t tt-end
+
+            $CSVStringOneLiner = $RECORDS[0] . "\t" . $PedagogicalTag . "\t" . $PedagogicalType . "\t" . $RECORDS[1] . "\t" . $RECORDS[2];
 
             # this line adds all the strings in json format in one single array
             # there is one of these arrays for each clip file
@@ -372,7 +375,11 @@ foreach $file (@ARGV) {
                 
                 $JSONStringOneLiner = "{" . $JSONClip . $JSONTag . $JSONType . $JSONEnd . $JSONStart ."}" ;
                 
-                $CSVStringOneLiner = $RECORDS[3] . "\t" . $RECORDS[2] . "\t" . $RECORDS[2] . "\tVocab:" . $RECORDS[1] . ":" .$RECORDS[0]; 
+                # clip_id \t tag \t tag_type \t tt-start \t tt-end
+                
+                $CSVStringOneLiner = $RECORDS[3] . "\t" . $RECORDS[1] . ":" . $RECORDS[0] . "\t" . "Vocab" . "\t" . $RECORDS[2] . "\t" . $RECORDS[2];
+
+#                $CSVStringOneLiner = $RECORDS[3] . "\t" . $RECORDS[2] . "\t" . $RECORDS[2] . "\tVocab:" . $RECORDS[1] . ":" .$RECORDS[0]; 
                 
                 # this line adds all the strings in json format in one single array
                 # there is one of these arrays for each clip file
@@ -469,16 +476,19 @@ open (FOUT,">", $OneFileJSON) || warn (" WARNING: Could not open $OneFileJSON wi
 close (FOUT);
 
 open (FOUT3,">", $OneFileCSV) || warn (" WARNING: Could not open $OneFileCSV with write permission.\n") ; 
+print FOUT3 "clip_id"."\t"."tag"."\t"."tag_type"."\t"."tt_start"."\t"."tt_end"; 
+print FOUT3 "\n";
 print FOUT3 join("\n",@CSVStringsWholeCorpus); 
+print FOUT3 "\n";
 close (FOUT3);
 
-open (FOUT2,">", "SpintxMetadataVocab.csv") || warn (" WARNING: Could not open SpintxMetadataVocab.csv with write permission.\n") ;
+open (FOUT2,">", "SpintxMetadataVocab.tsv") || warn (" WARNING: Could not open SpintxMetadataVocab.tsv with write permission.\n") ;
 print FOUT2 $VocabListSingleFileForWholeCorpusToPrint; 
 close (FOUT2);
 
 #system ("cp -v $OneFileJSON $StatsFileForRecord");
 system ("cp -v $OneFileCSV $StatsFileForRecord");
-system ("cp -v SpintxMetadataVocab.csv $StatsFileVocab");
+system ("cp -v SpintxMetadataVocab.tsv $StatsFileVocab");
 
 print STDERR "Done!\n";
 
