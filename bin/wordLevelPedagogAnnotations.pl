@@ -353,7 +353,7 @@ foreach $file (@ARGV) {
             my $JSONStart = "\"start\":". "\"" . $RECORDS[2];
             my $JSONEnd = "\"end\":". "\"" . $RECORDS[2] . "\",";
             my $JSONType = "\"type\":". "\"Vocab\",";
-            my $JSONTag = "\"tag\":". "\"" . $RECORDS[0].":".$RECORDS[1] . "\",";
+            my $JSONTag = "\"tag\":". "\"" . $RECORDS[1].":".$RECORDS[0] . "\","; #order is tag:lemma, e.g., Noun:plato
 
             if ($JSONTag =~ m/.*UNK\:[Adjective|Noun|Vern].*/){
                 next;
@@ -447,7 +447,7 @@ foreach $file (@ARGV) {
         # this prints the list of annotations for one single file in json format
         open (FOUT,">", $OutFile) || warn (" WARNING: Could not open $OutFile.\n") ;
         print FOUT "["; 
-        print FOUT join("\n",@JSONStringsWholeFileArray); 
+        print FOUT join(",",@JSONStringsWholeFileArray); 
         print FOUT "]"; 
         close (FOUT);
         
