@@ -33,17 +33,18 @@ LIST Infinitive = (VLinf);
 LIST PronombrePersonal = (PPX);
 LIST DetAll = (ART); # habrá que refinar la definición 
 LIST Sustantivo = (NC) (NP) (NMEA) (NMON) ;
-LIST LimiteOracionSimple = (CC) (CSUBX) (CSUBF) (CQUE) (CSUBI) ; # habrá que refinar la definición
 LIST Articulo = (ART);
 LIST Conjuncion = (Conjunction);
 SET AdjOrPart = Adj OR Part ;
 SET FiniteVerbFormsOrPart = FiniteVerbForms OR Part ;
-SET GrupoNominal = Sustantivo OR Adj OR DetAll; # habrá que refinar la definición de grupo nominal
 LIST PronPers = (PPX);
 LIST PronPersClitico = (PPC);
 LIST PronPersSE = (SE);
 LIST PalabraEnIngles = (lang:en);
 LIST PalabraEnEspanol = (lang:es);
+
+LIST LimiteOracionSimple = (CC) (CSUBX) (CSUBF) (CQUE) (CSUBI) ; # habrá que refinar la definición
+SET GrupoNominal = Sustantivo OR Adj OR DetAll; # habrá que refinar la definición de grupo nominal
 
 #LATEX\section{Rasgos morfosintácticos}
 ## LIST MORPH FEATURES VERBS
@@ -97,6 +98,7 @@ LIST Dios =("dios");
 LIST SoloAcento =("sólo");
 LIST ElLema = ("el");
 LIST VerboSer = ("ser");
+LIST VerboHablar = ("hablar");
 LIST VerboSerAmbiguoConErar = ("erar|ser"); ## eras, eran, era, eres (no éramos).
 LIST VerboSerAmbiguoConIr = ("ser|ir"); ## fui, fuimos, fue, fuiste...
 LIST VerboEstar = ("estar");
@@ -145,6 +147,11 @@ LIST LosLiteral = ("<los>") ("<Los>") ("<LOS>");
 LIST ElDetLiteral = ("<el>") ("<El>") ("<EL>");
 LIST LaLiteral = ("<la>") ("<LA>") ("<La>");
 LIST LasLiteral = ("<las>") ("<LAS>") ("<Las>");
+
+LIST ElLiteralMayusc = ("<El>");
+LIST PasoLiteralMayusc = ("<Paso>");
+LIST EstadosLiteralMayusc = ("<Estados>");
+LIST UnidosLiteralMayusc = ("<Unidos>");
 
 LIST Todos = ("<todos>") ("<TODOS>") ("<Todos>");
 LIST Modos = ("<modos>") ("<MODOS>") ("<Modos>");
@@ -596,6 +603,19 @@ ADDRELATION (Herit:Contacto:Mixtas) Verbo IF (0 ListaVerbosCorpusParaContactoMix
 ### FITA: no s'està mapejant la info de llengua i per tant la regla anterior no funciona
 ### 02/21/2013
 
+ADDRELATION (Vocab:Entities:Geo) Articulo IF  (0 ("<El>")) TO (1 ("<Paso>"));
+ADDRELATION (Vocab:Entities:Geo) Nombre IF  (0 ("<Estados>")) TO (1 ("<Unidos>"));
+ADDRELATION (Vocab:Entities:Geo) Nombre IF  (0 ("<Ciudad>")) TO (1 ("<Juárez>"));
+#LATEX T: R:Vocab:Entities:Geo
+#LATEX E: \emph{Ciudad Juárez}, \emph{El Paso}, \emph{Estados Unidos}  
+#LATEX D: Reglas para anotar entidades frecuentes en el corpus. En este caso de nombres geográficos.
+
+ADDRELATION (Vocab:Fraseol:VerbPrep) Verbo IF  (0 ("hablar")) TO (*1 Prep BARRIER LimiteOracionSimple OR GrupoNominal OR Verbo);
+ADDRELATION (Vocab:Fraseol:VerbPrep) Verbo IF  (0 ("pensar")) TO (*1 Prep BARRIER LimiteOracionSimple OR GrupoNominal OR Verbo);
+ADDRELATION (Vocab:Fraseol:VerbPrep) Verbo IF  (0 ("empezar")) TO (*1 Prep BARRIER LimiteOracionSimple OR GrupoNominal OR Verbo);
+#LATEX T: R:Vocab:Fraseol:VerbPrep
+#LATEX E: \emph{hablar PREP}, \emph{pensar PREP}, \emph{empezar PREP}  
+#LATEX D: Ahora no se distingue entre usos lexicalizados y usos composicionales (p.e., ``empezar en San Antonio y terminar en Austin'' se trata igual que ``empezé con la tradición en la preparatoria'') 
 ##AFTER-SECTIONS
 
 

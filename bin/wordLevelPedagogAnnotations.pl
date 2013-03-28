@@ -16,9 +16,9 @@ my $OutputDir = $ENV{SPINTX_HOME} . "corpus/ClipTags/";
 my $OutputDirWLA = $OutputDir . "ClipsWLA/"; #we will dump results in the wla folder under corpus/ClipTags
 my $OutputDirStats = $OutputDir . "stats/";
 
-my $OneFileJSON = $OutputDirWLA."ClipsWLAOneFile.json" ; #output file name for whole corpus info in JSON format
-my $OneFileCSV = $OutputDirWLA."ClipsWLAOneFile.tsv" ; #output file name for whole corpus info in CSV format
-my $StatsFileForRecord = $OutputDirStats . timestamp() . "_ClipsWLAOneFile" . ".tsv";
+my $OneFileJSON = $OutputDirWLA."TokenTagsPedagogical.json" ; #output file name for whole corpus info in JSON format
+my $OneFileCSV = $OutputDirWLA."TokenTagsPedagogical.tsv" ; #output file name for whole corpus info in CSV format
+my $StatsFileForRecord = $OutputDirStats . timestamp() . "_TokenTagsPedagogical" . ".tsv";
 my $StatsFileVocab = $OutputDirStats . timestamp() . "_SpintxVocabMetadata" . ".tsv";
 
 
@@ -350,7 +350,7 @@ foreach $file (@ARGV) {
             @RECORDS = split(/\|/,$_);
             
             my $JSONClip = "\"clip\":". "\"" . $RECORDS[3] . "\",";
-            my $JSONStart = "\"start\":". "\"" . $RECORDS[2];
+            my $JSONStart = "\"start\":". "\"" . $RECORDS[2] . "\"";
             my $JSONEnd = "\"end\":". "\"" . $RECORDS[2] . "\",";
             my $JSONType = "\"type\":". "\"Vocab\",";
             my $JSONTag = "\"tag\":". "\"" . $RECORDS[1].":".$RECORDS[0] . "\","; #order is tag:lemma, e.g., Noun:plato
