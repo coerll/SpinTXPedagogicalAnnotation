@@ -47,7 +47,8 @@ my $Lang; #language (now only useful for English fragments in Spanish interviews
 my $InterviewID;
 my ($Tense,$Mood,$Number,$Person,$Gender); #morpho-syntactic features
 my $LangForCGCohort; ## variable to store the format in which the language in which the word is will be printed for a CG-like reading (lang:LANGUAGE, e.g., lang:es and lang:en for Spanish and English)
-my ($ClipId,$WordId,$TranscriptLineId); # localization indexes to be compatible with other annotating modules within SPinTX
+my ($WordId,$TranscriptLineId); # removed $ClipId on Apr 1 2013
+#my ($ClipId,$WordId,$TranscriptLineId); # localization indexes to be compatible with other annotating modules within SPinTX
 my @ListOfAllTokenInfos; # a list I created for convenience in handling them when passed to subroutines
 
 # ---------------------------------------;
@@ -198,25 +199,25 @@ foreach $file (@ARGV) {
             foreach $_ (@line){
                 $_ =~ s/ /_/ig;
             } 
-            $ClipId = $line[0]; #word added from Jan 2013 on
-            $WordId = $line[1]; #lemma added from Jan 2013 on
-            $word = $line[2]; #word
-            $lemma = $line[5]; #lemma
-            $POSTag = $line[3]; #pos
-            $SimplePOSTag = $line[4]; #puncutation
+            # $ClipId = $line[0]; #added from Jan 2013 on // on Apr 1 changed format and now not included as file name
+            $WordId = "tt-".$line[0]; #lemma added from Jan 2013 on
+            $word = $line[1]; #word
+            $lemma = $line[4]; #lemma
+            $POSTag = $line[2]; #pos
+            $SimplePOSTag = $line[3]; #puncutation
             #$punct = $line[6]; #puncutation #As of March 5 punctuation is no longer a property of the token but a token in itself
-            $Speaker = $line[6]; #speaker
-            $StartTime = $line[7]; #starting time in video clip
-            $EndTime = $line[8]; #ending time in video clip
-            $TranscriptLineId = $line[9]; #Line Id added from Jan 2013 on
+            $Speaker = $line[5]; #speaker
+            $StartTime = $line[6]; #starting time in video clip
+            $EndTime = $line[7]; #ending time in video clip
+            $TranscriptLineId = $line[8]; #Line Id added from Jan 2013 on
             $TranscriptLineId = "SRTLine" . $TranscriptLineId;
-            $Lang = $line[10]; #language (now only useful for English fragments in Spanish interviews in SPinTX)
-            $InterviewID = $line[11]; #as of March 5 interview ID is added as a token property
-            $Tense = $line[12]; #tense for verbs
-            $Mood = $line[13]; #mood for verbs
-            $Number = $line[14]; #number
-            $Person = $line[15]; #person
-            $Gender = $line[16]; #gender
+            $Lang = $line[9]; #language (now only useful for English fragments in Spanish interviews in SPinTX)
+            $InterviewID = $line[10]; #as of March 5 interview ID is added as a token property
+            $Tense = $line[11]; #tense for verbs
+            $Mood = $line[12]; #mood for verbs
+            $Number = $line[13]; #number
+            $Person = $line[14]; #person
+            $Gender = $line[15]; #gender
             
             if ($lemma eq "<unknown>") {
                 $lemma = "UNK";
@@ -269,7 +270,9 @@ foreach $file (@ARGV) {
             $LangForCGCohort = "lang:".$Lang;
             # for convenience (in calling some subroutines later
             # we put all token level infos in list but in my preferred order
-            @ListOfAllTokenInfos = ($word, $lemma, $POSTag, $SimplePOSTag, $punct, $Tense, $Mood, $Number, $Person, $Gender, $LangForCGCohort, $StartTime, $EndTime, $WordId, $ClipId);
+            @ListOfAllTokenInfos = ($word, $lemma, $POSTag, $SimplePOSTag, $punct, $Tense, $Mood, $Number, $Person, $Gender, $LangForCGCohort, $StartTime, $EndTime, $WordId,$InterviewID);
+            #, $ClipId);
+            # removed on Apr 1 2013
             
             #debug line
             if ($DebugLevel > 4) {
