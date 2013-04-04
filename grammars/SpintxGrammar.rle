@@ -42,6 +42,10 @@ LIST PronPersClitico = (PPC);
 LIST PronPersSE = (SE);
 LIST PalabraEnIngles = (lang:en);
 LIST PalabraEnEspanol = (lang:es);
+LIST Pasado = (Past); #only for subjunctive (?)
+LIST Presente = (Pres);
+
+LIST Subjuntivo = (Subj);
 
 LIST LimiteOracionSimple = (CC) (CSUBX) (CSUBF) (CQUE) (CSUBI) ; # habrá que refinar la definición
 SET GrupoNominal = Sustantivo OR Adj OR DetAll; # habrá que refinar la definición de grupo nominal
@@ -187,6 +191,9 @@ SUBSTITUTE ("ranchar" Verb VLfin Pres Indi Sing 1st) ("rancho" Noun NC Singular 
 #LATEX T: Cambia Verb VLfin Pres Indi Sing 1st por Noun NC Singular Masculine en la palabra ``rancho''.
 #LATEX E: \emph{rancho} 
 #LATEX D: Lo hace de forma indiscriminada. Quizá en el futuro habrá que cambiarla, refinarla.
+
+SUBSTITUTE ("dicho" Determiner QU) ("decir" Verbo VLadj) TARGET ("dicho");
+SUBSTITUTE ("oír" Verb VLfin Pres Subj Sing 1st_or_3rd) ("oír" Verb VLfin Pres Indi_Command Sing 2nd_3rd) TARGET ("oír");
 
 
 #LATEX\part{Secciones principales}
@@ -349,7 +356,7 @@ ADD (@Gram:Pron:Otros) PronPersSE (0 SeLiteral) (NOT 0 GramPron) (NOT 1 FiniteVe
 ## SECTION -- RULES TO ADD PAST TENSE RELATED INFORMTATION
 #LATEX\chapter{Formas verbales conjugadas}
 
-#LATEX\section{Formas verbales para tiempos pretéritos}
+#LATEX\section{Formas verbales para tiempos de indicativo}
 
 #LATEX\subsection{Pretérito imperfecto}
 # PRETÉRTIO IMPERFECTO
@@ -369,7 +376,7 @@ ADD (@Gram:Indefinido) FiniteVerbForms IF (0 FiniteVerbForms + PretPerfSimple) (
 
 #LATEX\subsubsection{Pretérito perfecto perifrástico o compuesto}
 # PRETÉRTIO PERFECTO PERIFRÁSTICO
-ADDRELATION (Gram:PerfPerif) FiniteVerbForms (0 Haber + FiniteVerbForms) TO (1 Part);
+ADDRELATION (Gram:PerfPerif) FiniteVerbForms (0 Haber + FiniteVerbForms + Presente) (NOT 0 Subjuntivo) TO (1 Part);
 #LATEX T: Asigna R:Gram:PerfPerif a la forma del verbo HABER
 #LATEX E: \emph{ha cantado, ha corrido, ha andado dormido} (cualquier ocurrencia)
 #LATEX D: Requiere una forma finita de HABER seguida de un participio
@@ -430,6 +437,15 @@ ADDRELATION (Gram:Gustar:Otros) Part (0 Sorprender-Like) TO (*-1 LeLema BARRIER 
 #LATEX T: Asigna Gram:Gustar:Otros (antes era Gram:ExpresarSorpresas:Ajenas) a la forma de HABER
 #LATEX E: ¿Hay alguna palabra mexicana que \emph{le haya sorprendido}?
 #LATEX D: [Espacio para describir con palabras lo que hace la regla.]
+
+#LATEX\section{Formas verbales para tiempos de subjuntivo}
+ADD (@Gram:MSub:Pres) Verbo IF (0 Presente + Subjuntivo) (NOT -1 De) (NOT 1 Part);
+ADD (@Gram:MSub:Pret) FiniteVerbForms IF (0 Verbo + Pasado + Subjuntivo) (NOT -1 De) (NOT 1 Part);
+ADDRELATION (Gram:MSub:Pres) FiniteVerbForms (0 Haber + Verbo + Presente + Subjuntivo) (NOT -1 De) TO (1 Part);
+ADDRELATION (Gram:MSub:Pret) FiniteVerbForms (0 Haber + Verbo + Pasado + Subjuntivo) (NOT -1 De) TO (1 Part);
+#LATEX T: Asigna Gram:MSub:Pres a verbos en presente o pretérito de subjuntivo
+#LATEX E: ¿Hay alguna palabra mexicana que \emph{le haya sorprendido}?
+#LATEX D: No se aplica si la forma verbal no esta precedida por una "de" para evitar formas incorrectamente marcadas como subjuntivo por el tagging básico. Si se trata de una forma compuesta, es decir, HABER + PART, se marca todo como tal.
 
 ## SECTION -- RULES TO ADD PAST GUSTAR AND SIMILAR VERBS
 #LATEX\section{Verbos auxiliares}
