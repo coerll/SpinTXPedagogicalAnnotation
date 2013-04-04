@@ -362,7 +362,7 @@ ADD (@Gram:Imperf) FiniteVerbForms IF (0 FiniteVerbForms + PretImperfSimple) (NO
 
 #LATEX\subsubsection{Pretérito perfecto simple}
 # PRETÉRTIO PERFECTO SIMPLE
-ADD (@Gram:PretPerf) FiniteVerbForms IF (0 FiniteVerbForms + PretPerfSimple) (NOT 0 Haber) ;
+ADD (@Gram:Indefinido) FiniteVerbForms IF (0 FiniteVerbForms + PretPerfSimple) (NOT 0 Haber) ;
 #LATEX T: Asigna @Gram:PretPerf.
 #LATEX E: \emph{cantó, corrió, anduvo, partió} (cualquier ocurrencia)
 #LATEX D: Requiere una forma identificada como pretérito perfecto simple que no sea del verbo haber (auxiliar).
@@ -406,28 +406,28 @@ ADDRELATION (Gram:Gustar:Ajenos) FiniteVerbForms (0 Gustar-Like + 3aPersAmbig) T
 #LATEXDOCU Veáse \url{http://dev.coerll.utexas.edu/spanishtx/spe/html/adv13.html}.
 #LATEX\subsection{Usos de \emph{sorprender}}
 
-ADDRELATION (Gram:ExpresarSorpresas:Propias) FiniteVerbForms (0 Sorprender-Like + 3aPersAmbig) TO (-1 Yo);
-#LATEX T: Asigna Gram:ExpresarSorpresas:Propias a la forma de SORPRENDER
+ADDRELATION (Gram:Gustar:Otros) FiniteVerbForms (0 Sorprender-Like + 3aPersAmbig) TO (-1 Yo);
+#LATEX T: Asigna Gram:Gustar:Otros (Gram:ExpresarSorpresas:Propias) a la forma de SORPRENDER
 #LATEX E: Siempre \emph{me sorprende} su forma de hablar.
 #LATEX D: [Espacio para describir con palabras lo que hace la regla.]
 
-ADDRELATION (Gram:ExpresarSorpresas:Interlocutor) FiniteVerbForms (0 Sorprender-Like + 3aPersAmbig) TO (-1 Tu);
-#LATEX T: Asigna Gram:ExpresarSorpresas:Interlocutor a la forma de SORPRENDER
+ADDRELATION (Gram:Gustar:Otros) FiniteVerbForms (0 Sorprender-Like + 3aPersAmbig) TO (-1 Tu);
+#LATEX T: Asigna Gram:Gustar:Otros (antes era Gram:ExpresarSorpresas:Interlocutor) a la forma de SORPRENDER
 #LATEX E: ¿Y \emph{te sorprende} su forma de hablar?
 #LATEX D: [Espacio para describir con palabras lo que hace la regla.]
 
-ADDRELATION (Gram:ExpresarSorpresas:Interlocutor) Part (0 Sorprender-Like) TO (*-1 Tu BARRIER GrupoNominal OR LimiteOracionSimple LINK 1 Haber + 3aPersAmbig);
-#LATEX T: Asigna Gram:ExpresarSorpresas:Interlocutor a la forma de HABER
+ADDRELATION (Gram:Gustar:Otros) Part (0 Sorprender-Like) TO (*-1 Tu BARRIER GrupoNominal OR LimiteOracionSimple LINK 1 Haber + 3aPersAmbig);
+#LATEX T: Asigna Gram:Gustar:Otros (antes era Gram:ExpresarSorpresas:Interlocutor) a la forma de HABER
 #LATEX E: ¿Hay alguna palabra mexicana que \emph{te haya sorprendido}?
 #LATEX D: [Espacio para describir con palabras lo que hace la regla.]
 
-ADDRELATION (Gram:ExpresarSorpresas:Ajenas) FiniteVerbForms (0 Sorprender-Like + 3aPersAmbig) TO (-1 LeLema);
-#LATEX T: Asigna Gram:ExpresarSorpresas:Ajenas a la forma de SORPRENDER
+ADDRELATION (Gram:Gustar:Otros) FiniteVerbForms (0 Sorprender-Like + 3aPersAmbig) TO (-1 LeLema);
+#LATEX T: Asigna Gram:Gustar:Otros (antes era Gram:ExpresarSorpresas:Ajenas) a la forma de SORPRENDER
 #LATEX E: ¿Y \emph{le sorprende} su forma de hablar?
 #LATEX D: [Espacio para describir con palabras lo que hace la regla.]
 
-ADDRELATION (Gram:ExpresarSorpresas:Ajenas) Part (0 Sorprender-Like) TO (*-1 LeLema BARRIER GrupoNominal OR LimiteOracionSimple LINK 1 Haber + 3aPersAmbig);
-#LATEX T: Asigna Gram:ExpresarSorpresas:Ajenas a la forma de HABER
+ADDRELATION (Gram:Gustar:Otros) Part (0 Sorprender-Like) TO (*-1 LeLema BARRIER GrupoNominal OR LimiteOracionSimple LINK 1 Haber + 3aPersAmbig);
+#LATEX T: Asigna Gram:Gustar:Otros (antes era Gram:ExpresarSorpresas:Ajenas) a la forma de HABER
 #LATEX E: ¿Hay alguna palabra mexicana que \emph{le haya sorprendido}?
 #LATEX D: [Espacio para describir con palabras lo que hace la regla.]
 
@@ -572,7 +572,7 @@ ADDRELATION (Prag:MarcadoresDisc:Igualdad) No TO (1 SoloAcento);
 #LATEX E: porque uno \emph{no sólo} puede ayudar en el aspecto de inglés pero en el aspecto del español también
 #LATEX D: [Espacio para describir con palabras lo que hace la regla.]
 
-ADDRELATION (Prag:MarcadoresDisc:NoTipificado) Tal TO (1 Vez);
+ADDRELATION (Prag:MarcadoresDisc:Igualdad) Tal TO (1 Vez);
 #LATEX T: R:Prag:MarcadoresDisc:NoTipificado
 #LATEX E: noto que \emph{tal vez} sus hijos hablan el spanglish más unos más que otros
 #LATEX D: [Espacio para describir con palabras lo que hace la regla.]
