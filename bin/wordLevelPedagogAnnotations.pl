@@ -62,6 +62,7 @@ my (@WordReadings);
 ##my (@OneWordAnnotations,@MultiWordAnnotations,@CompletionInfo);
 
 my %HashForJSON; #this is a silly hash used to generate data in JSON format for compatibility with DRUPAL/solr
+my %HashForJSONTwoLevels; #this is a silly hash used to generate data in JSON format for compatibility with DRUPAL/solr
 my @JSONStringsWholeCorpus; # this is a scalar to store the JSON data at the corpus level printed in a file at the very end of the process
 my @CSVStringsWholeCorpus; # this is a scalar to store the JSON data at the corpus level printed in a file at the very end of the process
 my @JSONStringsWholeFileArray;
@@ -262,6 +263,8 @@ foreach $file (@ARGV) {
         my $JSONStringsWholeFile;
         my $JSONStringOneLiner;
         my $CSVStringOneLiner;
+        my $JSONStringOneLinerTwoLevels;
+        my $CSVStringOneLinerTwoLevels;
         my @RECORDS;
         
         # the following foreach creates a hash that we later convert
@@ -275,8 +278,12 @@ foreach $file (@ARGV) {
             $HashForJSON{'start'} = $RECORDS[1];
             $HashForJSON{'end'} = $RECORDS[2];
 
+            $HashForJSONTwoLevels{'clip'} = $RECORDS[0];
+            $HashForJSONTwoLevels{'start'} = $RECORDS[1];
+            $HashForJSONTwoLevels{'end'} = $RECORDS[2];
+
             my $TempLabel = $RECORDS[3];
-            my ($PedagogicalType, $PedagogicalTag);
+            my ($PedagogicalType, $PedagogicalTag, $PedagogicalTagLeft, $PedagogicalTagRight);
             
             # the Hierarchy tag has to be split: the first level is internally called
             # type, and the second and optionally the third are called tag (and are printed 
@@ -286,24 +293,63 @@ foreach $file (@ARGV) {
                 $PedagogicalType = $1;
                 $PedagogicalTag = $2;
             }
+
+            if ($PedagogicalTag =~ m/^([^:]+):(.+)$/ig){
+                $PedagogicalTagLeft = $1;
+                $PedagogicalTagRight = $2;
+            }
+            else{
+                $PedagogicalTagLeft = $PedagogicalTag;
+                $PedagogicalTagRight = "";
+            }
             
             $HashForJSON{'type'} = $PedagogicalType;
-            $HashForJSON{'tag'} = $PedagogicalTag;
+            $HashForJSON{'tag'} = $PedagogicalTagLeft;
             
+
+            $HashForJSONTwoLevels{'type'} = $PedagogicalType;
+            
+            if ($PedagogicalTagRight eq "") {
+                $HashForJSONTwoLevels{'tag'} = $PedagogicalTagLeft;
+            }
+            else{
+                $HashForJSONTwoLevels{'tag'} = $PedagogicalTagLeft . ":" . $PedagogicalTagRight;
+            }
+
             # this line encode the info in json format
             $JSONStringOneLiner = encode_json(\%HashForJSON);
+            $JSONStringOneLinerTwoLevels = encode_json(\%HashForJSONTwoLevels);
+
 
             # this line encode the info in CSV format
             # $CSVStringOneLiner = join ("\t",@RECORDS);
             # clip_id \t tag \t tag_type \t tt-start \t tt-end
 
-            $CSVStringOneLiner = $RECORDS[0] . "\t" . $PedagogicalTag . "\t" . $PedagogicalType . "\t" . $RECORDS[1] . "\t" . $RECORDS[2];
+            $CSVStringOneLiner = $RECORDS[0] . "\t" . $PedagogicalTagLeft . "\t" . $PedagogicalType . "\t" . $RECORDS[1] . "\t" . $RECORDS[2];
+
+            if ($PedagogicalTagRight eq "") {
+                $CSVStringOneLinerTwoLevels = $RECORDS[0] . "\t" . $PedagogicalTagLeft . "\t" . $PedagogicalType . "\t" . $RECORDS[1] . "\t" . $RECORDS[2];
+            }
+            else{
+                $CSVStringOneLinerTwoLevels = $RECORDS[0] . "\t" . $PedagogicalTagLeft . ":" . $PedagogicalTagRight . "\t" . $PedagogicalType . "\t" . $RECORDS[1] . "\t" . $RECORDS[2];
+            }
+
 
             # this line adds all the strings in json format in one single array
             # there is one of these arrays for each clip file
-            push(@JSONStringsWholeFileArray,$JSONStringOneLiner);
-            push(@CSVStringsWholeFileArray,$CSVStringOneLiner);
 
+            if ($PedagogicalTagRight eq "") {
+                push(@JSONStringsWholeFileArray,$JSONStringOneLiner);
+                push(@CSVStringsWholeFileArray,$CSVStringOneLiner);
+            }
+            else{
+                push(@JSONStringsWholeFileArray,$JSONStringOneLiner);
+                push(@CSVStringsWholeFileArray,$CSVStringOneLiner);
+                push(@JSONStringsWholeFileArray,$JSONStringOneLinerTwoLevels);
+                push(@CSVStringsWholeFileArray,$CSVStringOneLinerTwoLevels);
+            }
+
+            
             # we make sure the @RECORDS array is emptied / initialized after each iteration
             undef @RECORDS;
 
