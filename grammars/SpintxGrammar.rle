@@ -323,22 +323,22 @@ ADD (@Gram:Pron:Sujeto) PronPersFuerte;
 #LATEX D: La ocurrencia de uno de ellos
 
 #LATEX\section{Pronombres de objeto directo o complemento atributivo}
-ADD (@Gram:Pron:ObjetoDirecto) ElLema IF (NOT -1 Prep) (0 Articulo) (1 FiniteVerbForms) ;
-#LATEX T: Asigna @Gram:Pron:ObjetoDirecto
+ADD (@Gram:Pron:Objeto) ElLema IF (NOT -1 Prep) (0 Articulo) (1 FiniteVerbForms) ;
+#LATEX T: Asigna @Gram:Pron:Objeto
 #LATEX E: mí nunca me \emph{la} hicieron pero que estabamos
 #LATEX D: \emph{lo, la, los, las} VERBO CONJUGADO
 
 #LATEX\section{Pronombres de objeto directo, indirecto, o posesivos}
-ADD (@Gram:Pron:DirIndirOPoses) PronPers IF (0 PronombreDeObjetoNoAmbiguos);
-#LATEX T: Asigna @Gram:Pron:DirIndirOPoses
+ADD (@Gram:Pron:Objeto) PronPers IF (0 PronombreDeObjetoNoAmbiguos);
+#LATEX T: Asigna @Gram:Pron:Objeto
 #LATEX E: \emph{me, te, os, nos} (cualquier ocurrencia)
 #LATEX D: La ocurrencia de uno de ellos.
 
-#LATEX\section{Pronombres de objeto indirecto o posesivos}
-ADD (@Gram:Pron:IndirectoOPoses) PronPersClitico IF (0 LeLema);
-#LATEX T: Asigna @Gram:Pron:IndirectoOPoses
+#LATEX\section{Pronombres de objeto indirecto}
+ADD (@Gram:Pron:Objeto) PronPersClitico IF (0 LeLema);
+#LATEX T: Asigna @Gram:Pron:Objeto
 #LATEX E: \emph{le, les}
-#LATEX D: La ocurrencia de uno de ellos. El pronombre ``le'' es posesivo cuando hace referencia a usted, o ustedes en su forma en plural
+#LATEX D: La ocurrencia de uno de ellos.
 
 #LATEX\section{Pronombres de objeto doble}
 ADDRELATION (Gram:Pron:ObjetoDoble) PronPers (0 PronombreDeObjetoNoAmbiguos) TO (1 ElLema + Articulo);
