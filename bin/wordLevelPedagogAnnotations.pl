@@ -401,7 +401,7 @@ foreach $file (@ARGV) {
             my $JSONType = "\"type\":". "\"Vocab\",";
             my $JSONTag = "\"tag\":". "\"" . $RECORDS[1].":".$RECORDS[0] . "\","; #order is tag:lemma, e.g., Noun:plato
 
-            if ($JSONTag =~ m/.*UNK\:[Adjective|Noun|Vern].*/){
+            if ($JSONTag =~ m/.*UNK\:[Adjective|Noun|Verb].*/){
                 next;
             }
             else{
@@ -549,6 +549,7 @@ sub ProcessReadingsForPreviousWord {
     my @AllLemmaAnnotations;
     my $ClipId;
     my $TTId;
+    my $IDToRemoveFromVocabListFromUnigrams = "EMPTY";
     
     # variables used while processing the different readings
     my $AnnotationRecord;
@@ -588,8 +589,50 @@ sub ProcessReadingsForPreviousWord {
             print STDERR "clipID: " . $ClipId . "\n";
         }
         
-        unless ($POSTag eq "Punct") {
-            $LemmaList{$Lemma."|".$POSTag."|".$TTId."|".$ClipId}++;
+        #This filter is to exclude punctuation from the list of unigram lemmas that will be part of the vocabulary tab in the transcript
+        if ($POSTag eq "Punctuation") {
+            if ($DebugLevel > 2) {
+                print STDERR "punct token, reading ignored\n";
+                print STDERR $Reading;
+                print STDERR "\n";
+            }
+        }
+        elsif ($Reading =~ m/R\:Vocab/) {
+            if ($DebugLevel > 2) {
+                print STDERR "bigram vocab token, reading ignored\n";
+                print STDERR $Reading;
+                print STDERR "\n";
+            }
+            $IDToRemoveFromVocabListFromUnigrams = $Reading;
+            #            $IDToRemoveFromVocabListFromUnigrams =~ s/([0-9]+)/$1/ig;
+            if ($Reading =~ m/R:[^0-9]*\:([0-9]+)/) {
+                $IDToRemoveFromVocabListFromUnigrams = $1;
+            }
+            $IDToRemoveFromVocabListFromUnigrams = "ID:".$IDToRemoveFromVocabListFromUnigrams;
+            print STDERR "ID to be removed from one-word vocab list\n";
+            print STDERR $IDToRemoveFromVocabListFromUnigrams;
+            print STDERR "\n";
+            # TO DO: recollir el ID number de la relació del token exclòs i usar-lo per excloure també l'altre token (només funcionarà per bigrames no per tri-grames i superiors)
+        }
+        else {
+            if ($Reading =~ m/$IDToRemoveFromVocabListFromUnigrams/) {
+                if ($DebugLevel > 2) {
+                    print STDERR "token excluded in vocab list because it belongs to bi- or plusgram vocab token\n";
+                    print STDERR $Reading;
+                    print STDERR "\n";
+                }
+                $IDToRemoveFromVocabListFromUnigrams = "EMPTY";
+            }
+            else {
+                if ($DebugLevel > 2) {
+                    print STDERR "token included in vocab list\n";
+                    print STDERR $Reading;
+                    print STDERR "\n";
+                }
+                $LemmaList{$Lemma."|".$POSTag."|".$TTId."|".$ClipId}++;
+            }
+
+            
         }
         
         if ($Reading =~ m/(@|R|ID:)/) {
@@ -644,6 +687,7 @@ sub ProcessReadingsForPreviousWord {
         print STDERR "\n";
     }
 
+    #print STDERR @ResultingAnnotationRecords."\n"."\n".@PendingAnnotationRecords."\n"."\n".@MultiwordRecordCompletionInfo;
     
     return (@ResultingAnnotationRecords,@PendingAnnotationRecords,@MultiwordRecordCompletionInfo);
 }

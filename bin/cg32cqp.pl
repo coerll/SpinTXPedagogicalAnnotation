@@ -51,6 +51,8 @@ my %LemmaList;
 my %LemmaTypeCounter;
 my $BooleanInWord = "FALSE";
 my (@WordReadings);
+my @ProcessedInfoReadings;
+
 ##my (@OneWordAnnotations,@MultiWordAnnotations,@CompletionInfo);
 
 my %HashForJSON; #this is a silly hash used to generate data in JSON format for compatibility with DRUPAL/solr
@@ -172,7 +174,9 @@ foreach $file (@ARGV) {
                         print STDERR "DL3: Previous one will be processed before going on.\n";
                     }
                  
-                    &ProcessReadingsForPreviousWord(@WordReadings);
+                    @ProcessedInfoReadings = &ProcessReadingsForPreviousWord(@WordReadings);
+                    $ToPrint .= join ("\t",@ProcessedInfoReadings);
+                    $ToPrint .= "\n";
                     $BooleanInWord = "FALSE";
                     undef @WordReadings;
                 }
@@ -181,16 +185,17 @@ foreach $file (@ARGV) {
             }
             
             #FITA: start here next working day
-            elsif ($CG3Line =~ m/^\"<.*>\"$/ & $BooleanInWord eq "FALSE"){
+            elsif ($CG3Line =~ m/^\"<(.*)>\"$/ & $BooleanInWord eq "FALSE"){
                 if ($DebugLevel > 2) {
                     print STDERR "DL3: Current line is word form.\n";
                     print STDERR "DL3: Line number: " . $FileLineCounter . "\n";
                 }
                 $BooleanInWord = "TRUE";
-                next;
+#                @Cohort = $1;
+                $ToPrint .= $1 . "\n";
             }
             
-            elsif ($CG3Line =~ m/^\"<.*>\"$/ & $BooleanInWord eq "TRUE"){
+            elsif ($CG3Line =~ m/^\"<(.*)>\"$/ & $BooleanInWord eq "TRUE"){
 
                 if ($DebugLevel > 2) {
                     print STDERR "DL3: Current line is new word.\n";
@@ -200,6 +205,7 @@ foreach $file (@ARGV) {
                 if (scalar(@WordReadings) == 0)
                 {
                     $BooleanInWord = "FALSE";
+                    $ToPrint .= $1 . "\n";
                 }
                 else{
                     
@@ -207,8 +213,12 @@ foreach $file (@ARGV) {
                         print STDERR "DL3: Previous one will be processed before going on.\n";
                     }
 
-                    &ProcessReadingsForPreviousWord(@WordReadings);
+#                    &ProcessReadingsForPreviousWord(@WordReadings);
+                    @ProcessedInfoReadings = &ProcessReadingsForPreviousWord(@WordReadings);
+                    $ToPrint .= join ("\t",@ProcessedInfoReadings);
+                    $ToPrint .= "\n";
                     $BooleanInWord = "FALSE";
+                    $ToPrint .= $1 . "\n";
                     undef @WordReadings;
                 }
                 next;
@@ -255,6 +265,10 @@ sub ProcessReadingsForPreviousWord {
     foreach my $Reading (@ReadingsToBeProcessed) {
         
         @AllItemsInReading = split(/ /,$Reading);
+        
+        if ($AllItemsInReading[0] =~ m/\"([^\"]+)\"/) {
+            $AllItemsInReading[0] = $1;
+        } 
     
     }
     
