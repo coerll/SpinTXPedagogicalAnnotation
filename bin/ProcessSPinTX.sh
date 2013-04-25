@@ -51,8 +51,13 @@ if [[ "$1" == "all" ]] || [[ "$1" = "json" ]]; then
   echo "Done!"
 fi
 
-cut -f 2 ${OUTDIR}/SpintxMetadataVocab.tsv > ${OUTDIR}/JustVocabCol.txt
-paste ${OUTDIR}/SpintxPedagogicalMetadata.tsv ${OUTDIR}/JustVocabCol.txt > ${OUTDIR}/ClipMetadataPedagogical.tsv
+cut -f 2 ${OUTDIR}/SpintxMetadataVocab.tsv > ${OUTDIR}/JustVocabColUnigram.txt
+cut -f 5 ${OUTDIR}/SpintxPedagogicalMetadata.tsv > ${OUTDIR}/JustVocabColNgram.txt
+cut -f 1-4 ${OUTDIR}/SpintxPedagogicalMetadata.tsv > ${OUTDIR}/AllButVocab.txt
+paste -d \, ${OUTDIR}/JustVocabColNgram.txt ${OUTDIR}/JustVocabColUnigram.txt > ${OUTDIR}/JustVocabColALL.txt
+paste ${OUTDIR}/AllButVocab.txt ${OUTDIR}/JustVocabColALL.txt > ${OUTDIR}/ClipMetadataPedagogical-DRAFT.tsv
+cat ${OUTDIR}/ClipMetadataPedagogical-DRAFT.tsv | sed 's/Vocab,Vocab/Vocab/g' > ${OUTDIR}/ClipMetadataPedagogical-DRAFT2.tsv
+perl -pe  's/\t,/\t/g' < ${OUTDIR}/ClipMetadataPedagogical-DRAFT2.tsv > ${OUTDIR}/ClipMetadataPedagogical.tsv
 
 ## split -l 10000 ${CLIPSWLA}/ClipsWLAOneFile.tsv ${CLIPSWLA}/ForTokenTagsPedagogical
 

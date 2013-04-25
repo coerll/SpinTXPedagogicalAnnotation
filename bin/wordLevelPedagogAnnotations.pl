@@ -609,9 +609,11 @@ sub ProcessReadingsForPreviousWord {
                 $IDToRemoveFromVocabListFromUnigrams = $1;
             }
             $IDToRemoveFromVocabListFromUnigrams = "ID:".$IDToRemoveFromVocabListFromUnigrams;
-            print STDERR "ID to be removed from one-word vocab list\n";
-            print STDERR $IDToRemoveFromVocabListFromUnigrams;
-            print STDERR "\n";
+            if ($DebugLevel > 2) {
+                print STDERR "ID to be removed from one-word vocab list\n";
+                print STDERR $IDToRemoveFromVocabListFromUnigrams;
+                print STDERR "\n";
+            }
             # TO DO: recollir el ID number de la relació del token exclòs i usar-lo per excloure també l'altre token (només funcionarà per bigrames no per tri-grames i superiors)
         }
         else {

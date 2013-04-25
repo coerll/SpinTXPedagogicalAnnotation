@@ -239,7 +239,7 @@ foreach my $key (sort (keys(%FeatureCounterAllFiles))){
 print STDOUT "\n";
 
 open (FOUT,">SpintxPedagogicalMetadata.tsv");
-print FOUT "ClipId\tGram\tPrag\tHerit\n";
+print FOUT "ClipId\tGram\tPrag\tHerit\tVocab\n";
 print FOUT $ToPrintAtTheEndIncremental;
 close (FOUT);
 
@@ -263,7 +263,7 @@ sub PrintDataForFile {
         #$PrintToReturnForOneFileInfo .= "," . $key . "," . $HashWithCounts{$key};
     }
 
-    my (@TempSortedArray,@GramTagsForOneFileInfo,@PragTagsForOneFileInfo,@HeritTagsForOneFileInfo);
+    my (@TempSortedArray,@GramTagsForOneFileInfo,@PragTagsForOneFileInfo,@HeritTagsForOneFileInfo,@VocabTagsForOneFileInfo);
     my $MainCategory = "";
     @TempSortedArray = sort keys(%HashWithCounts);
     
@@ -291,9 +291,17 @@ sub PrintDataForFile {
             $MainCategory = "Herit";
             push(@HeritTagsForOneFileInfo,$2);
         } #KKK
+        elsif ($t eq "\@Vocab" | $t eq "R:Vocab") {
+            $MainCategory = "Vocab";
+            next;
+        }
+        elsif ($t =~ m/^(@|R:)Vocab:(.*)$/ & $MainCategory eq "Vocab") {
+            $MainCategory = "Vocab";
+            push(@VocabTagsForOneFileInfo,$2);
+        } #KKK
     }
 
-    $PrintToReturnForOneFileInfo .= join (",",@GramTagsForOneFileInfo) . "\t" . join (",",@PragTagsForOneFileInfo) . "\t" . join (",",@HeritTagsForOneFileInfo);
+    $PrintToReturnForOneFileInfo .= join (",",@GramTagsForOneFileInfo) . "\t" . join (",",@PragTagsForOneFileInfo) . "\t" . join (",",@HeritTagsForOneFileInfo). "\t" . join (",",@VocabTagsForOneFileInfo);
         
     $PrintToReturn .= "\n";
     $PrintToReturnForOneFileInfo .= "\n";
