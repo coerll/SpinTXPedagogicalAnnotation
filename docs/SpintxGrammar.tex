@@ -332,7 +332,7 @@ Veáse \url{http://dev.coerll.utexas.edu/spanishtx/spe/html/adv11.html}.
 \item DESC.:  D: Requiere una forma identificada como pretérito perfecto simple que no sea del verbo haber (auxiliar).
 \end{itemize}
 
-\subsubsection{Pretérito perfecto perifrástico o compuesto}
+\subsubsection{Pretérito perfecto perifrástico o compuesto}\label{sec:HaberAuxPretPerfecto}
 \paragraph*{Rule}
 \fbox{
 \parbox{.9\linewidth}{\texttt{ADDRELATION (Gram:PerfPerif) FiniteVerbForms (0 Haber + FiniteVerbForms + Presente) (NOT 0 Subjuntivo) TO (1 Part);}}
@@ -469,18 +469,18 @@ Veáse \url{http://dev.coerll.utexas.edu/spanishtx/spe/html/adv13.html}.
 \item DESC.:  D: No se aplica si la forma verbal no esta precedida por una "de" para evitar formas incorrectamente marcadas como subjuntivo por el tagging básico. Si se trata de una forma compuesta, es decir, HABER + PART, se marca todo como tal.
 \end{itemize}
 
-\section{Verbos auxiliares}
+\section{Verbos copulativos}
 \subsection{Verbo ser}
 \paragraph*{Rule}
 \fbox{
-\parbox{.9\linewidth}{\texttt{ADD (@Gram:Aux:Ser) Verbo (0 VerboSer OR VerboSerAmbiguoConErar);}}
+\parbox{.9\linewidth}{\texttt{ADD (@Gram:SerEstar:Ser) Verbo (0 VerboSer OR VerboSerAmbiguoConErar);}}
 }
 \paragraph*{Rule}
 \fbox{
-\parbox{.9\linewidth}{\texttt{ADD (@Gram:Aux:Ser) Verbo (0 VerboSerAmbiguoConIr) (NOT 1 Prep);}}
+\parbox{.9\linewidth}{\texttt{ADD (@Gram:SerEstar:Ser) Verbo (0 VerboSerAmbiguoConIr) (NOT 1 Prep);}}
 }
 \begin{itemize}
-\item ETIQ.:  T: @Gram:Aux:Ser
+\item ETIQ.:  T: @Gram:SerEstar:Ser
 \item EJEM.:  E: \emph{soy, eres,} etc. 
 \item EJEM.:  E: \emph{fui, fuimos...} NOT Prep 
 \item DESC.:  D: Cualquier forma de \emph{ser} del pretérito indefinido no seguido de una preposición (porque entonces seguramente será del verbo ir)
@@ -489,24 +489,28 @@ Veáse \url{http://dev.coerll.utexas.edu/spanishtx/spe/html/adv13.html}.
 \subsection{Verbo estar}
 \paragraph*{Rule}
 \fbox{
-\parbox{.9\linewidth}{\texttt{ADD (@Gram:Aux:Estar) Verbo (0 VerboEstar);}}
+\parbox{.9\linewidth}{\texttt{ADD (@Gram:SerEstar:Estar) Verbo (0 VerboEstar);}}
 }
 \begin{itemize}
-\item ETIQ.:  T: @Gram:Aux:Estar
+\item ETIQ.:  T: @Gram:SerEstar:Estar
 \item EJEM.:  E: \emph{estoy, estás, estaban,} etc. 
 \item DESC.:  D: Cualquier forma de \emph{estar}
 \end{itemize}
 
-\subsection{Verbo haber}
+\section{Verbo haber}
+\subsection{Verbo haber en su uso com existencial}
 \paragraph*{Rule}
 \fbox{
-\parbox{.9\linewidth}{\texttt{ADD (@Gram:Aux:Haber) Verbo (0 Haber) (NOT 1 Part);}}
+\parbox{.9\linewidth}{\texttt{ADD (@Gram:Haber:Exist) Verbo (0 Haber) (NOT 1 Part);}}
 }
 \begin{itemize}
 \item ETIQ.:  T: @Gram:Aux:Haber
 \item EJEM.:  E: \emph{Había} tres personas en el ascensor. 
 \item DESC.:  D: Cualquier forma de \emph{haber} que no vaya seguida de un participio
 \end{itemize}
+
+\section{Verbo haber en su uso como auxiliar en tiempos verbales compuestos}
+No hay una etiqueta específica para este caso, pero vean las descripciones en la secciión \ref{sec:HaberAuxPretPerfecto}. 
 
 \chapter{Funciones comunicativas}
 \chapter{Pragmática}

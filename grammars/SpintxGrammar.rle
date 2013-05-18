@@ -374,7 +374,7 @@ ADD (@Gram:Indefinido) FiniteVerbForms IF (0 FiniteVerbForms + PretPerfSimple) (
 #LATEX E: \emph{cantó, corrió, anduvo, partió} (cualquier ocurrencia)
 #LATEX D: Requiere una forma identificada como pretérito perfecto simple que no sea del verbo haber (auxiliar).
 
-#LATEX\subsubsection{Pretérito perfecto perifrástico o compuesto}
+#LATEX\subsubsection{Pretérito perfecto perifrástico o compuesto}\label{sec:HaberAuxPretPerfecto}
 # PRETÉRTIO PERFECTO PERIFRÁSTICO
 ADDRELATION (Gram:PerfPerif) FiniteVerbForms (0 Haber + FiniteVerbForms + Presente) (NOT 0 Subjuntivo) TO (1 Part);
 #LATEX T: Asigna R:Gram:PerfPerif a la forma del verbo HABER
@@ -448,28 +448,33 @@ ADDRELATION (Gram:MSub:Pret) FiniteVerbForms (0 Haber + Verbo + Pasado + Subjunt
 #LATEX D: No se aplica si la forma verbal no esta precedida por una "de" para evitar formas incorrectamente marcadas como subjuntivo por el tagging básico. Si se trata de una forma compuesta, es decir, HABER + PART, se marca todo como tal.
 
 ## SECTION -- RULES TO ADD PAST GUSTAR AND SIMILAR VERBS
-#LATEX\section{Verbos auxiliares}
+#LATEX\section{Verbos copulativos}
 
 #LATEX\subsection{Verbo ser}
 
-ADD (@Gram:Aux:Ser) Verbo (0 VerboSer OR VerboSerAmbiguoConErar);
-ADD (@Gram:Aux:Ser) Verbo (0 VerboSerAmbiguoConIr) (NOT 1 Prep);
-#LATEX T: @Gram:Aux:Ser
+ADD (@Gram:SerEstar:Ser) Verbo (0 VerboSer OR VerboSerAmbiguoConErar);
+ADD (@Gram:SerEstar:Ser) Verbo (0 VerboSerAmbiguoConIr) (NOT 1 Prep);
+#LATEX T: @Gram:SerEstar:Ser
 #LATEX E: \emph{soy, eres,} etc. 
 #LATEX E: \emph{fui, fuimos...} NOT Prep 
 #LATEX D: Cualquier forma de \emph{ser} del pretérito indefinido no seguido de una preposición (porque entonces seguramente será del verbo ir)
 
 #LATEX\subsection{Verbo estar}
-ADD (@Gram:Aux:Estar) Verbo (0 VerboEstar);
-#LATEX T: @Gram:Aux:Estar
+ADD (@Gram:SerEstar:Estar) Verbo (0 VerboEstar);
+#LATEX T: @Gram:SerEstar:Estar
 #LATEX E: \emph{estoy, estás, estaban,} etc. 
 #LATEX D: Cualquier forma de \emph{estar}
 
-#LATEX\subsection{Verbo haber}
-ADD (@Gram:Aux:Haber) Verbo (0 Haber) (NOT 1 Part);
+#LATEX\section{Verbo haber}
+#LATEX\subsection{Verbo haber en su uso com existencial}
+ADD (@Gram:Haber:Exist) Verbo (0 Haber) (NOT 1 Part);
 #LATEX T: @Gram:Aux:Haber
 #LATEX E: \emph{Había} tres personas en el ascensor. 
 #LATEX D: Cualquier forma de \emph{haber} que no vaya seguida de un participio
+
+#LATEX\section{Verbo haber en su uso como auxiliar en tiempos verbales compuestos}
+
+#LATEXDOCU No hay una etiqueta específica para este caso, pero vean las descripciones en la secciión \ref{sec:HaberAuxPretPerfecto}. 
 
 ## SECTION -- RULES TO ADD PAST GUSTAR AND SIMILAR VERBS
 #LATEX\chapter{Funciones comunicativas}
