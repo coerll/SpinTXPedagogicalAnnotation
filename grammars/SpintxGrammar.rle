@@ -619,6 +619,12 @@ ADDRELATION (Herit:Contacto:Mixtas) Verbo IF (0 ListaVerbosCorpusParaContactoMix
 ### FITA: no s'està mapejant la info de llengua i per tant la regla anterior no funciona
 ### 02/21/2013
 
+#LATEX\chapter{Vocabulario multipalabra}
+## Vocab
+
+#LATEX\section{Nombres propios}
+
+#LATEX\subsection{Nombres de localizaciones geográficas}
 ADDRELATION (Vocab:Entities:Geo) Articulo IF  (0 ("<El>")) TO (1 ("<Paso>"));
 ADDRELATION (Vocab:Entities:Geo) Nombre IF  (0 ("<Estados>")) TO (1 ("<Unidos>"));
 ADDRELATION (Vocab:Entities:Geo) Nombre IF  (0 ("<Ciudad>")) TO (1 ("<Juárez>"));
@@ -626,6 +632,7 @@ ADDRELATION (Vocab:Entities:Geo) Nombre IF  (0 ("<Ciudad>")) TO (1 ("<Juárez>")
 #LATEX E: \emph{Ciudad Juárez}, \emph{El Paso}, \emph{Estados Unidos}  
 #LATEX D: Reglas para anotar entidades frecuentes en el corpus. En este caso de nombres geográficos.
 
+#LATEX\subsection{Combinaciones de verbo y preposición de régimen}
 ADDRELATION (Vocab:Fraseol:VerbPrep) Verbo IF  (0 ("hablar")) TO (*1 Prep BARRIER LimiteOracionSimple OR GrupoNominal OR Verbo);
 ADDRELATION (Vocab:Fraseol:VerbPrep) Verbo IF  (0 ("pensar")) TO (*1 Prep BARRIER LimiteOracionSimple OR GrupoNominal OR Verbo);
 ADDRELATION (Vocab:Fraseol:VerbPrep) Verbo IF  (0 ("empezar")) TO (*1 Prep BARRIER LimiteOracionSimple OR GrupoNominal OR Verbo);

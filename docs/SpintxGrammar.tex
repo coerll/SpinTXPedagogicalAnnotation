@@ -196,20 +196,20 @@ Veáse \url{http://dev.coerll.utexas.edu/spanishtx/spe/html/adv11.html}.
 \subsection{Usos de \emph{por} en locuciones}
 \paragraph*{Rule}
 \fbox{
-\parbox{.9\linewidth}{\texttt{ADD (@Gram:Prep:Por:Locuciones) Prep IF (0 Por) (NOT 0 GramPrep) (1 LemasDePalabrasEnLocucionesConPor OR FormasDePalabrasEnLocucionesConPor);}}
+\parbox{.9\linewidth}{\texttt{ADD (@Gram:Prep:Por) Prep IF (0 Por) (NOT 0 GramPrep) (1 LemasDePalabrasEnLocucionesConPor OR FormasDePalabrasEnLocucionesConPor);}}
 }
 \begin{itemize}
-\item ETIQ.:  T: Asigna @Gram:Prep:Por:Locuciones.
+\item ETIQ.:  T: Asigna @Gram:Prep:Por
 \item EJEM.:  E: \emph{por ejemplo}, \emph{por eso}, \emph{por tanto}
 \item DESC.:  D: Requiere \emph{por} seguida por alguna palabra en la lista de palabras predefinidas \emph{LemasDePalabrasEnLocucionesConPor}
 \end{itemize}
 
 \paragraph*{Rule}
 \fbox{
-\parbox{.9\linewidth}{\texttt{ADD (@Gram:Prep:Por:Locuciones) Prep IF (0 Por) (NOT 0 GramPrep) (1 LoLiteral) (2 LemasDePalabrasEnLocucionesConPor);}}
+\parbox{.9\linewidth}{\texttt{ADD (@Gram:Prep:Por) Prep IF (0 Por) (NOT 0 GramPrep) (1 LoLiteral) (2 LemasDePalabrasEnLocucionesConPor);}}
 }
 \begin{itemize}
-\item ETIQ.:  T: Asigna @Gram:Prep:Por:Locuciones.
+\item ETIQ.:  T: Asigna @Gram:Prep:Por.
 \item EJEM.:  E: \emph{por lo tanto}, \emph{por lo regular}
 \item DESC.:  D: Requiere \emph{por} seguida por LO y alguna palabra en la lista de palabras predefinidas \emph{LemasDePalabrasEnLocucionesConPor}
 \end{itemize}
@@ -251,10 +251,10 @@ Veáse \url{http://dev.coerll.utexas.edu/spanishtx/spe/html/adv11.html}.
 \section{Pronombres de objeto directo o complemento atributivo}
 \paragraph*{Rule}
 \fbox{
-\parbox{.9\linewidth}{\texttt{ADD (@Gram:Pron:ObjetoDirecto) ElLema IF (NOT -1 Prep) (0 Articulo) (1 FiniteVerbForms) ;}}
+\parbox{.9\linewidth}{\texttt{ADD (@Gram:Pron:Objeto) ElLema IF (NOT -1 Prep) (0 Articulo) (1 FiniteVerbForms) ;}}
 }
 \begin{itemize}
-\item ETIQ.:  T: Asigna @Gram:Pron:ObjetoDirecto
+\item ETIQ.:  T: Asigna @Gram:Pron:Objeto
 \item EJEM.:  E: mí nunca me \emph{la} hicieron pero que estabamos
 \item DESC.:  D: \emph{lo, la, los, las} VERBO CONJUGADO
 \end{itemize}
@@ -262,23 +262,23 @@ Veáse \url{http://dev.coerll.utexas.edu/spanishtx/spe/html/adv11.html}.
 \section{Pronombres de objeto directo, indirecto, o posesivos}
 \paragraph*{Rule}
 \fbox{
-\parbox{.9\linewidth}{\texttt{ADD (@Gram:Pron:DirIndirOPoses) PronPers IF (0 PronombreDeObjetoNoAmbiguos);}}
+\parbox{.9\linewidth}{\texttt{ADD (@Gram:Pron:Objeto) PronPers IF (0 PronombreDeObjetoNoAmbiguos);}}
 }
 \begin{itemize}
-\item ETIQ.:  T: Asigna @Gram:Pron:DirIndirOPoses
+\item ETIQ.:  T: Asigna @Gram:Pron:Objeto
 \item EJEM.:  E: \emph{me, te, os, nos} (cualquier ocurrencia)
 \item DESC.:  D: La ocurrencia de uno de ellos.
 \end{itemize}
 
-\section{Pronombres de objeto indirecto o posesivos}
+\section{Pronombres de objeto indirecto}
 \paragraph*{Rule}
 \fbox{
-\parbox{.9\linewidth}{\texttt{ADD (@Gram:Pron:IndirectoOPoses) PronPersClitico IF (0 LeLema);}}
+\parbox{.9\linewidth}{\texttt{ADD (@Gram:Pron:Objeto) PronPersClitico IF (0 LeLema);}}
 }
 \begin{itemize}
-\item ETIQ.:  T: Asigna @Gram:Pron:IndirectoOPoses
+\item ETIQ.:  T: Asigna @Gram:Pron:Objeto
 \item EJEM.:  E: \emph{le, les}
-\item DESC.:  D: La ocurrencia de uno de ellos. El pronombre ``le'' es posesivo cuando hace referencia a usted, o ustedes en su forma en plural
+\item DESC.:  D: La ocurrencia de uno de ellos.
 \end{itemize}
 
 \section{Pronombres de objeto doble}
@@ -308,7 +308,7 @@ Veáse \url{http://dev.coerll.utexas.edu/spanishtx/spe/html/adv11.html}.
 \end{itemize}
 
 \chapter{Formas verbales conjugadas}
-\section{Formas verbales para tiempos pretéritos}
+\section{Formas verbales para tiempos de indicativo}
 \subsection{Pretérito imperfecto}
 \paragraph*{Rule}
 \fbox{
@@ -324,7 +324,7 @@ Veáse \url{http://dev.coerll.utexas.edu/spanishtx/spe/html/adv11.html}.
 \subsubsection{Pretérito perfecto simple}
 \paragraph*{Rule}
 \fbox{
-\parbox{.9\linewidth}{\texttt{ADD (@Gram:PretPerf) FiniteVerbForms IF (0 FiniteVerbForms + PretPerfSimple) (NOT 0 Haber) ;}}
+\parbox{.9\linewidth}{\texttt{ADD (@Gram:Indefinido) FiniteVerbForms IF (0 FiniteVerbForms + PretPerfSimple) (NOT 0 Haber) ;}}
 }
 \begin{itemize}
 \item ETIQ.:  T: Asigna @Gram:PretPerf.
@@ -335,7 +335,7 @@ Veáse \url{http://dev.coerll.utexas.edu/spanishtx/spe/html/adv11.html}.
 \subsubsection{Pretérito perfecto perifrástico o compuesto}
 \paragraph*{Rule}
 \fbox{
-\parbox{.9\linewidth}{\texttt{ADDRELATION (Gram:PerfPerif) FiniteVerbForms (0 Haber + FiniteVerbForms) TO (1 Part);}}
+\parbox{.9\linewidth}{\texttt{ADDRELATION (Gram:PerfPerif) FiniteVerbForms (0 Haber + FiniteVerbForms + Presente) (NOT 0 Subjuntivo) TO (1 Part);}}
 }
 \begin{itemize}
 \item ETIQ.:  T: Asigna R:Gram:PerfPerif a la forma del verbo HABER
@@ -398,52 +398,75 @@ Veáse \url{http://dev.coerll.utexas.edu/spanishtx/spe/html/adv13.html}.
 \subsection{Usos de \emph{sorprender}}
 \paragraph*{Rule}
 \fbox{
-\parbox{.9\linewidth}{\texttt{ADDRELATION (Gram:ExpresarSorpresas:Propias) FiniteVerbForms (0 Sorprender-Like + 3aPersAmbig) TO (-1 Yo);}}
+\parbox{.9\linewidth}{\texttt{ADDRELATION (Gram:Gustar:Otros) FiniteVerbForms (0 Sorprender-Like + 3aPersAmbig) TO (-1 Yo);}}
 }
 \begin{itemize}
-\item ETIQ.:  T: Asigna Gram:ExpresarSorpresas:Propias a la forma de SORPRENDER
+\item ETIQ.:  T: Asigna Gram:Gustar:Otros (Gram:ExpresarSorpresas:Propias) a la forma de SORPRENDER
 \item EJEM.:  E: Siempre \emph{me sorprende} su forma de hablar.
 \item DESC.:  D: [Espacio para describir con palabras lo que hace la regla.]
 \end{itemize}
 
 \paragraph*{Rule}
 \fbox{
-\parbox{.9\linewidth}{\texttt{ADDRELATION (Gram:ExpresarSorpresas:Interlocutor) FiniteVerbForms (0 Sorprender-Like + 3aPersAmbig) TO (-1 Tu);}}
+\parbox{.9\linewidth}{\texttt{ADDRELATION (Gram:Gustar:Otros) FiniteVerbForms (0 Sorprender-Like + 3aPersAmbig) TO (-1 Tu);}}
 }
 \begin{itemize}
-\item ETIQ.:  T: Asigna Gram:ExpresarSorpresas:Interlocutor a la forma de SORPRENDER
+\item ETIQ.:  T: Asigna Gram:Gustar:Otros (antes era Gram:ExpresarSorpresas:Interlocutor) a la forma de SORPRENDER
 \item EJEM.:  E: ¿Y \emph{te sorprende} su forma de hablar?
 \item DESC.:  D: [Espacio para describir con palabras lo que hace la regla.]
 \end{itemize}
 
 \paragraph*{Rule}
 \fbox{
-\parbox{.9\linewidth}{\texttt{ADDRELATION (Gram:ExpresarSorpresas:Interlocutor) Part (0 Sorprender-Like) TO (*-1 Tu BARRIER GrupoNominal OR LimiteOracionSimple LINK 1 Haber + 3aPersAmbig);}}
+\parbox{.9\linewidth}{\texttt{ADDRELATION (Gram:Gustar:Otros) Part (0 Sorprender-Like) TO (*-1 Tu BARRIER GrupoNominal OR LimiteOracionSimple LINK 1 Haber + 3aPersAmbig);}}
 }
 \begin{itemize}
-\item ETIQ.:  T: Asigna Gram:ExpresarSorpresas:Interlocutor a la forma de HABER
+\item ETIQ.:  T: Asigna Gram:Gustar:Otros (antes era Gram:ExpresarSorpresas:Interlocutor) a la forma de HABER
 \item EJEM.:  E: ¿Hay alguna palabra mexicana que \emph{te haya sorprendido}?
 \item DESC.:  D: [Espacio para describir con palabras lo que hace la regla.]
 \end{itemize}
 
 \paragraph*{Rule}
 \fbox{
-\parbox{.9\linewidth}{\texttt{ADDRELATION (Gram:ExpresarSorpresas:Ajenas) FiniteVerbForms (0 Sorprender-Like + 3aPersAmbig) TO (-1 LeLema);}}
+\parbox{.9\linewidth}{\texttt{ADDRELATION (Gram:Gustar:Otros) FiniteVerbForms (0 Sorprender-Like + 3aPersAmbig) TO (-1 LeLema);}}
 }
 \begin{itemize}
-\item ETIQ.:  T: Asigna Gram:ExpresarSorpresas:Ajenas a la forma de SORPRENDER
+\item ETIQ.:  T: Asigna Gram:Gustar:Otros (antes era Gram:ExpresarSorpresas:Ajenas) a la forma de SORPRENDER
 \item EJEM.:  E: ¿Y \emph{le sorprende} su forma de hablar?
 \item DESC.:  D: [Espacio para describir con palabras lo que hace la regla.]
 \end{itemize}
 
 \paragraph*{Rule}
 \fbox{
-\parbox{.9\linewidth}{\texttt{ADDRELATION (Gram:ExpresarSorpresas:Ajenas) Part (0 Sorprender-Like) TO (*-1 LeLema BARRIER GrupoNominal OR LimiteOracionSimple LINK 1 Haber + 3aPersAmbig);}}
+\parbox{.9\linewidth}{\texttt{ADDRELATION (Gram:Gustar:Otros) Part (0 Sorprender-Like) TO (*-1 LeLema BARRIER GrupoNominal OR LimiteOracionSimple LINK 1 Haber + 3aPersAmbig);}}
 }
 \begin{itemize}
-\item ETIQ.:  T: Asigna Gram:ExpresarSorpresas:Ajenas a la forma de HABER
+\item ETIQ.:  T: Asigna Gram:Gustar:Otros (antes era Gram:ExpresarSorpresas:Ajenas) a la forma de HABER
 \item EJEM.:  E: ¿Hay alguna palabra mexicana que \emph{le haya sorprendido}?
 \item DESC.:  D: [Espacio para describir con palabras lo que hace la regla.]
+\end{itemize}
+
+\section{Formas verbales para tiempos de subjuntivo}
+\paragraph*{Rule}
+\fbox{
+\parbox{.9\linewidth}{\texttt{ADD (@Gram:MSub:Pres) Verbo IF (0 Presente + Subjuntivo) (NOT -1 De) (NOT 1 Part);}}
+}
+\paragraph*{Rule}
+\fbox{
+\parbox{.9\linewidth}{\texttt{ADD (@Gram:MSub:Pret) FiniteVerbForms IF (0 Verbo + Pasado + Subjuntivo) (NOT -1 De) (NOT 1 Part);}}
+}
+\paragraph*{Rule}
+\fbox{
+\parbox{.9\linewidth}{\texttt{ADDRELATION (Gram:MSub:Pres) FiniteVerbForms (0 Haber + Verbo + Presente + Subjuntivo) (NOT -1 De) TO (1 Part);}}
+}
+\paragraph*{Rule}
+\fbox{
+\parbox{.9\linewidth}{\texttt{ADDRELATION (Gram:MSub:Pret) FiniteVerbForms (0 Haber + Verbo + Pasado + Subjuntivo) (NOT -1 De) TO (1 Part);}}
+}
+\begin{itemize}
+\item ETIQ.:  T: Asigna Gram:MSub:Pres a verbos en presente o pretérito de subjuntivo
+\item EJEM.:  E: ¿Hay alguna palabra mexicana que \emph{le haya sorprendido}?
+\item DESC.:  D: No se aplica si la forma verbal no esta precedida por una "de" para evitar formas incorrectamente marcadas como subjuntivo por el tagging básico. Si se trata de una forma compuesta, es decir, HABER + PART, se marca todo como tal.
 \end{itemize}
 
 \section{Verbos auxiliares}
@@ -580,7 +603,7 @@ Véase \url{http://www.cs.famaf.unc.edu.ar/~laura/shallowdisc4summ/index.html}.
 \parbox{.9\linewidth}{\texttt{ADDRELATION (Prag:MarcadoresDisc:Causa) Prep IF (0 Por) TO (2 Tanto OR FormasDePalabrasEnLocucionesCausalesConPor);}}
 }
 \begin{itemize}
-\item ETIQ.:  T: Asigna @Gram:Prep:Por:Locuciones.
+\item ETIQ.:  T: Asigna @Prag:MarcadoresDisc:Causa.
 \item EJEM.:  E: \emph{por lo tanto}
 \item EJEM.:  E: \emph{por eso}
 \item DESC.:  D: Requiere \emph{por} seguida por LO y TANTO
@@ -663,7 +686,7 @@ OBSERVACIÓN: No añado \emph{precisamente} porque es ambiguo entre su lectura l
 
 \paragraph*{Rule}
 \fbox{
-\parbox{.9\linewidth}{\texttt{ADDRELATION (Prag:MarcadoresDisc:NoTipificado) Tal TO (1 Vez);}}
+\parbox{.9\linewidth}{\texttt{ADDRELATION (Prag:MarcadoresDisc:Igualdad) Tal TO (1 Vez);}}
 }
 \begin{itemize}
 \item ETIQ.:  T: R:Prag:MarcadoresDisc:NoTipificado
@@ -695,6 +718,46 @@ Incluímos aquí expresiones que mezclan palabras en ambas lenguas, en este caso
 \item ETIQ.:  T: R:Herit:Contacto:Mixtas
 \item EJEM.:  E: \emph{hacer request}, \emph{comer turkey}
 \item DESC.:  D: Anota secuencias de un verbo seguid de una o más palabras en inglés. Por ahora lo limitamos a ser, hacer, decir y comer porque TreeTagger anota como verbo algunas palabras que no lo son y no queremos generar ruido para los usuarios.
+\end{itemize}
+
+\chapter{Vocabulario multipalabra}
+\section{Nombres propios}
+\subsection{Nombres de localizaciones geográficas}
+\paragraph*{Rule}
+\fbox{
+\parbox{.9\linewidth}{\texttt{ADDRELATION (Vocab:Entities:Geo) Articulo IF  (0 ("<El>")) TO (1 ("<Paso>"));}}
+}
+\paragraph*{Rule}
+\fbox{
+\parbox{.9\linewidth}{\texttt{ADDRELATION (Vocab:Entities:Geo) Nombre IF  (0 ("<Estados>")) TO (1 ("<Unidos>"));}}
+}
+\paragraph*{Rule}
+\fbox{
+\parbox{.9\linewidth}{\texttt{ADDRELATION (Vocab:Entities:Geo) Nombre IF  (0 ("<Ciudad>")) TO (1 ("<Juárez>"));}}
+}
+\begin{itemize}
+\item ETIQ.:  T: R:Vocab:Entities:Geo
+\item EJEM.:  E: \emph{Ciudad Juárez}, \emph{El Paso}, \emph{Estados Unidos}  
+\item DESC.:  D: Reglas para anotar entidades frecuentes en el corpus. En este caso de nombres geográficos.
+\end{itemize}
+
+\subsection{Combinaciones de verbo y preposición de régimen}
+\paragraph*{Rule}
+\fbox{
+\parbox{.9\linewidth}{\texttt{ADDRELATION (Vocab:Fraseol:VerbPrep) Verbo IF  (0 ("hablar")) TO (*1 Prep BARRIER LimiteOracionSimple OR GrupoNominal OR Verbo);}}
+}
+\paragraph*{Rule}
+\fbox{
+\parbox{.9\linewidth}{\texttt{ADDRELATION (Vocab:Fraseol:VerbPrep) Verbo IF  (0 ("pensar")) TO (*1 Prep BARRIER LimiteOracionSimple OR GrupoNominal OR Verbo);}}
+}
+\paragraph*{Rule}
+\fbox{
+\parbox{.9\linewidth}{\texttt{ADDRELATION (Vocab:Fraseol:VerbPrep) Verbo IF  (0 ("empezar")) TO (*1 Prep BARRIER LimiteOracionSimple OR GrupoNominal OR Verbo);}}
+}
+\begin{itemize}
+\item ETIQ.:  T: R:Vocab:Fraseol:VerbPrep
+\item EJEM.:  E: \emph{hablar PREP}, \emph{pensar PREP}, \emph{empezar PREP}  
+\item DESC.:  D: Ahora no se distingue entre usos lexicalizados y usos composicionales (p.e., ``empezar en San Antonio y terminar en Austin'' se trata igual que ``empezé con la tradición en la preparatoria'') 
 \end{itemize}
 
 \end{document}
