@@ -53,7 +53,7 @@ if ($opts{'help'}) {
     print STDERR "Options:\n";
     print STDERR " -help,-? \t\t shows this help\n";
     print STDERR " -debug \t\t shows this help\n";
-    print STDERR " -outformat \t\t specifies output format, solr for SPinTX/drupal compatible format\n";
+    print STDERR " -outformat \t\t specifies output format, pla for SPinTX/drupal compatible format\n";
     exit;
 }
 
@@ -69,8 +69,8 @@ if ($opts{'outformat'}) {
 }
 else {
 	print STDERR "\n EXECUTION ABORTED. An ouput format is required. \n";
-	print STDERR " Expected format is solr.\n";
-	print STDERR "\n Use -outformat=solr to declare it.\n";
+	print STDERR " Expected format is pla.\n";
+	print STDERR "\n Use -outformat=pla to declare it.\n";
     exit;
 }
 
@@ -99,19 +99,14 @@ foreach $file (@ARGV) {
             print STDERR "DL2: File " . $file . " will be proccessed.\n";
         }
         # generating name for output file, cpr stands for compressed
-        if ($OutputFormat eq "solr") {
+        if ($OutputFormat eq "pla") {
             $OutputDir = "";
-            $OutFile = $path.$OutputDir.$name."solr";
-        }
-        elsif ($OutputFormat eq "cloud") {
-            $OutputDir = "";
-            $OutFile = $path.$OutputDir.$name."cloud";
+            $OutFile = $path.$OutputDir.$name."pla";
         }
         else {
-            print STDERR "\n EXECUTION ABORTED. Unexpected ouput format. \n";
-            print STDERR " The only available format is solr.\n";
-            #            print STDERR "\n Use -outformat=cg3 or cqp to declare it.\n";
-            exit;
+            print STDERR "\n No ouput format specified. \n";
+            print STDERR " The only output format will be *.out, CG format.\n";
+            print STDERR "\n Use -outformat=pla to obtain PLA files, a Pedagogical List of Annotations at the file levels in human readable format.\n";
         }
         
         

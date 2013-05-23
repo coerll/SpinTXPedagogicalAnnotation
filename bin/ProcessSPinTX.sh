@@ -1,8 +1,8 @@
 #!/bin/bash
 
-TXTDIR="$SPINTX_HOME/corpus/ClipTags/ori"
-CG3DIR="$SPINTX_HOME/corpus/ClipTags/cg3"
-OUTDIR="$SPINTX_HOME/corpus/ClipTags/out"
+TXTDIR="$SPINTX_HOME/corpus/SpinTXCorpusData/ClipTags"
+CG3DIR="$SPINTX_HOME/corpus/SpinTXCorpusData/cg3"
+OUTDIR="$SPINTX_HOME/corpus/SpinTXCorpusData/ClipPedagogicalTags"
 ## MQ: I comment this till I start working on integration of PAToS in environment using CWB Tools
 ## CQPDIR="$TEXTDIR/CQP"
 GRAMMARS="$SPINTX_HOME/spintxPedagogicalAnntotation/grammars"
@@ -42,7 +42,7 @@ fi
 if [[ "$1" == "all" ]] || [[ "$1" = "counts" ]]; then
   echo "Counting/Adding up clip level information..."
   cd "$OUTDIR"
-  countPedagogicalFeatures.pl -outformat solr *.out
+  countPedagogicalFeatures.pl -outformat pla *.out
 fi
 
 if [[ "$1" == "all" ]] || [[ "$1" = "json" ]]; then

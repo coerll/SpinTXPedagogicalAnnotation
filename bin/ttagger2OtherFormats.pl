@@ -21,7 +21,7 @@ my $CPRFile; # output file name
 my ($name,$path,$suffix); # name, path and suffix of input file
 my $file; # input file name including path and extention (to be opened by script)
 my $Text; # input file contents
-my $OutputDir = $ENV{SPINTX_HOME} . "corpus/ClipTags/";
+my $OutputDir = $ENV{SPINTX_HOME} . "corpus/SpinTXCorpusData/";
 
 # Variables to control initial lines in files to be processed, often special lines
 my ($FirstLine,$FirstUsefulLine);

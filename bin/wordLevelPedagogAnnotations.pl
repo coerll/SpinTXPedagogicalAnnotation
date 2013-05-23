@@ -11,9 +11,9 @@ use Time::localtime;
 
 # ---------------------------------------;
 # Reading configuration paths from the enviroment variable $SPINTX_HOME as set in ~/.profile (in unix-like OS)
-my $OutputDir = $ENV{SPINTX_HOME} . "corpus/ClipTags/";
+my $OutputDir = $ENV{SPINTX_HOME} . "corpus/SpinTXCorpusData/";
 
-my $OutputDirWLA = $OutputDir . "ClipsWLA/"; #we will dump results in the wla folder under corpus/ClipTags
+my $OutputDirWLA = $OutputDir . "ClipWLA/"; #we will dump results in the wla folder under corpus/ClipTags
 my $OutputDirStats = $OutputDir . "stats/";
 
 my $OneFileJSON = $OutputDirWLA."TokenTagsPedagogical.json" ; #output file name for whole corpus info in JSON format
