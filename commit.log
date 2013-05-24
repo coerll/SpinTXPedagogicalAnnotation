@@ -1,0 +1,130 @@
+Change log
+==========
+
+MAY 24, 2013
+-----------
+- Added script CompileSPinTXInCQP.sh, which compiles the linguistically (not pedagogically) annotated files to CWB assuming this is installed and you know how to work with it
+- Modified ttagger2OtherFormats.pl so that it can generate tsv files in ClipCQP folder to work with Corpus WorkBench format
+- Updated README.md with instructions on how to use CompileSPinTXInCQP.sh
+
+MAY 23, 2013
+-----------
+- Adapted scripts to work with github's folder structure
+- Changed files with extension solr to extesion pla (stands for Pedagogical List of Annotations). These files are stored in ClipPedagogicalTags (folder in the github repository https://github.com/coerll/SpinTXCorpusData)
+
+MAY 17, 2013
+-----------
+- Updated CG grammar documentation
+- Updated last few changes, mainly minor changes in CG grammar, but forgot which (sorry).
+- Changed typology classes and names for the annotation of haber as an existential verb as in 'Hay tres cervezas en la nevera'.
+
+APR 25, 2013
+-----------
+- Now n-gram vocab annotations appear in ClipLevelMetadata.tsv
+
+APR 23, 2013
+-----------
+- Removed from the one word vocab list those words that belong to two-word vocab items in another list. For instance, El Paso appears as Vocab item, but Paso not anymore.
+
+APR 9, 2013
+-----------
+- Added a patch to generate annotation record lines for 1st and 2nd level of pedagogical annotation info
+
+  What used to be (in *.wla.json files and *.tsv files):
+
+AF002_1989_EP_SU2011_AD_01      Prep    Gram    tt-29   tt-29
+AF002_1989_EP_SU2011_AD_01      RecuDiscurso:GanarTiempo        Prag    tt-32   tt-32
+
+  Now is:
+
+AF002_1989_EP_SU2011_AD_01      Prep    Gram    tt-29   tt-29
+AF002_1989_EP_SU2011_AD_01      RecuDiscurso    Prag    tt-32   tt-32
+AF002_1989_EP_SU2011_AD_01      RecuDiscurso:GanarTiempo        Prag    tt-32   tt-32
+- Started writing a new script to generate a CQP formatted file out of the *.out files to allow better searching possibilities to grammar developers (and as a by product for research in linguistics), cg32cqp.pl
+- Adapted rules to merge different pedagogical labels used for tagging of constructions with object pronouns to one single label (Gram:Pron:Objeto)
+
+APR 4, 2013
+-----------
+- Changed rule code @Gram:PretPerf to @Gram:Indefinido (as it stands in the typology doc)
+- Changed all rules with a code such as @:Gram:ExpresarSorpresas:* to Gram:Gustar:Otros (to be coherent with current typology)
+- Changed code for "tal vez" from Prag:MarcadoresDisc:NoTipificado to Prag:MarcadoresDisc:Igualdad, I think this is the most coherent classification following Laura Alonso's criteria (whose work I used to classify our discourse markers)
+- Added rules to annotate present and past subjunctive and the plu- versions (hayas cantado and hubieras cantado)
+
+MAR 28, 2013
+------------
+- Added comma after start info on json format for word level annotation (ClipsWLA/*.wla.json)
+- Changed internal and output file names to be coherent with table names in Google Drive (SPinTX LIFT > Clips Corpus > ClipsDataTables)
+- Added rules to handle bigrams corresponding to geographical entities (El Paso, Estados Unidos, Ciudad Juárez)
+- Added rules to handle bigrams corresponding to verb-preposition combinations (pensar, hablar, empezar)
+
+MAR 26, 2013
+------------
+- put again the comma in the json format files for word level information between different token info lines
+
+MAR 21, 2013
+------------
+- Changed output file names and extensions to match spintx-wide ones
+- Changed format of Vocab metadata, because it had an error (tag and tag_type where not in different columns)
+
+MAR 19, 2013
+------------
+- Clip level summary of vocab info implemented
+- Generation one corpus word level annotation table in CSV format
+- Updated DataFlowDiagram.odg in docs folder
+- Updated the USAGE file in the main repo folder
+- Changed wla folder name to ClipsWLA (so that it is compatible with the Google Drive naming conventions)
+
+MAR 8, 2013 (bis)
+-----------------
+- Half way of implementing the clip level summary of vocabulary info in wordLevelPedagogAnnotations.pl.
+
+MAR 8, 2013
+-----------
+- Improved ProcessSpintx.sh help page and implmented individual execution options for each step in annotation process.
+- Repaired bug in wordLevelPedagogAnnotations.pl that incrementally increased size of VocabList array.
+
+MAR 5, 2013
+-----------
+- Adapted ttagger2OtherFormats.pl to process input files where punctuation is no longer a token property but a token in itself.
+
+FEB 26, 2013
+------------
+- Added some internal documentation on the code to wordLevelPedagogAnnotations.pl
+- Started to generate uni-gram counts for the generation of vocabulary lists
+
+FEB 21, 2013 (PM)
+-----------------
+- Changed format of reading info in CG3 compatible cohorst for language. Now it is represented as "lang:" and the ccode of the language in which the word is (es for Spanish, and en for English).
+- Added a sample rule in CG3 grammar to exemplify how the annotation of code switching could be implemented. It is far from being solved, it is just a proof of concept.
+- Added rules for Gram:Det:Demo, Prag:RecDocu:GanarTiempo.
+- Upddated PDF doc for rule specificaitons in docs folder under $SPINTX_HOME/spintxPedagogicalAnntotation.
+- Changed countPedagogicFeatures.pl to allow for the counting of annotations of the main category Herit (this is kind of ugly, but currently new 1st level classes have to be encoded manually in this one script).
+
+FEB 21, 2013 (AM)
+-----------------
+- Changed format of JSON files to [{...},{...},{...}].
+- wla.json files now dumped to wla folder in $SPINTX_HOME/corpus/ClipTags/wla and a copy of ClipsWLAOneFile.json is created in $SPINTX_HOME/corpus/ClipTags/stats folder for the records including time and date.
+- Enhanced and added info on INSTALL, USAGE and EXTENDING file.
+
+FEB 19, 2013
+------------
+- Modified GrammarDocuSPinTX.pl to ensure that it generates the *.tex file and *.pdf file in $SPINTX_HOME/spintxPedagogicalAnntotation/docs.
+- Added INSTALL file, including requirements.
+- Added USAGE file, with basic instructions on how to execute it.
+
+FEB 14, 2013
+------------
+- Changed JSON formatted word level metadata to use labels clip, start, end and separate pedagogical lable into type (Gram, Prag, etc.) or tag (Aux:Estar...)
+- Added data flow diagram to docs/PATos-DataFlowDiagram.odg
+- Modified script ProcessSPinTX.sh so that it runs all the required scripts from import of lemmatised and POS-tagged files to returning the clip-level information and word-level annotation files.
+
+FEB 12, 2013
+------------
+- Now generating output of word-level information in JSON format.
+
+FEB 7, 2013
+-----------
+
+- Commented pedagogical tags with four levels of description. Now three is the deepest level a pedaogical annotation should show.
+- Added annotation rules for "se", "ser", "estar" and "haber".
+- Changed output format of clip level information breakdown to ClipId TAB GramTag1,GramTag2 TAB PragTag1, PragTag2... 
