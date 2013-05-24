@@ -10,16 +10,8 @@ use Time::localtime;
 
 # ---------------------------------------;
 # Reading configuration paths from the enviroment variable $SPINTX_HOME as set in ~/.profile (in unix-like OS)
-my $OutputDir = $ENV{SPINTX_HOME} . "corpus/ClipTags/";
-
-my $OutputDirWLA = $OutputDir . "ClipsWLA/"; #we will dump results in the wla folder under corpus/ClipTags
-my $OutputDirStats = $OutputDir . "stats/";
-
-my $OneFileJSON = $OutputDirWLA."TokenTagsPedagogical.json" ; #output file name for whole corpus info in JSON format
-my $OneFileCSV = $OutputDirWLA."TokenTagsPedagogical.tsv" ; #output file name for whole corpus info in CSV format
-my $StatsFileForRecord = $OutputDirStats . timestamp() . "_TokenTagsPedagogical" . ".tsv";
-my $StatsFileVocab = $OutputDirStats . timestamp() . "_SpintxVocabMetadata" . ".tsv";
-
+my $OutputDir = $ENV{SPINTX_HOME} . "corpus/SpinTXCorpusData/";
+my $OutputDirCQP = $OutputDir . "ClipCQP/"; #we will dump results in the wla folder under corpus/ClipTags
 
 # ---------------------------------------;
 # VARIABLE DEFINITION
@@ -52,6 +44,7 @@ my %LemmaTypeCounter;
 my $BooleanInWord = "FALSE";
 my (@WordReadings);
 my @ProcessedInfoReadings;
+my $CurrentForm;
 
 ##my (@OneWordAnnotations,@MultiWordAnnotations,@CompletionInfo);
 
@@ -104,7 +97,7 @@ else{
 # ---------------------------------------;
 
 # -- STARTING EXECUTION OF CONVERSION
-print STDERR "Generating word level annotation files in JSON format...\n";
+print STDERR "Generating word level annotation files in CQP format...\n";
 
 foreach $file (@ARGV) {
     
@@ -126,14 +119,14 @@ foreach $file (@ARGV) {
             print STDERR "DL2: File " . $file . " will be proccessed.\n";
         }
 
-        $OutFile = $path.$name."cqp"; # *.wla, word level annotations file
+        $OutFile = $OutputDirCQP.$name."cqp"; # *.wla, word level annotations file
         
         if ($DebugLevel > 1) {
             print STDERR "DL2: Output file name will be " . $OutFile . "\n";
         }
         
         # reading contents of the file to be processed
-        open (FILE,"$file");
+        open (FILE,"$file") || warn "Could not open $file\n";
         sysread(FILE,$Text,(-s FILE));
         close (FILE);
         
@@ -149,6 +142,7 @@ foreach $file (@ARGV) {
             
             $FileLineCounter++;
             
+            # print XML lines as is and do nothing else if we are not in word reading, that is $BooleanInWord is FALSE
             if ($CG3Line =~ m/^<[^>]+>$/ & $BooleanInWord eq "FALSE"){
                 if ($DebugLevel > 2) {
                     print STDERR "DL3: Current line is an SGML tag. Will be printed as is.\n";
@@ -156,19 +150,22 @@ foreach $file (@ARGV) {
                 }
 
                 $ToPrint .= $CG3Line . "\n";
-                #                next;
             }
             
+            # if $BooleanInWord is TRUE and find and XML line
+            ## 1. Process and print word reading
+            ## 2. Print XML as is
             elsif ($CG3Line =~ m/^<[^>]+>$/ & $BooleanInWord eq "TRUE"){
+                
                 if ($DebugLevel > 2) {
                     print STDERR "DL3: Current line is an SGML tag. Will be ignored.\n";
                     print STDERR "DL3: Line number: " . $FileLineCounter . "\n";
                 }
-
-                if (scalar(@WordReadings) == 0)
-                {
-                    $BooleanInWord = "FALSE";
-                }
+                
+                # Sometimes wordreadings might be empty ( *** I DONT KNOW WHY/WHEN)
+                if (scalar(@WordReadings) == 0){}
+                
+                # if @WordReadings is full then process and print its contents
                 else{
                     if ($DebugLevel > 2) {
                         print STDERR "DL3: Previous one will be processed before going on.\n";
@@ -177,53 +174,74 @@ foreach $file (@ARGV) {
                     @ProcessedInfoReadings = &ProcessReadingsForPreviousWord(@WordReadings);
                     $ToPrint .= join ("\t",@ProcessedInfoReadings);
                     $ToPrint .= "\n";
-                    $BooleanInWord = "FALSE";
                     undef @WordReadings;
                 }
+                
                 $ToPrint .= $CG3Line . "\n";
-                #                next;
+                $BooleanInWord = "FALSE";
             }
             
-            #FITA: start here next working day
+            
+            # if $BooleanInWord is FALSE and find a word form line ("<tengo>")
+            ## 1. Print XML as is
+            ## 2. Set variable $BooleanInWord to TRUE
             elsif ($CG3Line =~ m/^\"<(.*)>\"$/ & $BooleanInWord eq "FALSE"){
+                $CurrentForm = $1;
+                $CurrentForm =~ s/\$([^[a-z0-9])/$1/ig;
+#                $CurrentForm =~ s/\$([\.,\:\?\!¡])/$1/ig;
+#                $CurrentForm =~ s/\$(¿)/$1/ig;
+
                 if ($DebugLevel > 2) {
                     print STDERR "DL3: Current line is word form.\n";
                     print STDERR "DL3: Line number: " . $FileLineCounter . "\n";
                 }
+                $ToPrint .= $CurrentForm . "\t";
                 $BooleanInWord = "TRUE";
-#                @Cohort = $1;
-                $ToPrint .= $1 . "\n";
             }
             
+            # if $BooleanInWord is TRUE and find a word form line ("<tengo>")
+            ## 1. Print XML as is
+            ## 2. Set variable $BooleanInWord to TRUE
             elsif ($CG3Line =~ m/^\"<(.*)>\"$/ & $BooleanInWord eq "TRUE"){
+
+                $CurrentForm = $1;
+                $CurrentForm =~ s/\$([^[a-z0-9])/$1/ig;
 
                 if ($DebugLevel > 2) {
                     print STDERR "DL3: Current line is new word.\n";
                     print STDERR "DL3: Line number: " . $FileLineCounter . "\n";
                 }
 
+                # Sometimes wordreadings might be empty ( *** I DONT KNOW WHY/WHEN)
                 if (scalar(@WordReadings) == 0)
                 {
-                    $BooleanInWord = "FALSE";
-                    $ToPrint .= $1 . "\n";
+                    $ToPrint .= $CurrentForm . "\t";
                 }
+                
+                # if @WordReadings is full then process and print its contents
                 else{
                     
                     if ($DebugLevel > 2) {
                         print STDERR "DL3: Previous one will be processed before going on.\n";
                     }
 
-#                    &ProcessReadingsForPreviousWord(@WordReadings);
+                    # 1. Print previous word readings
                     @ProcessedInfoReadings = &ProcessReadingsForPreviousWord(@WordReadings);
                     $ToPrint .= join ("\t",@ProcessedInfoReadings);
                     $ToPrint .= "\n";
-                    $BooleanInWord = "FALSE";
-                    $ToPrint .= $1 . "\n";
+                    
+                    # 2. Print current word form
+                    $ToPrint .= $CurrentForm . "\t";
+
+                    # empty list of word readings
                     undef @WordReadings;
                 }
-                next;
+
+                # Set current $BooleanInWord to "FALSE";
+                $BooleanInWord = "TRUE";
             }
             
+            # if line is a reading line just add it to @WordReadings list
             elsif ($CG3Line =~ m/^\t\".*$/){
                 if ($DebugLevel > 2) {
                     print STDERR "DL3: Current line is a reading.\n";
@@ -239,7 +257,10 @@ foreach $file (@ARGV) {
     
 } ## end of foreach $file
 
-open (FOUT,">", $OutFile) || warn (" WARNING: Could not open $OutFile with write permission.\n") ;;
+print STDERR $ToPrint; 
+print STDERR "\n"; 
+
+open (FOUT,">", $OutFile) || warn ("WARNING: Could not open $OutFile with write permission.\n") ;;
         print FOUT $ToPrint; 
         print FOUT "\n"; 
 close (FOUT);

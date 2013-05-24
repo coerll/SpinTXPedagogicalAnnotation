@@ -55,23 +55,33 @@ This script executes all the scripts and processess needed to generate:
 	  implemented, not for any fundamental reason.
 
 countPedagogicalFeatures.pl
+---------------------------
 
   Execute the following command line to obtain some help:
 
    command_line$ countPedagogicalFeatures.pl -help
 
 ttagger2OtherFormats.pl
+-----------------------
   Execute the following command line to obtain some help:
 
    command_line$ ttagger2OtherFormats.pl -help
 
 wordLevelPedagogAnnotations.pl
+------------------------------
   Execute the following command line to obtain some help:
 
    command_line$ wordLevelPedagogAnnotations.pl -help
 
 GrammarDocuSPinTX.pl
+--------------------
   Execute the following command line to obtain some help:
 
    command_line$ GrammarDocuSPinTX.pl -help
+
+CompileSPinTXInCQP.sh
+---------------------
+ Compile the files in ClipCQP folder into a local CQP (Corpus WorkBench tool) assuming a specific installation
+
+   command_line$ CompileSPinTXInCQP.sh
 

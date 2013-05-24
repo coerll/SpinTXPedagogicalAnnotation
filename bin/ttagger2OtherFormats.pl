@@ -60,7 +60,7 @@ if ($opts{'help'}) {
     print STDERR "Version: 0.1 // Author: Martí Quixal (2012 - today) \n";
     print STDERR "This code is totally free and open. Share and enjoy!\n";
     print STDERR "\n";
-    print STDERR "Usage: ttager2cqp.pl [OPTIONS]\n";
+    print STDERR "Usage: ttager2OtherFormats.pl [OPTIONS]\n";
     print STDERR "\n";
     print STDERR "Options:\n";
     print STDERR " -help,-? \t\t shows this help\n";
@@ -93,9 +93,9 @@ else {
 print STDERR "Starting conversion...\n";
 
 # generating name for output dir
-# cpr stands for compressed, cg3 for visl-cg3 (constraing grammar)
+# cqp stands for CQP or Corpus WorkBnech compatible, cg3 for visl-cg3 (constraing grammar)
 if ($OutputFormat eq "cqp") {
-    $OutputDir .= "cqp/";
+    $OutputDir .= "ClipCQP/";
 }
 elsif ($OutputFormat eq "cg3") {
     $OutputDir .= "cg3/";
@@ -128,9 +128,9 @@ foreach $file (@ARGV) {
         }
 
         # generating name for output file
-        # cpr stands for compressed, cg3 for visl-cg3 (constraing grammar)
+        # CQP compatibla files will have a TSV extension because they are basically tab separated values
         if ($OutputFormat eq "cqp") {
-            $CPRFile = $OutputDir.$name."cpr";
+            $CPRFile = $OutputDir.$name."tsv";
         }
         elsif ($OutputFormat eq "cg3") {
             $CPRFile = $OutputDir.$name."cg3";
@@ -412,23 +412,27 @@ sub PrintTokenLevelInformation{
     my ($Word, $Lemma, $PoSTag, $SimplePoSTag);
 
     
+    $Word = shift(@ListOfTokenInfos);
+    $Lemma = shift(@ListOfTokenInfos);
+    $PoSTag = shift(@ListOfTokenInfos);
+    $SimplePoSTag = shift(@ListOfTokenInfos);
+
+    #format generation if outformat is CQP
     if ($OutputFormat eq "cqp") {
-        #        $word."\t".$lemma."\t".$POSTag . "\t".$punct . "\t" . $StartTime.  "\t" . $EndTime . "\t".$Tense . "\t".$Mood . "\t".$Number . "\t".$Person . "\t".$Gender . "\t".$Lang ."\n";
-        $TokenLevelString = join ("\t",@ListOfTokenInfos);
-#        $TokenLevelString .= " DIFF";
+
+        $TokenLevelString .= $Word . "\t" .$Lemma . "\t" .$PoSTag . "\t" .$SimplePoSTag;
+        $TokenLevelString .= join ("\t",@ListOfTokenInfos);
         $TokenLevelString .= "\n";
         
     }
-    elsif ($OutputFormat eq "cg3") {
-        $Word = shift(@ListOfTokenInfos);
-        $Lemma = shift(@ListOfTokenInfos);
-        $PoSTag = shift(@ListOfTokenInfos);
-        $SimplePoSTag = shift(@ListOfTokenInfos);
-#        my $Punct; # = shift(@ListOfTokenInfos);
 
+    #format generation if outformat is CG3
+    elsif ($OutputFormat eq "cg3") {
 
         if ($SimplePoSTag eq "Punctuation") {
             
+            # Adding the dollar symbol, $, to all punctuation sign that will be delimiters in CG 
+            # DELIMITERS = "<$.>" "<$?>" "<$!>" "<$:>" "<$\;>" ;
             if ($Word eq "." | $Word eq "?" | $Word eq "!" | $Word eq "¿" | $Word eq "¡" | $Word eq ":" | $Word eq ";") {
                 $TokenLevelString .= "\"<\$" . $Word. ">\"\n";
                 $TokenLevelString .= "\t\"" . $Lemma. "\""; # Punct Clause\n";
@@ -452,21 +456,7 @@ sub PrintTokenLevelInformation{
 
         $TokenLevelString .= "\n";
         
-        # DELIMITERS = "<$.>" "<$?>" "<$!>" "<$:>" "<$\;>" ;
-#        unless ($Punct eq "BL") {
-#            elsif ($Punct eq "._¿" | $Punct eq ",_¿") {
-#                my ($a,$b) = split (/_/,$Punct);
-#                $TokenLevelString .= "\"<\$" . $a. ">\"\n";
-#                $TokenLevelString .= "\t\"" . $a. "\" Punct Clause\n";
-#                $TokenLevelString .= "\"<\$" . $b. ">\"\n";
-#                $TokenLevelString .= "\t\"" . $b. "\" Punct Clause\n";
-#            }
-#            else {
-#                $TokenLevelString .= "\"<" . $Punct. ">\"\n";
-#                $TokenLevelString .= "\t\"" . $Punct. "\" Punct Nonclause\n";
-#            }
-#        } #end of unless for handling punctuation
-      
+
     }
     
     return $TokenLevelString;
