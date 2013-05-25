@@ -480,12 +480,13 @@ ADDRELATION (Gram:MSub:Pret) FiniteVerbForms (0 Haber + Verbo + Pasado + Subjunt
 
 #LATEX\subsection{Verbo ser}
 
-ADD (@Gram:SerEstar:Ser) Verbo (0 VerboSer OR VerboSerAmbiguoConErar);
-ADD (@Gram:SerEstar:Ser) Verbo (0 VerboSerAmbiguoConIr) (NOT 1 Prep);
+ADD (@Gram:SerEstar:Ser) Verbo (0 VerboSer OR VerboSerAmbiguoConErar) (NOT -1 Haber);
+ADD (@Gram:SerEstar:Ser) Verbo (0 VerboSerAmbiguoConIr) (NOT 1 Prep) (NOT -1 Haber);
+ADDRELATION (Gram:SerEstar:Ser) Verbo (0 Haber + FiniteVerbForms) TO (1 VerboSer + Part OR VerboSerAmbiguoConErar + Part) (NOT 1 Part);
 #LATEX T: @Gram:SerEstar:Ser
-#LATEX E: \emph{soy, eres,} etc. 
+#LATEX E: \emph{soy, eres,} \emph{ha sido,}, pero no \emph{ha sido comprado}etc. 
 #LATEX E: \emph{fui, fuimos...} NOT Prep 
-#LATEX D: Cualquier forma de \emph{ser} del pretérito indefinido no seguido de una preposición (porque entonces seguramente será del verbo ir)
+#LATEX D: Cualquier forma de \emph{ser} del pretérito indefinido no seguido de una preposición (porque entonces seguramente será del verbo ir). También las formas perifrásticas con haber que no vayan seguidas de un participició
 
 #LATEX\subsection{Verbo estar}
 ADD (@Gram:SerEstar:Estar) Verbo (0 VerboEstar);
