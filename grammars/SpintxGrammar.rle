@@ -21,7 +21,7 @@ DELIMITERS = "<$.>" "<$?>" "<$!>" "<$:>";
 LIST ArtPronDemo = (DM);
 LIST Nombre = (Noun);
 LIST Adv = (ADV);
-LIST Prep = (PREP);
+LIST Prep = (Preposition) (PREP);
 LIST FiniteVerbForms = (VLfin) (VEfin) (VHfin) ;
 LIST FiniteFormsInPast = (VLfin Indi Pret) (VEfin Indi Pret) ;
 LIST PretImperfSimple = (Imp Indi) ;
@@ -29,7 +29,8 @@ LIST PretPerfSimple = (Pret Indi) ;
 LIST Adj = (ADJ) (ORD) ;
 LIST Part = (VLadj) (VSadj);
 LIST Verbo = (Verb);
-LIST Infinitive = (VLinf);
+LIST Infinitive = (VLinf) (VEinf) (VHinf) (VSinf);
+LIST Gerundio = (VLger) (VEger) (VHger) (VSger);
 LIST PronombrePersonal = (PPX);
 LIST DetAll = (ART); # habrá que refinar la definición 
 LIST Sustantivo = (NC) (NP) (NMEA) (NMON) ;
@@ -107,7 +108,7 @@ LIST VerboSerAmbiguoConErar = ("erar|ser"); ## eras, eran, era, eres (no éramos
 LIST VerboSerAmbiguoConIr = ("ser|ir"); ## fui, fuimos, fue, fuiste...
 LIST VerboEstar = ("estar");
 LIST ListaVerbosCorpusParaContactoMixtos = ("ser") ("decir") ("hacer") ("hacerse");
-
+LIST ConLema = ("con");
 LIST FormasDePalabrasEnLocucionesConPor = ("<ello>") ("<eso>");
 LIST LemasDePalabrasEnLocucionesConPor = ("ejemplo") ("tanto") ("ello") ("eso");
 LIST LemasDePalabrasEnLocucionesConPorLo = ("regular") ("tanto") ("pronto");
@@ -146,7 +147,8 @@ LIST EsteLiteral = ("<este>") ("<ESTE>") ("<Este>");
 LIST EstoLiteral = ("<esto>") ("<ESTO>") ("<Esto>");
 LIST EsoLiteral = ("<eso>") ("<ESO>") ("<Eso>");
 LIST AquelloLiteral = ("<aquello>") ("<AQUELLO>") ("<Aquello>");
-
+LIST EranLiteral = ("<eran>") ("<Eran>") ("<ERAN>");
+LIST ErasLiteral = ("<eras>") ("<Eras>") ("<ERAS>");
 LIST LosLiteral = ("<los>") ("<Los>") ("<LOS>");
 LIST ElDetLiteral = ("<el>") ("<El>") ("<EL>");
 LIST LaLiteral = ("<la>") ("<LA>") ("<La>");
@@ -193,10 +195,36 @@ SUBSTITUTE ("ranchar" Verb VLfin Pres Indi Sing 1st) ("rancho" Noun NC Singular 
 #LATEX D: Lo hace de forma indiscriminada. Quizá en el futuro habrá que cambiarla, refinarla.
 
 SUBSTITUTE ("dicho" Determiner QU) ("decir" Verbo VLadj) TARGET ("dicho");
-SUBSTITUTE ("oír" Verb VLfin Pres Subj Sing 1st_or_3rd) ("oír" Verb VLfin Pres Indi_Command Sing 2nd_3rd) TARGET ("oír");
+#LATEX T: Cambia lectura de ``dicho'' como determinante por lectura como adjetivo/participio.
+#LATEX E: \emph{dicho} 
+#LATEX D: Lo hace de forma indiscriminada. Quizá en el futuro habrá que cambiarla, refinarla.
 
+SUBSTITUTE ("oír" Verb VLfin Pres Subj Sing 1st_or_3rd) ("oír" Verb VLfin Pres Indi_Command Sing 2nd_3rd) TARGET ("oír");
+#LATEX T: Cambia lectura de "oye" como presente de subjuntivo por lectura de presente de indicativo/imperativo.
+#LATEX E: \emph{oye} 
+#LATEX D: Lo hace de forma indiscriminada. Quizá en el futuro habrá que cambiarla, refinarla.
+
+SUBSTITUTE ("ser" Verb VSfin Pret Indi Plural 3rd) ("ir" Verb VLfin Pret Indi Plural 3rd) TARGET ("<fueron>") IF (-1C SeLiteral);
+SUBSTITUTE ("ser" Verb VSfin Pret Indi Plural 3rd) ("ir" Verb VLfin Pret Indi Plural 3rd) TARGET ("<fueron>") IF (1 ConLema + Prep);
+SUBSTITUTE ("ser" Verb VSfin Pret Indi Plural 3rd) ("ir" Verb VLfin Pret Indi Plural 3rd) TARGET ("<fueron>") IF (1 Gerundio);
+#LATEX T: Reglas que cambian la lectura de "ser" por "ir" en "fueron" cuando no va precedida de un pronombre se o seguida la preposición con o un gerundio.
+#LATEX E: \emph{se fueron juntos, se fueron a la escuela} 
+#LATEX D: Quizá en el futuro habrá que cambiarlas, refinarlas.
+
+SUBSTITUTE ("maestro" Adjective ADJ Singular) ("maestro" Noun Singular) TARGET ("maestro");
+SUBSTITUTE ("maestro" Adjective ADJ Plural) ("maestro" Noun Plural) TARGET ("maestro");
+#LATEX T: Cambia lectura de "maestro" de adjetivo sustantivo.
+#LATEX E: \emph{maestro, maestra, maestros, maestras} 
+#LATEX D: Lo hace de forma indiscriminada. Quizá en el futuro habrá que cambiarla, refinarla. Por ejemplo, en "obras maestras", que no ocurre en la versión actal del corpus.
+
+SUBSTITUTE ("erar|ser" Verb VLfin Past Subj Sing 2nd) ("ser" Verb VSfin Past Indi Sing 2nd) TARGET ErasLiteral; #eras
+SUBSTITUTE ("erar|ser" Verb VLfin Past Subj Plural 2nd_or_3rd) ("ser" Verb VSfin Past Indi Plural 3rd) TARGET EranLiteral; #eran
+#LATEX T: Cambia lectura de "eras" y "eran" de lema ambiguo entre erar y ser a sólo lema ser.
+#LATEX E: \emph{eras, eran} 
+#LATEX D: Consideramos erar un verbo muy poco frecuente. Si hiciera falta, se podría refinar la regla.
 
 #LATEX\part{Secciones principales}
+
 SECTION
 #LATEXDOCU Las reglas de identificación de fenómenmos pedagógicos están ordenadas de más concretas a más generales. Así, por ejemplo, se detectan primero, cuando es posible, los distintos usos de \emph{para} (opinión, intención, destino, etc. como \emph{@Gram:Prep:Para:Opinion}...) y luego se marcan como simplemente \emph{@Gram:Prep:Para} el resto de ocurrencias de \emph{para}. Luego, se hace lo propio con otras preposiciones, hasta el punto que si para una preposición no hay reglas especiales, sus ocurrencias se marcan simplemente como \emph{@Gram:Prep}.
 
@@ -376,7 +404,7 @@ ADD (@Gram:Indefinido) FiniteVerbForms IF (0 FiniteVerbForms + PretPerfSimple) (
 
 #LATEX\subsubsection{Pretérito perfecto perifrástico o compuesto}\label{sec:HaberAuxPretPerfecto}
 # PRETÉRTIO PERFECTO PERIFRÁSTICO
-ADDRELATION (Gram:PerfPerif) FiniteVerbForms (0 Haber + FiniteVerbForms + Presente) (NOT 0 Subjuntivo) TO (1 Part);
+ADDRELATION (Gram:PerfPerif Gram:Aux:Haber) FiniteVerbForms (0 Haber + FiniteVerbForms + Presente) (NOT 0 Subjuntivo) TO (1 Part);
 #LATEX T: Asigna R:Gram:PerfPerif a la forma del verbo HABER
 #LATEX E: \emph{ha cantado, ha corrido, ha andado dormido} (cualquier ocurrencia)
 #LATEX D: Requiere una forma finita de HABER seguida de un participio
@@ -468,13 +496,16 @@ ADD (@Gram:SerEstar:Estar) Verbo (0 VerboEstar);
 #LATEX\section{Verbo haber}
 #LATEX\subsection{Verbo haber en su uso com existencial}
 ADD (@Gram:Haber:Exist) Verbo (0 Haber) (NOT 1 Part);
-#LATEX T: @Gram:Aux:Haber
+#LATEX T: @Gram:Haber:Exist
 #LATEX E: \emph{Había} tres personas en el ascensor. 
 #LATEX D: Cualquier forma de \emph{haber} que no vaya seguida de un participio
 
-#LATEX\section{Verbo haber en su uso como auxiliar en tiempos verbales compuestos}
+#LATEX\section{Verbos auxiliares: ser, estar y haber}
 
-#LATEXDOCU No hay una etiqueta específica para este caso, pero vean las descripciones en la secciión \ref{sec:HaberAuxPretPerfecto}. 
+#LATEX\subsection{Verbo haber en su uso como auxiliar en tiempos verbales compuestos}
+#LATEXDOCU Se etiqueta con @Gram:Aux:Haber, pero se hace en las reglas que sirven para etiquetar los tiempos verbales correspondientes. Véase por ejemplo la anotación (y la regla) del Presente Perfecto en la secciión \ref{sec:HaberAuxPretPerfecto}. 
+
+#LATEX\subsection{Verbo ser en pasivas}
 
 ## SECTION -- RULES TO ADD PAST GUSTAR AND SIMILAR VERBS
 #LATEX\chapter{Funciones comunicativas}

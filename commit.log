@@ -1,6 +1,12 @@
 Change log
 ==========
 
+MAY 25, 2013
+-----------
+- Created rules to correct ser reading for fueron in several contexts (not "ser")
+- Created rules to correct wrong adj reading for maestro/a/os/as
+- Created rules to disambiguate erar|ser readings for eran and eras, leave them as ser
+- Added label for haber as auxiliary so that "has visto" can be accessed as a form of presente perfecto but also as a form of haber used as an auxiliary verb
 MAY 24, 2013
 -----------
 - Added script CompileSPinTXInCQP.sh, which compiles the linguistically (not pedagogically) annotated files to CWB assuming this is installed and you know how to work with it
