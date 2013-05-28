@@ -55,6 +55,7 @@ SET GrupoNominal = Sustantivo OR Adj OR DetAll; # habrá que refinar la definici
 ## LIST MORPH FEATURES VERBS
 
 LIST PL = (Plural);
+LIST SG = (Sing) (Singular);
 LIST 1aPers = (1st);
 LIST 3aPers = (3rd);
 LIST 1aO3aPersAmbig = (1st_or_3rd);
@@ -131,7 +132,7 @@ SET SerOServir = Ser OR Servir;
 
 #LATEX\chapter{LIST y SET basados en palabras (literales)}
 LIST YoLiteral = ("<yo>") ("<Yo>") ("<YO>") ;
-LIST TuLiteral = ("<tu>") ("<Tu>") ("<TU>") ;
+LIST TuLiteral = ("<tú>") ("<Tú>") ("<TÚ>") ;
 LIST ElOEllaLiterales = ("<él>") ("<Él>") ("<ÉL>") ("<ella>") ("<Ella>") ("<ELLA>") ;
 LIST NosotrosLiteral = ("<nosotros>") ("<Nosotros>") ("<NOSOTROS>") ;
 LIST VosotrosLiteral = ("<vosotros>") ("<Vosotros>") ("<VOSOTROS>") ;
@@ -153,6 +154,28 @@ LIST LosLiteral = ("<los>") ("<Los>") ("<LOS>");
 LIST ElDetLiteral = ("<el>") ("<El>") ("<EL>");
 LIST LaLiteral = ("<la>") ("<LA>") ("<La>");
 LIST LasLiteral = ("<las>") ("<LAS>") ("<Las>");
+
+LIST MiSingLiteral = ("<mi>") ("<MI>") ("<Mi>");
+LIST MiPluLiteral = ("<mis>") ("<MIS>") ("<Mis>");
+LIST TuSingLiteral = ("<tu>") ("<TU>") ("<Tu>");
+LIST TuPluLiteral = ("<tus>") ("<TUS>") ("<Tus>");
+LIST SuSingLiteral = ("<su>") ("<SU>") ("<Su>");
+LIST SuPluLiteral = ("<sus>") ("<SUS>") ("<Sus>");
+LIST NuestroSingLiteral = ("<nuestro>") ("<NUESTRO>") ("<Nuestro>");
+LIST NuestroPluLiteral = ("<nuestros>") ("<NUESTROS>") ("<Nuestros>");
+LIST VuestroSingLiteral = ("<vuestro>") ("<VUESTRO>") ("<Vuestro>");
+LIST VuestroPluLiteral = ("<vuestros>") ("<VUESTROS>") ("<Vuestros>");
+LIST NuestraSingLiteral = ("<nuestra>") ("<NUESTRA>") ("<Nuestra>");
+LIST NuestraPluLiteral = ("<nuestras>") ("<NUESTRAS>") ("<Nuestras>");
+LIST VuestraSingLiteral = ("<vuestra>") ("<VUESTRA>") ("<Vuestra>");
+LIST VuestraPluLiteral = ("<vuestras>") ("<VUESTRAS>") ("<Vuestras>");
+
+SET DetPosSing = MiSingLiteral OR TuSingLiteral OR SuSingLiteral;
+SET DetPosPlu = MiPluLiteral OR TuPluLiteral OR SuPluLiteral;
+SET DetPosFemPlu = NuestraPluLiteral OR VuestraPluLiteral;
+SET DetPosMascPlu =  NuestroPluLiteral OR VuestroPluLiteral;
+SET DetPosFemSing = NuestraPluLiteral OR VuestraPluLiteral;
+SET DetPosMascSing =  NuestroPluLiteral OR VuestroPluLiteral;
 
 LIST ElLiteralMayusc = ("<El>");
 LIST PasoLiteralMayusc = ("<Paso>");
@@ -255,6 +278,18 @@ ADD (@Gram:Det:Demo) ArtPronDemo IF (-1 Prep OR FiniteVerbForms) (0 EsteEseAquel
 #LATEX T: Asigna @Gram:Det:Demo
 #LATEX E: Prep/Verbo \emph{este/ese/aquel} (LEMMA) + Nombre
 #LATEX D: Cualquier ocurrencia de un demostrativo precedida de una preposición o un verbo conjugado y seguido de un nombre.
+
+#LATEX\section{Usos de los determinantes posesivos}
+
+ADD (@Gram:Det:Pos) DetPosSing IF (*1 Nombre + SG BARRIER FiniteVerbForms OR Conjuncion OR LimiteOracionSimple) ;
+ADD (@Gram:Det:Pos) DetPosPlu IF (*1 Nombre + PL BARRIER FiniteVerbForms OR Conjuncion OR LimiteOracionSimple) ;
+ADD (@Gram:Det:Pos) DetPosFemPlu IF (*1 Nombre + PL BARRIER FiniteVerbForms OR Conjuncion OR LimiteOracionSimple) ;
+ADD (@Gram:Det:Pos) DetPosMascPlu IF (*1 Nombre + PL BARRIER FiniteVerbForms OR Conjuncion OR LimiteOracionSimple) ;
+ADD (@Gram:Det:Pos) DetPosFemSing IF (*1 Nombre + SG BARRIER FiniteVerbForms OR Conjuncion OR LimiteOracionSimple) ;
+ADD (@Gram:Det:Pos) DetPosMascSing IF (*1 Nombre + SG BARRIER FiniteVerbForms OR Conjuncion OR LimiteOracionSimple) ;
+#LATEX T: Asigna @Gram:Det:Poss
+#LATEX E: Prep/Verbo \emph{mi/tu/su/sus/nuestro/nuestros/vuestro/vuestros} (LEMMA) + Nombre
+#LATEX D: Cualquier ocurrencia de un determinante posesivo seguido de un nombre (se admiten ADV y ADJ intercalados).
 
 #LATEX\chapter{Uso de las preposiciones}
 ## SECTION -- RULES TO ADD Prep-RELATED INFORMTATION
@@ -503,10 +538,26 @@ ADD (@Gram:Haber:Exist) Verbo (0 Haber) (NOT 1 Part);
 
 #LATEX\section{Verbos auxiliares: ser, estar y haber}
 
-#LATEX\subsection{Verbo haber en su uso como auxiliar en tiempos verbales compuestos}
-#LATEXDOCU Se etiqueta con @Gram:Aux:Haber, pero se hace en las reglas que sirven para etiquetar los tiempos verbales correspondientes. Véase por ejemplo la anotación (y la regla) del Presente Perfecto en la secciión \ref{sec:HaberAuxPretPerfecto}. 
+#LATEX\subsection{Verbo estar en su uso como auxiliar}
+#LATEXDOCU Se etiqueta con RGram:SerEstar:EstarAux las secuencias de estar seguido de un gerundio.
+ADDRELATION (Gram:SerEstar:EstarAux) VerboEstar IF (0 FiniteVerbForms) TO (1 Gerundio);
+ADDRELATION (Gram:SerEstar:EstarAux) VerboEstar IF (0 Infinitive) TO (1 Gerundio);
+#LATEX T: R:Gram:SerEstar:EstarAux
+#LATEX E: y me \emph{estuvo platicando} allí
+#LATEX D: Actualmente sólo se aplica sobre formas conjugadas y en secuencias estar (infinitivo) más gerundio. Habrá que ver cuán necesario es aplicar reglas para "hemos estado mirando" o "estando comprando?" (el interrogante los uso para marcar que dudo de la gramaticalidad de esta oración.
 
-#LATEX\subsection{Verbo ser en pasivas}
+#LATEX\subsection{Verbo haber en su uso como auxiliar en tiempos verbales compuestos}
+#LATEXDOCU Se etiqueta con @Gram:Aux:Haber, pero se hace en las reglas que sirven para etiquetar los tiempos verbales correspondientes. Véase por ejemplo la anotación (y la regla) del Presente Perfecto en la sección \ref{sec:HaberAuxPretPerfecto}. 
+
+#LATEX\subsection{Verbo ser en su uso como auxiliar}
+###LATEXDOCU No se etiquetan las ocurrencias de ser como auxiliar en las construcciones pasivas por dos razones: una es que hay muy pocas ocurrencias (unas 10 o 12) y otra es que se confunden a menudo con usos adjetivales del participio (por ejemplo, \emph{soy callada y reservada}, \emph{la otra era licenciada en administración de empresas}, etc. Entre unos y otros había unos 31 casos en el Batch 1 (los primeros 327 clips publicados). Véase la Figura \ref{fig:InstancesOfSerPlusParticiple}.
+
+#LATEXDOCU \begin{figure}[htb]
+#LATEXDOCU \centering
+#LATEXDOCU \includegraphics[scale=0.5]{Figs/InstancesOfSerPlusParticiple.png}
+#LATEXDOCU \caption{Ocurrencias de ser seguido de participio en Batch 1.}
+#LATEXDOCU \label{fig:InstancesOfSerPlusParticiple}
+#LATEXDOCU \end{figure}
 
 ## SECTION -- RULES TO ADD PAST GUSTAR AND SIMILAR VERBS
 #LATEX\chapter{Funciones comunicativas}

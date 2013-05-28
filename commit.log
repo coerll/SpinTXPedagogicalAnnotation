@@ -1,6 +1,16 @@
 Change log
 ==========
 
+MAY 28, 2013
+-----------
+- Added option to make pdflatex compilation optional in GrammarDocuSPinTX.pl
+- Added/Refined rules to handle haber as auxiliar
+- Excluded and justified why ser cannot be tagged as auxiliar (right now) -- at least it does not seem worth the effort
+- New version of grammard documentation in PDF (see docs folder)
+- Repaired bug in formatting of documentation of rule related information
+- Repaired bug in annotation of tu as subject pronoun (when it has no tilde it is usually a determiner, unless it is a typo)
+- Rules for the annotation of possessive determiners
+
 MAY 25, 2013
 -----------
 - Created rules to correct ser reading for fueron in several contexts (not "ser")

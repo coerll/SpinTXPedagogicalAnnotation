@@ -12,6 +12,7 @@ use Getopt::Long;
 ## -- To control program execution modes
 my %opts;
 my $DebugLevel;
+my $CompileBoolean;
 my $OutputFormat; #to store the format in which the output file will be printed
 
 # variables to handle file names, paths and contents
@@ -37,7 +38,7 @@ my $ToPrint = ""; # where the output string is being concatenated and printed at
 # ---------------------------------------;
 
 
-GetOptions(\%opts, "help|?", "debug=s", "outformat=s");
+GetOptions(\%opts, "help|?", "debug=s", "outformat=s", "compile=s");
 
 if ($opts{'help'}) {
     print STDERR "\nAutomatic generation of documentation for the CG3 SPinTX grammar\n";
@@ -50,6 +51,8 @@ if ($opts{'help'}) {
     print STDERR " -help,-? \t\t shows this help\n";
     print STDERR " -debug \t\t shows this help\n";
     print STDERR " -outformat \t\t specifies output format, currently only pdf suported\n";
+    print STDERR " -compile \t\t specifies if output tex file should be compiled or not.\n";
+    print STDERR "  Default value is no, but can be set to yes (literally both options).\n";
     exit;
 }
 
@@ -58,6 +61,13 @@ if ($opts{'debug'}) {
 }
 else{
 	$DebugLevel = 0;
+}
+
+if ($opts{'compile'}) {
+	$CompileBoolean = $opts{'compile'};
+}
+else{
+	$CompileBoolean = "no"; #yes does not seem to work now (May 27, 2013)
 }
 
 if ($opts{'outformat'}) {
@@ -100,6 +110,10 @@ $ToPrint .= "%to add links but not color
 %Bib style
 \\usepackage{natbib}
 \\bibpunct[: ]{(}{)}{;}{a}{,}{,}
+
+%To Add Figures
+\\usepackage{graphicx}
+
 ";
 
 $ToPrint .= "\\begin{document}
@@ -183,19 +197,29 @@ open (FOUT,">$OutFile");
 print FOUT $ToPrint;
 close (FOUT);
 
-print STDERR "\n LATEX file in: ". $OutFile;
 
-print STDERR "\n\n Generating PDF files.";
-system ("pdflatex -output-directory $OutputDir $OutFile &> latex.patos.screen.log1");
-system ("pdflatex -output-directory $OutputDir $OutFile &> latex.patos.screen.log2");
-system ("pdflatex -output-directory $OutputDir $OutFile &> latex.patos.screen.log3");
-system ("pdflatex -output-directory $OutputDir $OutFile &> latex.patos.screen.log4");
-# system ("bibtex $OutFile &> bibtex.screen.log");
+if ($CompileBoolean eq "yes"){
+    print STDERR "\n\n Generating PDF files.";
+    print STDERR "\n LATEX file in: ". $OutFile;
+#    system ("pdflatex -interaction nonstopmode -output-directory $OutputDir $OutFile &> latex.patos.screen.log1");
+#    system ("pdflatex -output-directory $OutputDir $OutFile &> latex.patos.screen.log2");
+#    system ("pdflatex -output-directory $OutputDir $OutFile &> latex.patos.screen.log3");
+#    system ("pdflatex -output-directory $OutputDir $OutFile &> latex.patos.screen.log4");
+    system ("pdflatex -output-directory $OutputDir $OutFile");
+    system ("pdflatex -output-directory $OutputDir $OutFile");
+#    system ("pdflatex -output-directory $OutputDir $OutFile");
+#    system ("pdflatex -output-directory $OutputDir $OutFile");
+    # system ("bibtex $OutFile &> bibtex.screen.log");
 
-print STDERR "\n";
-system ("mv -v *.patos.screen.log* $OutputDir");
-#
-print STDERR "\n\n PDF file in: ". $OutputDir . "\n";
+    print STDERR "\n";
+    system ("mv -v *.patos.screen.log* $OutputDir");
+    #
+    print STDERR "\n\n PDF file in: ". $OutputDir . "\n";
+}
+else{
+    print STDERR "\n Compile tex file manually at: ". $OutFile;
+}
+
 
 ##-------------------
 ## SUB ROUTINES
@@ -222,13 +246,13 @@ sub ProcessLineContents{
     }
     elsif ($Line =~ m/^ T: (.+)$/) {
         $ResultLine = "\\begin{itemize}\n";
-        $ResultLine .= "\\item ETIQ.: " . $Line . "\n";
+        $ResultLine .= "\\item ETIQ: " . $1 . "\n";
     }
     elsif ($Line =~ m/^ E: (.+)$/) {
-        $ResultLine = "\\item EJEM.: " . $Line . "\n";
+        $ResultLine = "\\item EJEM: " . $1 . "\n";
     }
     elsif ($Line =~ m/^ D: (.+)$/) {
-        $ResultLine = "\\item DESC.: " . $Line . "\n";
+        $ResultLine = "\\item DESC: " . $1 . "\n";
         $ResultLine .= "\\end{itemize}\n\n";
     }
     else{
