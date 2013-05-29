@@ -3,6 +3,12 @@ Change log
 
 MAY 28, 2013
 -----------
+- Rules to handle annotation of masc nouns that end in -a (problema, tema, día)
+- Rules to annotate fem nouns that require el as article (el alma, el área)
+- Added corresponding documentation
+
+MAY 28, 2013
+-----------
 - Added option to make pdflatex compilation optional in GrammarDocuSPinTX.pl
 - Added/Refined rules to handle haber as auxiliar
 - Excluded and justified why ser cannot be tagged as auxiliar (right now) -- at least it does not seem worth the effort

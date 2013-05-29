@@ -32,7 +32,7 @@ LIST Verbo = (Verb);
 LIST Infinitive = (VLinf) (VEinf) (VHinf) (VSinf);
 LIST Gerundio = (VLger) (VEger) (VHger) (VSger);
 LIST PronombrePersonal = (PPX);
-LIST DetAll = (ART); # habrá que refinar la definición 
+LIST DetAll = (ART) (DM); # habrá que refinar la definición 
 LIST Sustantivo = (NC) (NP) (NMEA) (NMON) ;
 LIST Articulo = (ART);
 LIST Conjuncion = (Conjunction);
@@ -121,6 +121,9 @@ LIST Tambien = ("también");
 LIST Vez = ("vez");
 LIST Tal = ("tal");
 LIST EsteEseAquel = ("ese") ("este") ("aquel");
+LIST SustMascAcabadosEnA = ("idioma") ("día") ("problema") ("programa") ("tema") ("sistema") ("lema") ("planeta") ("síntoma") ("trauma");
+LIST SustFemConATonicaInicial = ("área") ("agua") ("habla") ("arma") ("alma");
+## ("dentista")
 
 ##de momento no se usa
 LIST VerboSaberAmbiguoConSer = ("saber|ser");
@@ -147,11 +150,14 @@ LIST OsLiteral = ("<os>") ("<OS>") ("<Os>");
 LIST EsteLiteral = ("<este>") ("<ESTE>") ("<Este>");
 LIST EstoLiteral = ("<esto>") ("<ESTO>") ("<Esto>");
 LIST EsoLiteral = ("<eso>") ("<ESO>") ("<Eso>");
+LIST EseLiteral = ("<ese>") ("<ESE>") ("<Ese>");
 LIST AquelloLiteral = ("<aquello>") ("<AQUELLO>") ("<Aquello>");
+LIST AquelLiteral = ("<aquel>") ("<AQUEL>") ("<Aquel>");
 LIST EranLiteral = ("<eran>") ("<Eran>") ("<ERAN>");
 LIST ErasLiteral = ("<eras>") ("<Eras>") ("<ERAS>");
 LIST LosLiteral = ("<los>") ("<Los>") ("<LOS>");
 LIST ElDetLiteral = ("<el>") ("<El>") ("<EL>");
+LIST UnDetLiteral = ("<un>") ("<Una>") ("<UNA>");
 LIST LaLiteral = ("<la>") ("<LA>") ("<La>");
 LIST LasLiteral = ("<las>") ("<LAS>") ("<Las>");
 
@@ -290,6 +296,22 @@ ADD (@Gram:Det:Pos) DetPosMascSing IF (*1 Nombre + SG BARRIER FiniteVerbForms OR
 #LATEX T: Asigna @Gram:Det:Poss
 #LATEX E: Prep/Verbo \emph{mi/tu/su/sus/nuestro/nuestros/vuestro/vuestros} (LEMMA) + Nombre
 #LATEX D: Cualquier ocurrencia de un determinante posesivo seguido de un nombre (se admiten ADV y ADJ intercalados).
+
+#LATEX\chapter{Género gramatical y artículos}
+
+#LATEX\section{Género masculino en palabras terminadas en ``a''}
+ADDRELATION (Gram:Genero:ExcepMasc) DetAll IF (0 ElDetLiteral + SG OR UnDetLiteral + SG OR ArtPronDemo + SG) TO (1 SustMascAcabadosEnA + Nombre + SG) ;
+##ADDRELATION (Gram:Genero:ExcepMasc) DetAll IF (0 ElDetLiteral + SG) TO (1 SustMascAcabadosEnA + Nombre + SG) ;
+#LATEX T: Asigna R:Gram:Genero:ExcepMasc
+#LATEX E: \emph{el/un/ese} + (SUST acabado en -a, \emph{tema, día, problema, trauma})
+#LATEX D: No se aplica con todos los determinantes porque TreeTagger no asigna género a todos y lematiza con criterios curiosos.
+
+#LATEX\section{Cambio de artículo femenino a masculina en palabras con ``a'' tónica inicial}
+ADDRELATION (Gram:Genero:ExcepArtFem) DetAll IF (0 ElDetLiteral) TO (1 SustFemConATonicaInicial + Nombre + SG) ;
+#LATEX T: Asigna R:Gram:Genero:ExcepArtFem
+#LATEX E: \emph{el} + (SUST con a- tónica inicial, \emph{arma, aula, agua})
+#LATEX D: No se aplica con todos los determinantes porque TreeTagger no asigna género a todos y lematiza con criterios curiosos.
+
 
 #LATEX\chapter{Uso de las preposiciones}
 ## SECTION -- RULES TO ADD Prep-RELATED INFORMTATION

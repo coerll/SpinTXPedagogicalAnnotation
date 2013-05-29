@@ -173,6 +173,29 @@ Identificaremos los usos de los artículos definidos \emph{el, la, los, las}, y 
 \item DESC: Cualquier ocurrencia de un determinante posesivo seguido de un nombre (se admiten ADV y ADJ intercalados).
 \end{itemize}
 
+\chapter{Género gramatical y artículos}
+\section{Género masculino en palabras terminadas en ``a''}
+\paragraph*{Rule}
+\fbox{
+\parbox{.9\linewidth}{\texttt{ADDRELATION (Gram:Genero:ExcepMasc) DetAll IF (0 ElDetLiteral + SG OR UnDetLiteral + SG OR ArtPronDemo + SG) TO (1 SustMascAcabadosEnA + Nombre + SG) ;}}
+}
+\begin{itemize}
+\item ETIQ: Asigna R:Gram:Genero:ExcepMasc
+\item EJEM: \emph{el/un/ese} + (SUST acabado en -a, \emph{tema, día, problema, trauma})
+\item DESC: No se aplica con todos los determinantes porque TreeTagger no asigna género a todos y lematiza con criterios curiosos.
+\end{itemize}
+
+\section{Cambio de artículo femenino a masculina en palabras con a tónica inicial}
+\paragraph*{Rule}
+\fbox{
+\parbox{.9\linewidth}{\texttt{ADDRELATION (Gram:Genero:ExcepArtFem) DetAll IF (0 ElDetLiteral) TO (1 SustFemConATonicaInicial + Nombre + SG) ;}}
+}
+\begin{itemize}
+\item ETIQ: Asigna R:Gram:Genero:ExcepArtFem
+\item EJEM: \emph{el} + (SUST con a- tónica inicial, \emph{arma, aula, agua})
+\item DESC: No se aplica con todos los determinantes porque TreeTagger no asigna género a todos y lematiza con criterios curiosos.
+\end{itemize}
+
 \chapter{Uso de las preposiciones}
 \section{Usos de para}
 Veáse \url{http://dev.coerll.utexas.edu/spanishtx/spe/html/adv11.html}.
