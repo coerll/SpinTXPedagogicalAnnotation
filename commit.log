@@ -1,6 +1,13 @@
 Change log
 ==========
 
+JUNE 10, 2013
+-----------
+- Added rules to handle ordinal adjectives (a subset at least)
+- Added rules to modify reading "UNK" NC Plural of mis and set it to "mío" PPO Plural (consistent with "mi")
+- Updated docu
+- Update excel and fusion tables accordingly (in Google Drive)
+
 MAY 28, 2013
 -----------
 - Rules to handle annotation of masc nouns that end in -a (problema, tema, día)

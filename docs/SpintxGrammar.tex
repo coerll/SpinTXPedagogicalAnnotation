@@ -98,6 +98,12 @@ DOCU
 \item DESC: Consideramos erar un verbo muy poco frecuente. Si hiciera falta, se podría refinar la regla.
 \end{itemize}
 
+\begin{itemize}
+\item ETIQ: Cambia lectura de "UNK" Noun NC Plural a "mío" Pronoun PPO Plural a "mis".
+\item EJEM: \emph{mis,Mis} 
+\item DESC: [Ninguna.]
+\end{itemize}
+
 \part{Secciones principales}
 Las reglas de identificación de fenómenmos pedagógicos están ordenadas de más concretas a más generales. Así, por ejemplo, se detectan primero, cuando es posible, los distintos usos de \emph{para} (opinión, intención, destino, etc. como \emph{@Gram:Prep:Para:Opinion}...) y luego se marcan como simplemente \emph{@Gram:Prep:Para} el resto de ocurrencias de \emph{para}. Luego, se hace lo propio con otras preposiciones, hasta el punto que si para una preposición no hay reglas especiales, sus ocurrencias se marcan simplemente como \emph{@Gram:Prep}.
 
@@ -185,7 +191,7 @@ Identificaremos los usos de los artículos definidos \emph{el, la, los, las}, y 
 \item DESC: No se aplica con todos los determinantes porque TreeTagger no asigna género a todos y lematiza con criterios curiosos.
 \end{itemize}
 
-\section{Cambio de artículo femenino a masculina en palabras con a tónica inicial}
+\section{Cambio de artículo femenino a masculina en palabras con ``a'' tónica inicial}
 \paragraph*{Rule}
 \fbox{
 \parbox{.9\linewidth}{\texttt{ADDRELATION (Gram:Genero:ExcepArtFem) DetAll IF (0 ElDetLiteral) TO (1 SustFemConATonicaInicial + Nombre + SG) ;}}
@@ -194,6 +200,21 @@ Identificaremos los usos de los artículos definidos \emph{el, la, los, las}, y 
 \item ETIQ: Asigna R:Gram:Genero:ExcepArtFem
 \item EJEM: \emph{el} + (SUST con a- tónica inicial, \emph{arma, aula, agua})
 \item DESC: No se aplica con todos los determinantes porque TreeTagger no asigna género a todos y lematiza con criterios curiosos.
+\end{itemize}
+
+\chapter{Uso de los adjetivos}
+\paragraph*{Rule}
+\fbox{
+\parbox{.9\linewidth}{\texttt{ADD (Gram:Adj:Ord) AdjOrd IF (0 AdjOrd) (NOT 0 LiteralPrimeroOrTercero + SG) (-1 DetAll + SG OR Prep OR PrepContract OR Verbo) (1 Sustantivo + SG);}}
+}
+\paragraph*{Rule}
+\fbox{
+\parbox{.9\linewidth}{\texttt{ADD (Gram:Adj:Ord) AdjOrd IF (0 AdjOrd) (NOT 0 LiteralPrimeroOrTercero + PL) (-1 DetAll + PL OR Prep OR Verbo) (1 Sustantivo + PL); }}
+}
+\begin{itemize}
+\item ETIQ: Asigna Gram:Adj:Ord
+\item EJEM: \emph{por primera vez, del tercer mundo} 
+\item DESC: Se controla que el elemento de la izquierda sea un determinante, preposición, con o sin contracción, o verbo. El de la derecha un sustantivo y, cuando hay número, deben concordar. PrepContract no tiene sentido en la versión plural porque no se hace contracción entre preposición y artículos en plural.
 \end{itemize}
 
 \chapter{Uso de las preposiciones}

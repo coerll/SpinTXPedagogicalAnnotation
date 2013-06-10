@@ -22,17 +22,19 @@ LIST ArtPronDemo = (DM);
 LIST Nombre = (Noun);
 LIST Adv = (ADV);
 LIST Prep = (Preposition) (PREP);
+LIST PrepContract = (PDEL);
 LIST FiniteVerbForms = (VLfin) (VEfin) (VHfin) ;
 LIST FiniteFormsInPast = (VLfin Indi Pret) (VEfin Indi Pret) ;
 LIST PretImperfSimple = (Imp Indi) ;
 LIST PretPerfSimple = (Pret Indi) ;
 LIST Adj = (ADJ) (ORD) ;
+LIST AdjOrd = (ORD) ;
 LIST Part = (VLadj) (VSadj);
 LIST Verbo = (Verb);
 LIST Infinitive = (VLinf) (VEinf) (VHinf) (VSinf);
 LIST Gerundio = (VLger) (VEger) (VHger) (VSger);
 LIST PronombrePersonal = (PPX);
-LIST DetAll = (ART) (DM); # habrá que refinar la definición 
+LIST DetAll = (ART) (DM) (PPO); # habrá que refinar la definición, p.e., incluye palabras como mío, mía, míos, que claramente son adjetivos y no determinantes (esto viene de TreeTagger)
 LIST Sustantivo = (NC) (NP) (NMEA) (NMON) ;
 LIST Articulo = (ART);
 LIST Conjuncion = (Conjunction);
@@ -54,7 +56,7 @@ SET GrupoNominal = Sustantivo OR Adj OR DetAll; # habrá que refinar la definici
 #LATEX\section{Rasgos morfosintácticos}
 ## LIST MORPH FEATURES VERBS
 
-LIST PL = (Plural);
+LIST PL = (Plural) (Plu);
 LIST SG = (Sing) (Singular);
 LIST 1aPers = (1st);
 LIST 3aPers = (3rd);
@@ -160,6 +162,9 @@ LIST ElDetLiteral = ("<el>") ("<El>") ("<EL>");
 LIST UnDetLiteral = ("<un>") ("<Una>") ("<UNA>");
 LIST LaLiteral = ("<la>") ("<LA>") ("<La>");
 LIST LasLiteral = ("<las>") ("<LAS>") ("<Las>");
+LIST LiteralPrimero = ("<primero>") ("<PRIMERO>") ("<Primero>");
+LIST LiteralTercero = ("<tercero>") ("<TERCERO>") ("<Tercero>");
+SET LiteralPrimeroOrTercero = LiteralTercero OR LiteralPrimero;
 
 LIST MiSingLiteral = ("<mi>") ("<MI>") ("<Mi>");
 LIST MiPluLiteral = ("<mis>") ("<MIS>") ("<Mis>");
@@ -252,6 +257,11 @@ SUBSTITUTE ("erar|ser" Verb VLfin Past Subj Plural 2nd_or_3rd) ("ser" Verb VSfin
 #LATEX E: \emph{eras, eran} 
 #LATEX D: Consideramos erar un verbo muy poco frecuente. Si hiciera falta, se podría refinar la regla.
 
+SUBSTITUTE ("UNK" Noun NC Plural) ("mío" Pronoun PPO Plural) TARGET ("<mis>") OR ("<Mis>");
+#LATEX T: Cambia lectura de "UNK" Noun NC Plural a "mío" Pronoun PPO Plural a "mis".
+#LATEX E: \emph{mis,Mis} 
+#LATEX D: [Ninguna.]
+
 #LATEX\part{Secciones principales}
 
 SECTION
@@ -312,6 +322,15 @@ ADDRELATION (Gram:Genero:ExcepArtFem) DetAll IF (0 ElDetLiteral) TO (1 SustFemCo
 #LATEX E: \emph{el} + (SUST con a- tónica inicial, \emph{arma, aula, agua})
 #LATEX D: No se aplica con todos los determinantes porque TreeTagger no asigna género a todos y lematiza con criterios curiosos.
 
+
+#LATEX\chapter{Uso de los adjetivos}
+## SECTION -- RULES TO ADD Adj-RELATED INFORMTATION
+
+ADD (Gram:Adj:Ord) AdjOrd IF (0 AdjOrd) (NOT 0 LiteralPrimeroOrTercero + SG) (-1 DetAll + SG OR Prep OR PrepContract OR Verbo) (1 Sustantivo + SG);
+ADD (Gram:Adj:Ord) AdjOrd IF (0 AdjOrd) (NOT 0 LiteralPrimeroOrTercero + PL) (-1 DetAll + PL OR Prep OR Verbo) (1 Sustantivo + PL); 
+#LATEX T: Asigna Gram:Adj:Ord
+#LATEX E: \emph{por primera vez, del tercer mundo} 
+#LATEX D: Se controla que el elemento de la izquierda sea un determinante, preposición, con o sin contracción, o verbo. El de la derecha un sustantivo y, cuando hay número, deben concordar. PrepContract no tiene sentido en la versión plural porque no se hace contracción entre preposición y artículos en plural.
 
 #LATEX\chapter{Uso de las preposiciones}
 ## SECTION -- RULES TO ADD Prep-RELATED INFORMTATION
