@@ -5,7 +5,8 @@ CG3DIR="$SPINTX_HOME/data/SpinTXCorpusData/cg3"
 OUTDIR="$SPINTX_HOME/data/SpinTXCorpusData/ClipPedagogicalTags"
 ## MQ: I comment this till I start working on integration of PAToS in environment using CWB Tools
 ## CQPDIR="$TEXTDIR/CQP"
-GRAMMARS="$SPINTX_HOME/tools/spintxPedagogicalAnntotation/grammars"
+## GRAMMARS="$SPINTX_HOME/tools/spintxPedagogicalAnntotation/grammars"
+GRAMMARS="${SPINTX_HOME}tools/SpinTXPedagogicalAnnotation/grammars"
 
 if [[ "$1" == "help" ]] || [[ "$1" == "" ]]; then
   echo " "
