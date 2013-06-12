@@ -1,6 +1,33 @@
 Change log
 ==========
 
+JUNE 12, 2013
+-----------
+- Added rules to disambiguate dar|decir occurrences of "di" into the dar (to better handle imperativo)
+- Changed internal path definitions to work properly with installation in virtual server (basically assumes that there is a SPINTX_HOME variable that has two subfolders data and tools. These two folders contain the rest of files (downloaded mainly from github or processed internally if there is the need)
+
+JUNE 10, 2013
+-----------
+- Added rules to handle ordinal adjectives (a subset at least)
+- Added rules to modify reading "UNK" NC Plural of mis and set it to "mío" PPO Plural (consistent with "mi")
+- Updated docu
+- Update excel and fusion tables accordingly (in Google Drive)
+
+MAY 28, 2013
+-----------
+- Rules to handle annotation of masc nouns that end in -a (problema, tema, día)
+- Rules to annotate fem nouns that require el as article (el alma, el área)
+- Added corresponding documentation
+
+MAY 28, 2013
+-----------
+- Added option to make pdflatex compilation optional in GrammarDocuSPinTX.pl
+- Added/Refined rules to handle haber as auxiliar
+- Excluded and justified why ser cannot be tagged as auxiliar (right now) -- at least it does not seem worth the effort
+- New version of grammard documentation in PDF (see docs folder)
+- Repaired bug in formatting of documentation of rule related information
+- Repaired bug in annotation of tu as subject pronoun (when it has no tilde it is usually a determiner, unless it is a typo)
+- Rules for the annotation of possessive determiners
 JUNE 10, 2013
 -----------
 - Added rules to handle ordinal adjectives (a subset at least)

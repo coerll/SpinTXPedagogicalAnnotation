@@ -22,7 +22,7 @@ my $PDFFile; # output file name (one output file for all input files)
 my ($name,$path,$suffix); # name, path and suffix of input file
 my $file; # input file name including path and extention (to be opened by script)
 my $Text; # input file contents
-my $OutputDir = $ENV{SPINTX_HOME} . "spintxPedagogicalAnntotation/";
+my $OutputDir = $ENV{SPINTX_HOME} . "tools/spintxPedagogicalAnntotation/";
 
 
 # Variables to control initial lines in files to be processed, often special lines
@@ -173,7 +173,7 @@ foreach $file (@ARGV) {
                 my $ToBeProcessed = $1;
                 $ToPrint .= &ProcessLineContents($ToBeProcessed);
             }
-            elsif ($GrammarFileLine =~ m/^(ADD|ADDRELATIONS|ADDRELATION|REPLACE) (.+)$/) {
+            elsif ($GrammarFileLine =~ m/^(ADD|ADDRELATIONS|ADDRELATION|REPLACE|SUBSTITUTE) (.+)$/) {
                 $ToPrint .= &ProcessRuleContents($GrammarFileLine);
             }
 

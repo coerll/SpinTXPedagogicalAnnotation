@@ -11,7 +11,7 @@ use Time::localtime;
 
 # ---------------------------------------;
 # Reading configuration paths from the enviroment variable $SPINTX_HOME as set in ~/.profile (in unix-like OS)
-my $OutputDir = $ENV{SPINTX_HOME} . "corpus/SpinTXCorpusData/";
+my $OutputDir = $ENV{SPINTX_HOME} . "data/SpinTXCorpusData/";
 
 my $OutputDirWLA = $OutputDir . "ClipWLA/"; #we will dump results in the wla folder under corpus/ClipTags
 my $OutputDirStats = $OutputDir . "stats/";

@@ -1,6 +1,6 @@
 #!/bin/bash
 
-CQPDIR="$SPINTX_HOME/corpus/SpinTXCorpusData/ClipCQP"
+CQPDIR="$SPINTX_HOME/data/SpinTXCorpusData/ClipCQP"
 
 echo "Compiling SPinTX in a local installation of cqp"
 echo "This script assumes cqp is installed"

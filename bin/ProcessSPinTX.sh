@@ -1,11 +1,11 @@
 #!/bin/bash
 
-TXTDIR="$SPINTX_HOME/corpus/SpinTXCorpusData/ClipTags"
-CG3DIR="$SPINTX_HOME/corpus/SpinTXCorpusData/cg3"
-OUTDIR="$SPINTX_HOME/corpus/SpinTXCorpusData/ClipPedagogicalTags"
+TXTDIR="$SPINTX_HOME/data/SpinTXCorpusData/ClipTags"
+CG3DIR="$SPINTX_HOME/data/SpinTXCorpusData/cg3"
+OUTDIR="$SPINTX_HOME/data/SpinTXCorpusData/ClipPedagogicalTags"
 ## MQ: I comment this till I start working on integration of PAToS in environment using CWB Tools
 ## CQPDIR="$TEXTDIR/CQP"
-GRAMMARS="$SPINTX_HOME/spintxPedagogicalAnntotation/grammars"
+GRAMMARS="$SPINTX_HOME/tools/spintxPedagogicalAnntotation/grammars"
 
 if [[ "$1" == "help" ]] || [[ "$1" == "" ]]; then
   echo " "

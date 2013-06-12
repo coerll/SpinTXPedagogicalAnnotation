@@ -157,6 +157,7 @@ LIST AquelloLiteral = ("<aquello>") ("<AQUELLO>") ("<Aquello>");
 LIST AquelLiteral = ("<aquel>") ("<AQUEL>") ("<Aquel>");
 LIST EranLiteral = ("<eran>") ("<Eran>") ("<ERAN>");
 LIST ErasLiteral = ("<eras>") ("<Eras>") ("<ERAS>");
+LIST DiLiteral = ("<di>") ("<Di>") ("<DI>") ;
 LIST LosLiteral = ("<los>") ("<Los>") ("<LOS>");
 LIST ElDetLiteral = ("<el>") ("<El>") ("<EL>");
 LIST UnDetLiteral = ("<un>") ("<Una>") ("<UNA>");
@@ -200,6 +201,7 @@ LIST Es = ("<es>") ("<Es>") ("<ES>");
 SET DetArtDefinidosLiterales = ElDetLiteral OR LosLiteral OR LasLiteral OR LaLiteral;
 SET PronPersFuerte = YoLiteral OR TuLiteral OR ElOEllaLiterales OR NosotrosLiteral OR VosotrosLiteral OR EllosOEllasLiteral OR UstedLema;
 SET PronombreDeObjetoNoAmbiguos = Me OR Te OR NosLiteral OR OsLiteral;
+SET PronombresCliticosTODOS = Me OR Te OR NosLiteral OR OsLiteral OR LosLiteral OR LasLiteral OR LaLiteral OR LoLiteral OR LeLema;
 SET EstoEsoAquello = EstoLiteral OR EsoLiteral OR AquelloLiteral;
 
 #LATEX\chapter{LIST y SET basados en etiquetas pedagógicas}
@@ -251,8 +253,8 @@ SUBSTITUTE ("maestro" Adjective ADJ Plural) ("maestro" Noun Plural) TARGET ("mae
 #LATEX E: \emph{maestro, maestra, maestros, maestras} 
 #LATEX D: Lo hace de forma indiscriminada. Quizá en el futuro habrá que cambiarla, refinarla. Por ejemplo, en "obras maestras", que no ocurre en la versión actal del corpus.
 
-SUBSTITUTE ("erar|ser" Verb VLfin Past Subj Sing 2nd) ("ser" Verb VSfin Past Indi Sing 2nd) TARGET ErasLiteral; #eras
-SUBSTITUTE ("erar|ser" Verb VLfin Past Subj Plural 2nd_or_3rd) ("ser" Verb VSfin Past Indi Plural 3rd) TARGET EranLiteral; #eran
+SUBSTITUTE ("erar|ser" Verb VLfin Past Subj Sing 2nd) ("ser" Verb VSfin Imp Indi Sing 2nd) TARGET ErasLiteral; #eras
+SUBSTITUTE ("erar|ser" Verb VLfin Past Subj Plural 2nd_or_3rd) ("ser" Verb VSfin Imp Indi Plural 3rd) TARGET EranLiteral; #eran
 #LATEX T: Cambia lectura de "eras" y "eran" de lema ambiguo entre erar y ser a sólo lema ser.
 #LATEX E: \emph{eras, eran} 
 #LATEX D: Consideramos erar un verbo muy poco frecuente. Si hiciera falta, se podría refinar la regla.
@@ -260,7 +262,12 @@ SUBSTITUTE ("erar|ser" Verb VLfin Past Subj Plural 2nd_or_3rd) ("ser" Verb VSfin
 SUBSTITUTE ("UNK" Noun NC Plural) ("mío" Pronoun PPO Plural) TARGET ("<mis>") OR ("<Mis>");
 #LATEX T: Cambia lectura de "UNK" Noun NC Plural a "mío" Pronoun PPO Plural a "mis".
 #LATEX E: \emph{mis,Mis} 
-#LATEX D: [Ninguna.]
+#LATEX D: [Ninguna.
+
+SUBSTITUTE ("dar|decir" Verb VLfin Pres Command Sing 2nd) ("dar" Verb VLfin Pret Indi Sing 1st) TARGET DiLiteral IF (-1 PronombresCliticosTODOS); #XXX
+#LATEX T: Cambia lectura de "di" de lema ambiguo entre dar y decir a sólo lema dar.
+#LATEX E: \emph{le di, me di cuenta} 
+#LATEX D: Dado que ``di'' como mandato llevará siempre el clítico pospuesto, si no lo lleva lo podemos considerar una forma de dar. Cabría tener en cuenta otras opciones pero esta parece razonable.
 
 #LATEX\part{Secciones principales}
 
