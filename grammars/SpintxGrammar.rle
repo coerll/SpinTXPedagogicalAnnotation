@@ -47,8 +47,8 @@ LIST PalabraEnIngles = (lang:en);
 LIST PalabraEnEspanol = (lang:es);
 LIST Pasado = (Past); #only for subjunctive (?)
 LIST Presente = (Pres);
-
 LIST Subjuntivo = (Subj);
+LIST Imperativo = (Command);
 
 LIST LimiteOracionSimple = (CC) (CSUBX) (CSUBF) (CQUE) (CSUBI) ; # habrá que refinar la definición
 SET GrupoNominal = Sustantivo OR Adj OR DetAll; # habrá que refinar la definición de grupo nominal
@@ -60,6 +60,7 @@ LIST PL = (Plural) (Plu);
 LIST SG = (Sing) (Singular);
 LIST 1aPers = (1st);
 LIST 3aPers = (3rd);
+LIST 2aPers = (2nd);
 LIST 1aO3aPersAmbig = (1st_or_3rd);
 
 SET 3aPersAmbig = 3aPers OR 1aO3aPersAmbig;
@@ -268,6 +269,12 @@ SUBSTITUTE ("dar|decir" Verb VLfin Pres Command Sing 2nd) ("dar" Verb VLfin Pret
 #LATEX T: Cambia lectura de "di" de lema ambiguo entre dar y decir a sólo lema dar.
 #LATEX E: \emph{le di, me di cuenta} 
 #LATEX D: Dado que ``di'' como mandato llevará siempre el clítico pospuesto, si no lo lleva lo podemos considerar una forma de dar. Cabría tener en cuenta otras opciones pero esta parece razonable.
+
+SUBSTITUTE (Verb VLinf Pres Command Plural 2nd) (Verb VLinf) TARGET ("<(.*)(ar|er|ir|ír)>"r); #infinitivos marcados como imperativo
+#LATEX T: Cambia lectura Command Plural 2nd a los infinitivos 
+#LATEX E: \emph{decir,nadar,temer} 
+#LATEX D: Se aplica a cualquier infinitivo con la lectura arriba mencionada. A pesar de que los imperativos pueden tener esta función de mandatopragmáticamente hablando, consideramos que no se deben etiquetar morfológicamente como tales.
+#LATEXREM Notad la ``r'' al final del TARGET en la regla. Indica que lo anterior debe ser tratado como una expresión regular. Si no, la regla no se aplica.
 
 #LATEX\part{Secciones principales}
 
@@ -558,6 +565,16 @@ ADDRELATION (Gram:MSub:Pret) FiniteVerbForms (0 Haber + Verbo + Pasado + Subjunt
 #LATEX E: ¿Hay alguna palabra mexicana que \emph{le haya sorprendido}?
 #LATEX D: No se aplica si la forma verbal no esta precedida por una "de" para evitar formas incorrectamente marcadas como subjuntivo por el tagging básico. Si se trata de una forma compuesta, es decir, HABER + PART, se marca todo como tal.
 
+#LATEX\section{Formas verbales para tiempos de imperativo}
+
+#LATEX\subsection{Formas verbales para tiempos de imperativo informal (tú)}
+ADD (@Gram:MImp:Informal) Verbo IF (0 Presente + Imperativo + SG + 2aPers) (NOT 0 ("<órale>") OR ("<(.*)(é|í|á)rselo>"r));
+###Verb VLfin Pres Command Sing 2nd 
+#LATEX T: @Gram:MImp:Informal
+#LATEX E: \emph{cuéntame}... 
+#LATEX D: Cualquier forma de imperativo de la segunda persona del singular. No se aplicará en formas como cantárselo, comérselo o partírselo, pero sí en otras formas infinitivas con pronombres de objeto que TreeTagger etiquete como imperativos.
+#LATEXREM Actualmente falla en ``díael'' (debido a un error de transcripción). Se ha arreglado el problema de transcripción y en próximas versiones no debería aparecer.
+
 ## SECTION -- RULES TO ADD PAST GUSTAR AND SIMILAR VERBS
 #LATEX\section{Verbos copulativos}
 
@@ -569,7 +586,7 @@ ADDRELATION (Gram:SerEstar:Ser) Verbo (0 Haber + FiniteVerbForms) TO (1 VerboSer
 #LATEX T: @Gram:SerEstar:Ser
 #LATEX E: \emph{soy, eres,} \emph{ha sido,}, pero no \emph{ha sido comprado}etc. 
 #LATEX E: \emph{fui, fuimos...} NOT Prep 
-#LATEX D: Cualquier forma de \emph{ser} del pretérito indefinido no seguido de una preposición (porque entonces seguramente será del verbo ir). También las formas perifrásticas con haber que no vayan seguidas de un participició
+#LATEX D: Cualquier forma de \emph{ser} del pretérito indefinido no seguido de una preposición (porque entonces seguramente será del verbo ir). También las formas perifrásticas con haber que no vayan seguidas de un participicio.
 
 #LATEX\subsection{Verbo estar}
 ADD (@Gram:SerEstar:Estar) Verbo (0 VerboEstar);

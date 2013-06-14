@@ -3,6 +3,10 @@ Change log
 
 JUNE 12, 2013
 -----------
+- Added rules to handle mandatos informales en singular (tú)
+
+JUNE 12, 2013
+-----------
 - Added rules to disambiguate dar|decir occurrences of "di" into the dar (to better handle imperativo)
 - Changed internal path definitions to work properly with installation in virtual server (basically assumes that there is a SPINTX_HOME variable that has two subfolders data and tools. These two folders contain the rest of files (downloaded mainly from github or processed internally if there is the need)
 - Changed the way the CG3 grammar was called by ProcessSPinTX.sh so that it adapts (hopefully seamlessly) to new installations
