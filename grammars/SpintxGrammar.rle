@@ -20,7 +20,7 @@ DELIMITERS = "<$.>" "<$?>" "<$!>" "<$:>";
 ## LISTS OR SETS FOR PART-OF-SPEECH TAGS
 LIST ArtPronDemo = (DM);
 LIST Nombre = (Noun);
-LIST Adv = (ADV);
+LIST Adverbio = (ADV);
 LIST Prep = (Preposition) (PREP);
 LIST PrepContract = (PDEL);
 LIST FiniteVerbForms = (VLfin) (VEfin) (VHfin) ;
@@ -49,7 +49,6 @@ LIST Pasado = (Past); #only for subjunctive (?)
 LIST Presente = (Pres);
 LIST Subjuntivo = (Subj);
 LIST Imperativo = (Command);
-
 LIST LimiteOracionSimple = (CC) (CSUBX) (CSUBF) (CQUE) (CSUBI) ; # habrá que refinar la definición
 SET GrupoNominal = Sustantivo OR Adj OR DetAll; # habrá que refinar la definición de grupo nominal
 
@@ -89,7 +88,6 @@ LIST Os = ("vosotros" PPX);
 LIST LeLema = ("él" PPC);
 LIST PretPerfRelations = (r:PretPerifAux) (r:PretPerifMain);
 LIST Que = ("que");
-LIST Uno = ("uno");
 LIST UstedLema = ("usted");
 LIST ConjLetraO = ("o");
 LIST MarcDiscRevision = ("pero") ("aunque") ("exepto");
@@ -126,6 +124,8 @@ LIST Tal = ("tal");
 LIST EsteEseAquel = ("ese") ("este") ("aquel");
 LIST SustMascAcabadosEnA = ("idioma") ("día") ("problema") ("programa") ("tema") ("sistema") ("lema") ("planeta") ("síntoma") ("trauma");
 LIST SustFemConATonicaInicial = ("área") ("agua") ("habla") ("arma") ("alma");
+LIST NoAdv = ("no" NEG);
+
 ## ("dentista")
 
 ##de momento no se usa
@@ -166,6 +166,7 @@ LIST LaLiteral = ("<la>") ("<LA>") ("<La>");
 LIST LasLiteral = ("<las>") ("<LAS>") ("<Las>");
 LIST LiteralPrimero = ("<primero>") ("<PRIMERO>") ("<Primero>");
 LIST LiteralTercero = ("<tercero>") ("<TERCERO>") ("<Tercero>");
+LIST UnoLiteral = ("<uno>") ("<UNO>") ("<Uno>");
 SET LiteralPrimeroOrTercero = LiteralTercero OR LiteralPrimero;
 
 LIST MiSingLiteral = ("<mi>") ("<MI>") ("<Mi>");
@@ -265,7 +266,7 @@ SUBSTITUTE ("UNK" Noun NC Plural) ("mío" Pronoun PPO Plural) TARGET ("<mis>") O
 #LATEX E: \emph{mis,Mis} 
 #LATEX D: [Ninguna.
 
-SUBSTITUTE ("dar|decir" Verb VLfin Pres Command Sing 2nd) ("dar" Verb VLfin Pret Indi Sing 1st) TARGET DiLiteral IF (-1 PronombresCliticosTODOS); #XXX
+SUBSTITUTE ("dar|decir" Verb VLfin Pres Command Sing 2nd) ("dar" Verb VLfin Pret Indi Sing 1st) TARGET DiLiteral IF (-1 PronombresCliticosTODOS);
 #LATEX T: Cambia lectura de "di" de lema ambiguo entre dar y decir a sólo lema dar.
 #LATEX E: \emph{le di, me di cuenta} 
 #LATEX D: Dado que ``di'' como mandato llevará siempre el clítico pospuesto, si no lo lleva lo podemos considerar una forma de dar. Cabría tener en cuenta otras opciones pero esta parece razonable.
@@ -275,6 +276,11 @@ SUBSTITUTE (Verb VLinf Pres Command Plural 2nd) (Verb VLinf) TARGET ("<(.*)(ar|e
 #LATEX E: \emph{decir,nadar,temer} 
 #LATEX D: Se aplica a cualquier infinitivo con la lectura arriba mencionada. A pesar de que los imperativos pueden tener esta función de mandatopragmáticamente hablando, consideramos que no se deben etiquetar morfológicamente como tales.
 #LATEXREM Notad la ``r'' al final del TARGET en la regla. Indica que lo anterior debe ser tratado como una expresión regular. Si no, la regla no se aplica.
+
+SUBSTITUTE ("UNK" Verb VLfin Pres Command Plural 2nd) ("platicar" Verb VLfin Pres Command Sing 3rd) TARGET ("<platíquenos>");
+#LATEX T: Cambia lectura Command Plural 2nd y lema a ``platíquenos'' 
+#LATEX E: \emph{platíquenos} 
+#LATEX D: Se aplica sólo a pltíquenos.
 
 #LATEX\part{Secciones principales}
 
@@ -309,6 +315,13 @@ ADD (@Gram:Det:Demo) ArtPronDemo IF (-1 Prep OR FiniteVerbForms) (0 EsteEseAquel
 #LATEX E: Prep/Verbo \emph{este/ese/aquel} (LEMMA) + Nombre
 #LATEX D: Cualquier ocurrencia de un demostrativo precedida de una preposición o un verbo conjugado y seguido de un nombre.
 
+#LATEX\section{Usos pronominales de los demostrativos}
+
+ADD (@Gram:Det:Demo) ArtPronDemo IF (-1 Prep OR FiniteVerbForms) (0 EstoEsoAquello) ;
+#LATEX T: Asigna @Gram:Pron:Demo
+#LATEX E: Prep/Verbo \emph{esto/eso/aquello}
+#LATEX D: Cualquier ocurrencia de un demostrativo terminado en -o. No distinguimos las formas que forman parte de locuciones (como ``por eso'', etc.).
+
 #LATEX\section{Usos de los determinantes posesivos}
 
 ADD (@Gram:Det:Pos) DetPosSing IF (*1 Nombre + SG BARRIER FiniteVerbForms OR Conjuncion OR LimiteOracionSimple) ;
@@ -320,6 +333,14 @@ ADD (@Gram:Det:Pos) DetPosMascSing IF (*1 Nombre + SG BARRIER FiniteVerbForms OR
 #LATEX T: Asigna @Gram:Det:Poss
 #LATEX E: Prep/Verbo \emph{mi/tu/su/sus/nuestro/nuestros/vuestro/vuestros} (LEMMA) + Nombre
 #LATEX D: Cualquier ocurrencia de un determinante posesivo seguido de un nombre (se admiten ADV y ADJ intercalados).
+
+#LATEX\section{Usos de los determinantes indefinidos}
+
+ADD (@Gram:Det:CuantIndef) UnoLiteral IF (1 De) (NOT -1 Infinitive);
+#LATEX T: Asigna @Gram:Det:CuantIndef
+#LATEX E: Que no los puedo criticar porque yo soy \emph{uno} de ellos (...)
+#LATEX D: Cualquier ocurrencia de un determinante posesivo seguido de un nombre (se admiten ADV y ADJ intercalados).
+
 
 #LATEX\chapter{Género gramatical y artículos}
 
@@ -433,12 +454,24 @@ ADD (@Gram:Prep) Prep (NOT 0 GramPrep);
 #LATEX\chapter{Uso de los pronombres}
 ## SECTION -- RULES TO ADD Prep-RELATED INFORMTATION
 
-#LATEX\section{Pronombres de sujeto}
+#LATEX\section{Pronombres de sujeto: los pronombres de sujeto personales}
 
 ADD (@Gram:Pron:Sujeto) PronPersFuerte;
 #LATEX T: Asigna @Gram:Pron:Sujeto.
 #LATEX E: \emph{yo, tú, él, ella, ud., nosotros, vosotros, ellos, ellas, uds.} (cualquier ocurrencia)
-#LATEX D: La ocurrencia de uno de ellos
+#LATEX E: Cuando aquí en los Estados Unidos \emph{uno creció} con las lavadoras, ¿verdad? 
+#LATEX D: La ocurrencia de uno de ellos.
+
+#LATEX\subsection{Pronombres de sujeto: \emph{uno} como sujeto impersonal}
+
+ADD (@Gram:Pron:Sujeto) UnoLiteral IF (1 FiniteVerbForms) ;
+ADD (@Gram:Pron:Sujeto) UnoLiteral IF (-2 NoAdv OR PronombresCliticosTODOS OR Adverbio) (-1 Verbo);
+ADD (@Gram:Pron:Sujeto) UnoLiteral IF (*1 Adverbio BARRIER GrupoNominal OR LimiteOracionSimple LINK 1 FiniteVerbForms) ;
+ADD (@Gram:Pron:Sujeto) UnoLiteral IF (*1 Adverbio BARRIER GrupoNominal OR LimiteOracionSimple LINK 1 SeLiteral LINK 1 FiniteVerbForms) ;
+#LATEX T: Asigna @Gram:Pron:Sujeto.
+#LATEX E: Cuando aquí en los Estados Unidos \emph{uno creció} con las lavadoras, ¿verdad? 
+#LATEX E: (...) \emph{uno} ya sabe si hablan el español
+#LATEX D: La ocurrencia de uno de ellos. En cuanto a ``uno'', sólo se aplica si va seguido de un verbo conjugado, o si va precedido del adverbio ``no'' o un clítico y un verbo (conjugado o no).
 
 #LATEX\section{Pronombres de objeto directo o complemento atributivo}
 ADD (@Gram:Pron:Objeto) ElLema IF (NOT -1 Prep) (0 Articulo) (1 FiniteVerbForms) ;
@@ -565,7 +598,7 @@ ADDRELATION (Gram:MSub:Pret) FiniteVerbForms (0 Haber + Verbo + Pasado + Subjunt
 #LATEX E: ¿Hay alguna palabra mexicana que \emph{le haya sorprendido}?
 #LATEX D: No se aplica si la forma verbal no esta precedida por una "de" para evitar formas incorrectamente marcadas como subjuntivo por el tagging básico. Si se trata de una forma compuesta, es decir, HABER + PART, se marca todo como tal.
 
-#LATEX\section{Formas verbales para tiempos de imperativo}
+#LATEX\section{Formas verbales para tiempos de imperativo
 
 #LATEX\subsection{Formas verbales para tiempos de imperativo informal (tú)}
 ADD (@Gram:MImp:Informal) Verbo IF (0 Presente + Imperativo + SG + 2aPers) (NOT 0 ("<órale>") OR ("<(.*)(é|í|á)rselo>"r));
@@ -574,6 +607,14 @@ ADD (@Gram:MImp:Informal) Verbo IF (0 Presente + Imperativo + SG + 2aPers) (NOT 
 #LATEX E: \emph{cuéntame}... 
 #LATEX D: Cualquier forma de imperativo de la segunda persona del singular. No se aplicará en formas como cantárselo, comérselo o partírselo, pero sí en otras formas infinitivas con pronombres de objeto que TreeTagger etiquete como imperativos.
 #LATEXREM Actualmente falla en ``díael'' (debido a un error de transcripción). Se ha arreglado el problema de transcripción y en próximas versiones no debería aparecer.
+
+#LATEX\subsection{Formas verbales para tiempos de imperativo formal (usted)}
+ADD (@Gram:MImp:Formal) Verbo IF (0 Presente + Imperativo + SG + 3aPers);
+#LATEXREM Sólo aparecen tres ocurrencias (detectadas) de uso del imperativo en la forma formal.
+
+#LATEX\subsection{Formas verbales para tiempos de imperativo en negativo (no mires!)}
+
+#LATEXDOCU No hemos anotado usos de imperativo en negativo (p.e., ¡No compre(s) un vino tan caro!) ni en el registro formal ni el informal.
 
 ## SECTION -- RULES TO ADD PAST GUSTAR AND SIMILAR VERBS
 #LATEX\section{Verbos copulativos}
@@ -615,7 +656,8 @@ ADDRELATION (Gram:SerEstar:EstarAux) VerboEstar IF (0 Infinitive) TO (1 Gerundio
 #LATEXDOCU Se etiqueta con @Gram:Aux:Haber, pero se hace en las reglas que sirven para etiquetar los tiempos verbales correspondientes. Véase por ejemplo la anotación (y la regla) del Presente Perfecto en la sección \ref{sec:HaberAuxPretPerfecto}. 
 
 #LATEX\subsection{Verbo ser en su uso como auxiliar}
-###LATEXDOCU No se etiquetan las ocurrencias de ser como auxiliar en las construcciones pasivas por dos razones: una es que hay muy pocas ocurrencias (unas 10 o 12) y otra es que se confunden a menudo con usos adjetivales del participio (por ejemplo, \emph{soy callada y reservada}, \emph{la otra era licenciada en administración de empresas}, etc. Entre unos y otros había unos 31 casos en el Batch 1 (los primeros 327 clips publicados). Véase la Figura \ref{fig:InstancesOfSerPlusParticiple}.
+
+#LATEXDOCU No se etiquetan las ocurrencias de ser como auxiliar en las construcciones pasivas por dos razones: una es que hay muy pocas ocurrencias (unas 10 o 12) y otra es que se confunden a menudo con usos adjetivales del participio (por ejemplo, \emph{soy callada y reservada}, \emph{la otra era licenciada en administración de empresas}, etc. Entre unos y otros había unos 31 casos en el Batch 1 (los primeros 327 clips publicados). Véase la Figura \ref{fig:InstancesOfSerPlusParticiple}.
 
 #LATEXDOCU \begin{figure}[htb]
 #LATEXDOCU \centering
@@ -626,6 +668,49 @@ ADDRELATION (Gram:SerEstar:EstarAux) VerboEstar IF (0 Infinitive) TO (1 Gerundio
 
 ## SECTION -- RULES TO ADD PAST GUSTAR AND SIMILAR VERBS
 #LATEX\chapter{Funciones comunicativas}
+
+###FITA SUBJUNTIVO
+#LATEX\section{Expresar deseos y recomendaciones (implicando a otros)}
+
+    ## ESPERAR
+    # 42140:  a querer ser el Llanero Solitario , digo , no <esperas> tu niña que se comporte así , y esta niña
+    # 55916:  años que pues sí me sorprendió mi mamá porque no <esperaba> que me regalaran nada y llegó una bicicleta que nomás
+    # 67630:  de América Latina . Creo que ... el español ... <espero> que el español se vuelva tal vez otro idioma oficial
+
+    ## RECOMENDAR
+    # 45388:  que viene a vivir a ? . ¿ Qué le <recomendaría> a un hispano que viene a vivir a o a ## NO ESTÁNDAR/SUBJUNTIVO
+    # 45410:  Estados Unidos ? , más como yo . Yo le <recomendaría> , en cuanto al idioma , trate de aprenderlo lo
+
+    # ## PEDIR
+    # 43121:  estábamos en Rusia , él y otros colaboradores cristianos les <pidieron> que fueran a ... a la Universidad de Moscú porque
+    # 44790:  por ejemplo mientras yo estuve ahí se veía mucha gente <pidiendo> dinero en las calles , él se deshizo de todo
+    # 45168:  Yanesa tenía dos años , me contestó , yo le <pedí> que hiciera algo y ella me dijo algo así como
+    # 47270:  , por su cultura , es golpeado y alguien te <pide> o te pregunta algo , en un tono de voz
+    # 51375:  porque cuando ellas empezaron a hablar inglés yo siempre les <pedía> que me hablaran en inglés porque yo quería aprenderlo .
+    # 52109:  ahora nos reímos bastante , ¿ te acuerdas Lupita cuando <pedíamos> de a poquito para juntar para nuestro lonche ? Lo
+    # 57966:  Conforme estaba en la preparatoria empecé con la maestra le <pedí> que si me daba trabajo en su despacho y gracias
+    # 63578:  iba a una tienda y no sabía que ... como <pedir> las cosas . Gracias a Dios ahorita ya sé .
+    # 76635:  hay cincuenta mil marcas distintas de cigarrillos y cuando me <pedían> marcas , yo no tenía idea que querían entonces tenía
+    # 78927:  , ¿ no ? Claro , sabía lo esencial como <pedir> permiso para ir al baño , ese tipo de cosas
+
+#LATEX\section{Expresar deseos y recomendaciones (implicando a uno mismo)}
+
+##TODO
+
+	    
+   # ## PEDIR
+
+   # 62107:  , muy buenos hijos , no he tenido problemas , <espero> no tenerlos en el futuro . Y creo que han
+   # ## NECESITAR
+   # 41470:  puedes decirlo y la persona se empezó a enojar , <necesito> hablar con Olga Alexina , pásele el teléfono a Olga
+   # 41528:  ha dado una risa porque le dije a mi esposo <necesito> que me escribas las posibles respuestas a posibles llamadas pero
+
+   # 45230:  mal mami y es todo , es todo lo que <necesitaba> hacer con Yanesa , el sólo hecho de que me
+   # 45999:  y yo estoy dispuesta a trabajar con usted nada más <necesito> estar en casa cuando AISD no tiene clases . Enton
+   #        no tanto por tener una carrera sino porque <necesitaba> conocer todos los aspectos de la cultura de aquí y
+   # 78972:  o sea ya había estudiando antes , entonces como que <necesitaba> ... practicarlo más y poco a poco incluso ahora lo
+   # 79651:  mis estudios cuando yo llegué acá a Estados Unidos y <necesitaba> ahorrar dinero para ... para estudiar en el , comencé
+   # 80215:  , sería muy interesante pero por ejemplo para ese trabajo <necesitas> ser ciudadano , así que es ... es muy im
 
 ## SECTION -- RULES TO ADD PAST GUSTAR AND SIMILAR VERBS
 #LATEX\chapter{Pragmática}
@@ -719,8 +804,8 @@ ADDRELATION (Prag:MarcadoresDisc:Causa) Gracia (0 PL) (1 APrep) TO (2 Dios);
 #LATEX\subsection{Marcadores discursivos indicadores de igualdad}
 ## Prag:MarcadoresDisc:Igualdad
 
-ADD (@Prag:MarcadoresDisc:Igualdad) Adv IF (0 Ademas) (NOT 1 De);
-ADD (@Prag:MarcadoresDisc:Igualdad) Adv IF (0 Tambien);
+ADD (@Prag:MarcadoresDisc:Igualdad) Adverbio IF (0 Ademas) (NOT 1 De);
+ADD (@Prag:MarcadoresDisc:Igualdad) Adverbio IF (0 Tambien);
 #LATEXREM No añado \emph{precisamente} porque es ambiguo entre su lectura literal (preciso, justo, cierto) como modificador verbal y su lectura como marcador discursivo. Para anotarlo con fiabilidad habría que tener en cuenta su posición respecto al principio de la oración y el verbo principal. Ejemplos: \emph{sí muchas pero no sé precisamente cuál cuál sería una}, \emph{allí vivimos como un año y precisamente yo me tomé me tomaron fotos en un un estudio de fotografía}
 #LATEX T: @:Prag:MarcadoresDisc:Igualdad
 #LATEX E: \emph{además}, \emph{también}
@@ -771,6 +856,15 @@ ADDRELATION (Herit:Contacto:Mixtas) Verbo IF (0 ListaVerbosCorpusParaContactoMix
 
 ### FITA: no s'està mapejant la info de llengua i per tant la regla anterior no funciona
 ### 02/21/2013
+
+#LATEX\section{Usos de inidicativo dónde se esperaría subjuntivo (en español estándard)}
+#LATEXREM Sección en proceso de implementación.
+
+## TODO
+##    49950:  a mirar esas peleas , y ese día ella estaba <esperando> que iba a llegar la pelea , y al final
+##    57410:  mí me gusta vivir lo que viene , no estar <esperando> que voy a hacer esto o hacer aquello . Se
+
+
 
 #LATEX\chapter{Vocabulario multipalabra}
 ## Vocab

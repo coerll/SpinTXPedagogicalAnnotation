@@ -1,7 +1,13 @@
 Change log
 ==========
 
-JUNE 12, 2013
+JUNE 17, 2013
+-----------
+- Rules to handle esto, eso, aquello as pronouns (in fact marked as determiners with a pronominal function, following certain theories that advocate for the inexistence of empty categories).
+- Rules to handle "uno" as an indefinite article in as in "uno de sus hermanos".
+- Halfway working on the indentification of exponents of function for "expresar deseos y recomendaciones"
+
+JUNE 13, 2013
 -----------
 - Added rules to handle mandatos informales en singular (tú)
 
