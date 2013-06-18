@@ -1,6 +1,10 @@
 Change log
 ==========
 
+JUNE 18, 2013
+-----------
+- Added rules to handle deseos, recomendaciones and a couple more of functional tags (still underway)
+
 JUNE 17, 2013
 -----------
 - Rules to handle esto, eso, aquello as pronouns (in fact marked as determiners with a pronominal function, following certain theories that advocate for the inexistence of empty categories).
