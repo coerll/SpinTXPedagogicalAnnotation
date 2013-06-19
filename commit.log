@@ -1,6 +1,11 @@
 Change log
 ==========
 
+JUNE 19, 2013
+-----------
+- Changes in GrammarDocuSPinTX.pl so that it works with the appropriate paths (after slight changes in path names)
+- Changes in GrammarDocuSPinTX.pl so that it works out rules that have low long dashes in them like _ (which caused problems in pdflatex compilation for the generation of the PDF documentation of the rules)
+
 JUNE 18, 2013
 -----------
 - Added rules to handle deseos, recomendaciones and a couple more of functional tags (still underway)

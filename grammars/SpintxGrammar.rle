@@ -257,8 +257,8 @@ SUBSTITUTE ("maestro" Adjective ADJ Plural) ("maestro" Noun Plural) TARGET ("mae
 #LATEX E: \emph{maestro, maestra, maestros, maestras} 
 #LATEX D: Lo hace de forma indiscriminada. Quizá en el futuro habrá que cambiarla, refinarla. Por ejemplo, en "obras maestras", que no ocurre en la versión actal del corpus.
 
-SUBSTITUTE ("erar|ser" Verb VLfin Past Subj Sing 2nd) ("ser" Verb VSfin Imp Indi Sing 2nd) TARGET ErasLiteral; #eras
-SUBSTITUTE ("erar|ser" Verb VLfin Past Subj Plural 2nd_or_3rd) ("ser" Verb VSfin Imp Indi Plural 3rd) TARGET EranLiteral; #eran
+SUBSTITUTE ("erar|ser" Verb VLfin Past Subj Sing 2nd) ("ser" Verb VSfin Imp Indi Sing 2nd) TARGET ErasLiteral;
+SUBSTITUTE ("erar|ser" Verb VLfin Past Subj Plural 2nd_or_3rd) ("ser" Verb VSfin Imp Indi Plural 3rd) TARGET EranLiteral;
 #LATEX T: Cambia lectura de "eras" y "eran" de lema ambiguo entre erar y ser a sólo lema ser.
 #LATEX E: \emph{eras, eran} 
 #LATEX D: Consideramos erar un verbo muy poco frecuente. Si hiciera falta, se podría refinar la regla.
@@ -273,8 +273,8 @@ SUBSTITUTE ("dar|decir" Verb VLfin Pres Command Sing 2nd) ("dar" Verb VLfin Pret
 #LATEX E: \emph{le di, me di cuenta} 
 #LATEX D: Dado que ``di'' como mandato llevará siempre el clítico pospuesto, si no lo lleva lo podemos considerar una forma de dar. Cabría tener en cuenta otras opciones pero esta parece razonable.
 
-SUBSTITUTE (Verb VLinf Pres Command Plural 2nd) (Verb VLinf) TARGET ("<(.*)(ar|er|ir|ír)>"r); #infinitivos marcados como imperativo
-#LATEX T: Cambia lectura Command Plural 2nd a los infinitivos 
+SUBSTITUTE (Verb VLinf Pres Command Plural 2nd) (Verb VLinf) TARGET ("<(.*)(ar|er|ir|ír)>"r); 
+#LATEX T: Cambia lectura Command Plural 2nd a los infinitivos marcados como imperativo (y que estrictamente no los son)
 #LATEX E: \emph{decir,nadar,temer} 
 #LATEX D: Se aplica a cualquier infinitivo con la lectura arriba mencionada. A pesar de que los imperativos pueden tener esta función de mandatopragmáticamente hablando, consideramos que no se deben etiquetar morfológicamente como tales.
 #LATEXREM Notad la ``r'' al final del TARGET en la regla. Indica que lo anterior debe ser tratado como una expresión regular. Si no, la regla no se aplica.
@@ -600,7 +600,7 @@ ADDRELATION (Gram:MSub:Pret) FiniteVerbForms (0 Haber + Verbo + Pasado + Subjunt
 #LATEX E: ¿Hay alguna palabra mexicana que \emph{le haya sorprendido}?
 #LATEX D: No se aplica si la forma verbal no esta precedida por una "de" para evitar formas incorrectamente marcadas como subjuntivo por el tagging básico. Si se trata de una forma compuesta, es decir, HABER + PART, se marca todo como tal.
 
-#LATEX\section{Formas verbales para tiempos de imperativo
+#LATEX\section{Formas verbales para tiempos de imperativo}
 
 #LATEX\subsection{Formas verbales para tiempos de imperativo informal (tú)}
 ADD (@Gram:MImp:Informal) Verbo IF (0 Presente + Imperativo + SG + 2aPers) (NOT 0 ("<órale>") OR ("<(.*)(é|í|á)rselo>"r));
@@ -674,27 +674,32 @@ ADDRELATION (Gram:SerEstar:EstarAux) VerboEstar IF (0 Infinitive) TO (1 Gerundio
 ###FITA SUBJUNTIVO
 #LATEX\section{Expresar deseos sobre uno mismo u otros con incertidumbre/en el futuro}
 
-ADDRELATION (Func:Deseos:Ajenos) Verbo IF (0 VerbosExpresarDeseos) (1 Que) (2 GrupoNominal OR PronombresCliticosTODOS) TO (*3 Verbo + Subjuntivo BARRIER GrupoNominal OR LimiteOracionSimple OR FiniteVerbForms);
-ADDRELATION (Func:Deseos:Ajenos) Verbo IF (0 VerbosExpresarDeseos) (1 Que) TO (*2 Verbo + Subjuntivo BARRIER GrupoNominal OR LimiteOracionSimple OR FiniteVerbForms);
+ADDRELATION (Func:Deseos:Ajenos) Verbo IF (0 VerbosExpresarDeseos) (1 Que) (2 PronombresCliticosTODOS) TO (*3 Verbo + Subjuntivo BARRIER GrupoNominal OR LimiteOracionSimple OR FiniteVerbForms);
+### FITA Think about templates for (2 GrupoNominal) maybe this is the solution 
 #LATEX T: R:Func:Deseos:Ajenos
 #LATEX E: [Pendiente de documentar]
 #LATEX D: [Pendiente de documentar]
+    # 55916:  años que pues sí me sorprendió mi mamá porque no <esperaba> que me regalaran nada y llegó una bicicleta que nomás
+    # 51375:  porque cuando ellas empezaron a hablar inglés yo siempre les <pedía> que me hablaran en inglés porque yo quería aprenderlo .
+    # 35273:  no ? pues este ... a mí no me gustaría <que me dejaras> , me gustaría mejor que te casaras conmigo
 
-### FITA: aquestes dos regles sembla que se solapen tot i que jo diria que haurien d'estar fent coses diferents. Si activo la segona, la primera és com si no hi fos, és a dir, els tres casos que cobreix la primer les cobreix també la segona i això no em quadra pel BARRIER.
+###FITA Aquesta regla hauria de funcionar amb aquesta frase però no ho fa.
+# ADDRELATION (Func:Deseos:Ajenos) Verbo IF (0 VerbosExpresarDeseos) (1 Que) (2 DetAll) (3 Sustantivo) (4 PronombresCliticosTODOS) TO (*5 Verbo + Subjuntivo BARRIER GrupoNominal OR LimiteOracionSimple OR FiniteVerbForms);
+#     # 67630:  de América Latina . Creo que ... el español ... <espero> que el español se vuelva tal vez otro idioma oficial
 
+ADDRELATION (Func:Deseos:Ajenos) Verbo IF (0 VerbosExpresarDeseos) (1 Que) TO (*2 Verbo + Subjuntivo BARRIER GrupoNominal OR LimiteOracionSimple OR FiniteVerbForms);
     # 45168:  Yanesa tenía dos años , me contestó , yo le <pedí> que hiciera algo y ella me dijo algo así como
+    # This rule adds 8 new examples of this function
  
     ## ESPERAR
     # 42140:  a querer ser el Llanero Solitario , digo , no <esperas> tu niña que se comporte así , y esta niña
-    # 55916:  años que pues sí me sorprendió mi mamá porque no <esperaba> que me regalaran nada y llegó una bicicleta que nomás
-    # 67630:  de América Latina . Creo que ... el español ... <espero> que el español se vuelva tal vez otro idioma oficial
+
     # ESPERAR/PEDIR + QUE + (SUJETO) + (CLITICO) + SUBJUNTIVO
     # ESPERAR + (SUJETO) + QUE + (CLITICO) + SUBJUNTIVO
     # PEDIR/SUGERIR/RECOMENDAR (CLITICO) A X QUE + SUBJUNTIVO
 
     # ## PEDIR
     # 43121:  estábamos en Rusia , él y otros colaboradores cristianos les <pidieron> que fueran a ... a la Universidad de Moscú porque
-    # 51375:  porque cuando ellas empezaron a hablar inglés yo siempre les <pedía> que me hablaran en inglés porque yo quería aprenderlo .
     # XXXXX: Yo crecí pensando que para orar o para <pedirle a Dios> que hiciera algo o para confesar mis pecados
 
     # ## DECIR USADO COMO PEDIR (o simplemente estilo indirecto de una órden)

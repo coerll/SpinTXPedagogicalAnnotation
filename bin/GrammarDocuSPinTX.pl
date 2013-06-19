@@ -22,8 +22,8 @@ my $PDFFile; # output file name (one output file for all input files)
 my ($name,$path,$suffix); # name, path and suffix of input file
 my $file; # input file name including path and extention (to be opened by script)
 my $Text; # input file contents
-my $OutputDir = $ENV{SPINTX_HOME} . "tools/spintxPedagogicalAnntotation/";
-
+##my $OutputDir = $ENV{SPINTX_HOME} . "tools/spintxPedagogicalAnntotation/";
+my $OutputDir = $ENV{SPINTX_HOME} . "tools/SpinTXPedagogicalAnnotation/";
 
 # Variables to control initial lines in files to be processed, often special lines
 my (@ALLLINES); # array with all the lines in a file to be processed
@@ -270,6 +270,8 @@ sub ProcessRuleContents{
         print STDERR "DL2: In subroutine to process rule contents (ProcessRuleContents)\n";
         print STDERR "DL2: Value of \$Line is : " . $Line ."\n";
     }
+    
+    $Line =~ s/_/\\_/ig;
     
     $ResultLine = "\\paragraph*{Rule}\n";
     $ResultLine .= "\\fbox{\n";

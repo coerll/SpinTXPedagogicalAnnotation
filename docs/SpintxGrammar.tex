@@ -49,59 +49,147 @@ DOCU
 \chapter{LIST y SET basados en palabras (literales)}
 \chapter{LIST y SET basados en etiquetas pedagógicas}
 \part{Secciones previas}
+\paragraph*{Rule}
+\fbox{
+\parbox{.9\linewidth}{\texttt{SUBSTITUTE ("por" Adverb ADV) ("por" Preposition PREP) TARGET ("por");}}
+}
 \chapter{Reglas para rectificar errores del análisis morfosintático}
+\paragraph*{Rule}
+\fbox{
+\parbox{.9\linewidth}{\texttt{SUBSTITUTE (Noun NC Singular Masculine) (Conjunction CC) TARGET ("pero");}}
+}
 \begin{itemize}
 \item ETIQ: CC
 \item EJEM: \emph{pero} 
 \item DESC: Regla para cambiar a \emph{pero} la lectura de nombre por la de conjunción. Ahora se aplica indiscriminadamente, pero podría ser conveniente controlar que antes del pero no hay un artículo. Por ejemplo: ``el pero de la cuestión es que podría romperse el motor''.
 \end{itemize}
 
+\paragraph*{Rule}
+\fbox{
+\parbox{.9\linewidth}{\texttt{SUBSTITUTE ("hecho" Noun NC Singular Masculine) ("hacer" Verb VLadj) TARGET ("hecho") IF (-1 Haber + Verbo);}}
+}
 \begin{itemize}
 \item ETIQ: Cambia Noun NC Singular Masculine por Verb VLadj
 \item EJEM: \emph{hecho} 
 \item DESC: Regla para cambiar a \emph{pero} la lectura de nombre por la de conjunción. Ahora se aplica indiscriminadamente, pero podría ser conveniente controlar que antes del pero no hay un artículo. Por ejemplo: ``el pero de la cuestión es que podría romperse el motor''.
 \end{itemize}
 
+\paragraph*{Rule}
+\fbox{
+\parbox{.9\linewidth}{\texttt{SUBSTITUTE ("ranchar" Verb VLfin Pres Indi Sing 1st) ("rancho" Noun NC Singular Masculine) TARGET ("ranchar");}}
+}
 \begin{itemize}
 \item ETIQ: Cambia Verb VLfin Pres Indi Sing 1st por Noun NC Singular Masculine en la palabra ``rancho''.
 \item EJEM: \emph{rancho} 
 \item DESC: Lo hace de forma indiscriminada. Quizá en el futuro habrá que cambiarla, refinarla.
 \end{itemize}
 
+\paragraph*{Rule}
+\fbox{
+\parbox{.9\linewidth}{\texttt{SUBSTITUTE ("dicho" Determiner QU) ("decir" Verbo VLadj) TARGET ("dicho");}}
+}
 \begin{itemize}
 \item ETIQ: Cambia lectura de ``dicho'' como determinante por lectura como adjetivo/participio.
 \item EJEM: \emph{dicho} 
 \item DESC: Lo hace de forma indiscriminada. Quizá en el futuro habrá que cambiarla, refinarla.
 \end{itemize}
 
+\paragraph*{Rule}
+\fbox{
+\parbox{.9\linewidth}{\texttt{SUBSTITUTE ("oír" Verb VLfin Pres Subj Sing 1st\_or\_3rd) ("oír" Verb VLfin Pres Indi\_Command Sing 2nd\_3rd) TARGET ("oír");}}
+}
 \begin{itemize}
 \item ETIQ: Cambia lectura de "oye" como presente de subjuntivo por lectura de presente de indicativo/imperativo.
 \item EJEM: \emph{oye} 
 \item DESC: Lo hace de forma indiscriminada. Quizá en el futuro habrá que cambiarla, refinarla.
 \end{itemize}
 
+\paragraph*{Rule}
+\fbox{
+\parbox{.9\linewidth}{\texttt{SUBSTITUTE ("ser" Verb VSfin Pret Indi Plural 3rd) ("ir" Verb VLfin Pret Indi Plural 3rd) TARGET ("<fueron>") IF (-1C SeLiteral);}}
+}
+\paragraph*{Rule}
+\fbox{
+\parbox{.9\linewidth}{\texttt{SUBSTITUTE ("ser" Verb VSfin Pret Indi Plural 3rd) ("ir" Verb VLfin Pret Indi Plural 3rd) TARGET ("<fueron>") IF (1 ConLema + Prep);}}
+}
+\paragraph*{Rule}
+\fbox{
+\parbox{.9\linewidth}{\texttt{SUBSTITUTE ("ser" Verb VSfin Pret Indi Plural 3rd) ("ir" Verb VLfin Pret Indi Plural 3rd) TARGET ("<fueron>") IF (1 Gerundio);}}
+}
 \begin{itemize}
 \item ETIQ: Reglas que cambian la lectura de "ser" por "ir" en "fueron" cuando no va precedida de un pronombre se o seguida la preposición con o un gerundio.
 \item EJEM: \emph{se fueron juntos, se fueron a la escuela} 
 \item DESC: Quizá en el futuro habrá que cambiarlas, refinarlas.
 \end{itemize}
 
+\paragraph*{Rule}
+\fbox{
+\parbox{.9\linewidth}{\texttt{SUBSTITUTE ("maestro" Adjective ADJ Singular) ("maestro" Noun Singular) TARGET ("maestro");}}
+}
+\paragraph*{Rule}
+\fbox{
+\parbox{.9\linewidth}{\texttt{SUBSTITUTE ("maestro" Adjective ADJ Plural) ("maestro" Noun Plural) TARGET ("maestro");}}
+}
 \begin{itemize}
 \item ETIQ: Cambia lectura de "maestro" de adjetivo sustantivo.
 \item EJEM: \emph{maestro, maestra, maestros, maestras} 
 \item DESC: Lo hace de forma indiscriminada. Quizá en el futuro habrá que cambiarla, refinarla. Por ejemplo, en "obras maestras", que no ocurre en la versión actal del corpus.
 \end{itemize}
 
+\paragraph*{Rule}
+\fbox{
+\parbox{.9\linewidth}{\texttt{SUBSTITUTE ("erar|ser" Verb VLfin Past Subj Sing 2nd) ("ser" Verb VSfin Imp Indi Sing 2nd) TARGET ErasLiteral;}}
+}
+\paragraph*{Rule}
+\fbox{
+\parbox{.9\linewidth}{\texttt{SUBSTITUTE ("erar|ser" Verb VLfin Past Subj Plural 2nd\_or\_3rd) ("ser" Verb VSfin Imp Indi Plural 3rd) TARGET EranLiteral;}}
+}
 \begin{itemize}
 \item ETIQ: Cambia lectura de "eras" y "eran" de lema ambiguo entre erar y ser a sólo lema ser.
 \item EJEM: \emph{eras, eran} 
 \item DESC: Consideramos erar un verbo muy poco frecuente. Si hiciera falta, se podría refinar la regla.
 \end{itemize}
 
+\paragraph*{Rule}
+\fbox{
+\parbox{.9\linewidth}{\texttt{SUBSTITUTE ("UNK" Noun NC Plural) ("mío" Pronoun PPO Plural) TARGET ("<mis>") OR ("<Mis>");}}
+}
 \begin{itemize}
 \item ETIQ: Cambia lectura de "UNK" Noun NC Plural a "mío" Pronoun PPO Plural a "mis".
 \item EJEM: \emph{mis,Mis} 
-\item DESC: [Ninguna.]
+\item DESC: [Ninguna.
+\end{itemize}
+
+\paragraph*{Rule}
+\fbox{
+\parbox{.9\linewidth}{\texttt{SUBSTITUTE ("dar|decir" Verb VLfin Pres Command Sing 2nd) ("dar" Verb VLfin Pret Indi Sing 1st) TARGET DiLiteral IF (-1 PronombresCliticosTODOS);}}
+}
+\begin{itemize}
+\item ETIQ: Cambia lectura de "di" de lema ambiguo entre dar y decir a sólo lema dar.
+\item EJEM: \emph{le di, me di cuenta} 
+\item DESC: Dado que ``di'' como mandato llevará siempre el clítico pospuesto, si no lo lleva lo podemos considerar una forma de dar. Cabría tener en cuenta otras opciones pero esta parece razonable.
+\end{itemize}
+
+\paragraph*{Rule}
+\fbox{
+\parbox{.9\linewidth}{\texttt{SUBSTITUTE (Verb VLinf Pres Command Plural 2nd) (Verb VLinf) TARGET ("<(.*)(ar|er|ir|ír)>"r); }}
+}
+\begin{itemize}
+\item ETIQ: Cambia lectura Command Plural 2nd a los infinitivos marcados como imperativo (y que estrictamente no los son)
+\item EJEM: \emph{decir,nadar,temer} 
+\item DESC: Se aplica a cualquier infinitivo con la lectura arriba mencionada. A pesar de que los imperativos pueden tener esta función de mandatopragmáticamente hablando, consideramos que no se deben etiquetar morfológicamente como tales.
+\end{itemize}
+
+OBSERVACIÓN: Notad la ``r'' al final del TARGET en la regla. Indica que lo anterior debe ser tratado como una expresión regular. Si no, la regla no se aplica.
+
+\paragraph*{Rule}
+\fbox{
+\parbox{.9\linewidth}{\texttt{SUBSTITUTE ("UNK" Verb VLfin Pres Command Plural 2nd) ("platicar" Verb VLfin Pres Command Sing 3rd) TARGET ("<platíquenos>");}}
+}
+\begin{itemize}
+\item ETIQ: Cambia lectura Command Plural 2nd y lema a ``platíquenos'' 
+\item EJEM: \emph{platíquenos} 
+\item DESC: Se aplica sólo a pltíquenos.
 \end{itemize}
 
 \part{Secciones principales}
@@ -148,6 +236,17 @@ Identificaremos los usos de los artículos definidos \emph{el, la, los, las}, y 
 \item DESC: Cualquier ocurrencia de un demostrativo precedida de una preposición o un verbo conjugado y seguido de un nombre.
 \end{itemize}
 
+\section{Usos pronominales de los demostrativos}
+\paragraph*{Rule}
+\fbox{
+\parbox{.9\linewidth}{\texttt{ADD (@Gram:Det:Demo) ArtPronDemo IF (-1 Prep OR FiniteVerbForms) (0 EstoEsoAquello) ;}}
+}
+\begin{itemize}
+\item ETIQ: Asigna @Gram:Pron:Demo
+\item EJEM: Prep/Verbo \emph{esto/eso/aquello}
+\item DESC: Cualquier ocurrencia de un demostrativo terminado en -o. No distinguimos las formas que forman parte de locuciones (como ``por eso'', etc.).
+\end{itemize}
+
 \section{Usos de los determinantes posesivos}
 \paragraph*{Rule}
 \fbox{
@@ -176,6 +275,17 @@ Identificaremos los usos de los artículos definidos \emph{el, la, los, las}, y 
 \begin{itemize}
 \item ETIQ: Asigna @Gram:Det:Poss
 \item EJEM: Prep/Verbo \emph{mi/tu/su/sus/nuestro/nuestros/vuestro/vuestros} (LEMMA) + Nombre
+\item DESC: Cualquier ocurrencia de un determinante posesivo seguido de un nombre (se admiten ADV y ADJ intercalados).
+\end{itemize}
+
+\section{Usos de los determinantes indefinidos}
+\paragraph*{Rule}
+\fbox{
+\parbox{.9\linewidth}{\texttt{ADD (@Gram:Det:CuantIndef) UnoLiteral IF (1 De) (NOT -1 Infinitive);}}
+}
+\begin{itemize}
+\item ETIQ: Asigna @Gram:Det:CuantIndef
+\item EJEM: Que no los puedo criticar porque yo soy \emph{uno} de ellos (...)
 \item DESC: Cualquier ocurrencia de un determinante posesivo seguido de un nombre (se admiten ADV y ADJ intercalados).
 \end{itemize}
 
@@ -346,7 +456,7 @@ Veáse \url{http://dev.coerll.utexas.edu/spanishtx/spe/html/adv11.html}.
 \end{itemize}
 
 \chapter{Uso de los pronombres}
-\section{Pronombres de sujeto}
+\section{Pronombres de sujeto: los pronombres de sujeto personales}
 \paragraph*{Rule}
 \fbox{
 \parbox{.9\linewidth}{\texttt{ADD (@Gram:Pron:Sujeto) PronPersFuerte;}}
@@ -354,7 +464,32 @@ Veáse \url{http://dev.coerll.utexas.edu/spanishtx/spe/html/adv11.html}.
 \begin{itemize}
 \item ETIQ: Asigna @Gram:Pron:Sujeto.
 \item EJEM: \emph{yo, tú, él, ella, ud., nosotros, vosotros, ellos, ellas, uds.} (cualquier ocurrencia)
-\item DESC: La ocurrencia de uno de ellos
+\item EJEM: Cuando aquí en los Estados Unidos \emph{uno creció} con las lavadoras, ¿verdad? 
+\item DESC: La ocurrencia de uno de ellos.
+\end{itemize}
+
+\subsection{Pronombres de sujeto: \emph{uno} como sujeto impersonal}
+\paragraph*{Rule}
+\fbox{
+\parbox{.9\linewidth}{\texttt{ADD (@Gram:Pron:Sujeto) UnoLiteral IF (1 FiniteVerbForms) ;}}
+}
+\paragraph*{Rule}
+\fbox{
+\parbox{.9\linewidth}{\texttt{ADD (@Gram:Pron:Sujeto) UnoLiteral IF (-2 NoAdv OR PronombresCliticosTODOS OR Adverbio) (-1 Verbo);}}
+}
+\paragraph*{Rule}
+\fbox{
+\parbox{.9\linewidth}{\texttt{ADD (@Gram:Pron:Sujeto) UnoLiteral IF (*1 Adverbio BARRIER GrupoNominal OR LimiteOracionSimple LINK 1 FiniteVerbForms) ;}}
+}
+\paragraph*{Rule}
+\fbox{
+\parbox{.9\linewidth}{\texttt{ADD (@Gram:Pron:Sujeto) UnoLiteral IF (*1 Adverbio BARRIER GrupoNominal OR LimiteOracionSimple LINK 1 SeLiteral LINK 1 FiniteVerbForms) ;}}
+}
+\begin{itemize}
+\item ETIQ: Asigna @Gram:Pron:Sujeto.
+\item EJEM: Cuando aquí en los Estados Unidos \emph{uno creció} con las lavadoras, ¿verdad? 
+\item EJEM: (...) \emph{uno} ya sabe si hablan el español
+\item DESC: La ocurrencia de uno de ellos. En cuanto a ``uno'', sólo se aplica si va seguido de un verbo conjugado, o si va precedido del adverbio ``no'' o un clítico y un verbo (conjugado o no).
 \end{itemize}
 
 \section{Pronombres de objeto directo o complemento atributivo}
@@ -578,6 +713,30 @@ Veáse \url{http://dev.coerll.utexas.edu/spanishtx/spe/html/adv13.html}.
 \item DESC: No se aplica si la forma verbal no esta precedida por una "de" para evitar formas incorrectamente marcadas como subjuntivo por el tagging básico. Si se trata de una forma compuesta, es decir, HABER + PART, se marca todo como tal.
 \end{itemize}
 
+\section{Formas verbales para tiempos de imperativo}
+\subsection{Formas verbales para tiempos de imperativo informal (tú)}
+\paragraph*{Rule}
+\fbox{
+\parbox{.9\linewidth}{\texttt{ADD (@Gram:MImp:Informal) Verbo IF (0 Presente + Imperativo + SG + 2aPers) (NOT 0 ("<órale>") OR ("<(.*)(é|í|á)rselo>"r));}}
+}
+\begin{itemize}
+\item ETIQ: @Gram:MImp:Informal
+\item EJEM: \emph{cuéntame}... 
+\item DESC: Cualquier forma de imperativo de la segunda persona del singular. No se aplicará en formas como cantárselo, comérselo o partírselo, pero sí en otras formas infinitivas con pronombres de objeto que TreeTagger etiquete como imperativos.
+\end{itemize}
+
+OBSERVACIÓN: Actualmente falla en ``díael'' (debido a un error de transcripción). Se ha arreglado el problema de transcripción y en próximas versiones no debería aparecer.
+
+\subsection{Formas verbales para tiempos de imperativo formal (usted)}
+\paragraph*{Rule}
+\fbox{
+\parbox{.9\linewidth}{\texttt{ADD (@Gram:MImp:Formal) Verbo IF (0 Presente + Imperativo + SG + 3aPers);}}
+}
+OBSERVACIÓN: Sólo aparecen tres ocurrencias (detectadas) de uso del imperativo en la forma formal.
+
+\subsection{Formas verbales para tiempos de imperativo en negativo (no mires!)}
+No hemos anotado usos de imperativo en negativo (p.e., ¡No compre(s) un vino tan caro!) ni en el registro formal ni el informal.
+
 \section{Verbos copulativos}
 \subsection{Verbo ser}
 \paragraph*{Rule}
@@ -596,7 +755,7 @@ Veáse \url{http://dev.coerll.utexas.edu/spanishtx/spe/html/adv13.html}.
 \item ETIQ: @Gram:SerEstar:Ser
 \item EJEM: \emph{soy, eres,} \emph{ha sido,}, pero no \emph{ha sido comprado}etc. 
 \item EJEM: \emph{fui, fuimos...} NOT Prep 
-\item DESC: Cualquier forma de \emph{ser} del pretérito indefinido no seguido de una preposición (porque entonces seguramente será del verbo ir). También las formas perifrásticas con haber que no vayan seguidas de un participició
+\item DESC: Cualquier forma de \emph{ser} del pretérito indefinido no seguido de una preposición (porque entonces seguramente será del verbo ir). También las formas perifrásticas con haber que no vayan seguidas de un participicio.
 \end{itemize}
 
 \subsection{Verbo estar}
@@ -644,6 +803,8 @@ Se etiqueta con RGram:SerEstar:EstarAux las secuencias de estar seguido de un ge
 Se etiqueta con @Gram:Aux:Haber, pero se hace en las reglas que sirven para etiquetar los tiempos verbales correspondientes. Véase por ejemplo la anotación (y la regla) del Presente Perfecto en la sección \ref{sec:HaberAuxPretPerfecto}. 
 
 \subsection{Verbo ser en su uso como auxiliar}
+No se etiquetan las ocurrencias de ser como auxiliar en las construcciones pasivas por dos razones: una es que hay muy pocas ocurrencias (unas 10 o 12) y otra es que se confunden a menudo con usos adjetivales del participio (por ejemplo, \emph{soy callada y reservada}, \emph{la otra era licenciada en administración de empresas}, etc. Entre unos y otros había unos 31 casos en el Batch 1 (los primeros 327 clips publicados). Véase la Figura \ref{fig:InstancesOfSerPlusParticiple}.
+
 \begin{figure}[htb]
 
 \centering
@@ -657,6 +818,28 @@ Se etiqueta con @Gram:Aux:Haber, pero se hace en las reglas que sirven para etiq
 \end{figure}
 
 \chapter{Funciones comunicativas}
+\section{Expresar deseos sobre uno mismo u otros con incertidumbre/en el futuro}
+\paragraph*{Rule}
+\fbox{
+\parbox{.9\linewidth}{\texttt{ADDRELATION (Func:Deseos:Ajenos) Verbo IF (0 VerbosExpresarDeseos) (1 Que) (2 GrupoNominal OR PronombresCliticosTODOS) TO (*3 Verbo + Subjuntivo BARRIER GrupoNominal OR LimiteOracionSimple OR FiniteVerbForms);}}
+}
+\paragraph*{Rule}
+\fbox{
+\parbox{.9\linewidth}{\texttt{ADDRELATION (Func:Deseos:Ajenos) Verbo IF (0 VerbosExpresarDeseos) (1 Que) TO (*2 Verbo + Subjuntivo BARRIER GrupoNominal OR LimiteOracionSimple OR FiniteVerbForms);}}
+}
+\begin{itemize}
+\item ETIQ: R:Func:Deseos:Ajenos
+\item EJEM: [Pendiente de documentar]
+\item DESC: [Pendiente de documentar]
+\end{itemize}
+
+\section{Expresar opiniones, dudas}
+\section{Expresar objetivos (con para que)}
+OBSERVACIÓN: Oración sacada del corpus. 45388:  que viene a vivir a ? . ¿ Qué le <recomendaría> a un hispano que viene a vivir a o a (...) . Esta frase anterior no es la misma construcción (que la de los deseos con sjubjuntivo) porque el que ``viene a vivir'' es una adjetival de hispano, no una subordinada de recomendar.
+
+OBSERVACIÓN:  Oración sacada del corpus. 45410:  Estados Unidos ? , más como yo . Yo le <recomendaría> , en cuanto al idioma , trate de aprenderlo lo (...) Esta oración refleja la omisión del que (oral o literario, algo recargado). Este tipo de estructuras requerirían un análisis lingüístico más sofisticado, seguramente -- sintáctico, análisis de incisos, etc.
+
+\section{Expresar deseos y recomendaciones (implicando a uno mismo)}
 \chapter{Pragmática}
 \section{Marcadores discursivos}
 Véase \url{http://www.cs.famaf.unc.edu.ar/~laura/shallowdisc4summ/index.html}.
@@ -788,11 +971,11 @@ Véase \url{http://www.cs.famaf.unc.edu.ar/~laura/shallowdisc4summ/index.html}.
 \subsection{Marcadores discursivos indicadores de igualdad}
 \paragraph*{Rule}
 \fbox{
-\parbox{.9\linewidth}{\texttt{ADD (@Prag:MarcadoresDisc:Igualdad) Adv IF (0 Ademas) (NOT 1 De);}}
+\parbox{.9\linewidth}{\texttt{ADD (@Prag:MarcadoresDisc:Igualdad) Adverbio IF (0 Ademas) (NOT 1 De);}}
 }
 \paragraph*{Rule}
 \fbox{
-\parbox{.9\linewidth}{\texttt{ADD (@Prag:MarcadoresDisc:Igualdad) Adv IF (0 Tambien);}}
+\parbox{.9\linewidth}{\texttt{ADD (@Prag:MarcadoresDisc:Igualdad) Adverbio IF (0 Tambien);}}
 }
 OBSERVACIÓN: No añado \emph{precisamente} porque es ambiguo entre su lectura literal (preciso, justo, cierto) como modificador verbal y su lectura como marcador discursivo. Para anotarlo con fiabilidad habría que tener en cuenta su posición respecto al principio de la oración y el verbo principal. Ejemplos: \emph{sí muchas pero no sé precisamente cuál cuál sería una}, \emph{allí vivimos como un año y precisamente yo me tomé me tomaron fotos en un un estudio de fotografía}
 
@@ -867,6 +1050,9 @@ Incluímos aquí expresiones que mezclan palabras en ambas lenguas, en este caso
 \item EJEM: \emph{hacer request}, \emph{comer turkey}
 \item DESC: Anota secuencias de un verbo seguid de una o más palabras en inglés. Por ahora lo limitamos a ser, hacer, decir y comer porque TreeTagger anota como verbo algunas palabras que no lo son y no queremos generar ruido para los usuarios.
 \end{itemize}
+
+\section{Usos de inidicativo dónde se esperaría subjuntivo (en español estándard)}
+OBSERVACIÓN: Sección en proceso de implementación.
 
 \chapter{Vocabulario multipalabra}
 \section{Nombres propios}
