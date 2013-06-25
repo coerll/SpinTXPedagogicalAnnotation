@@ -1,6 +1,10 @@
 Change log
 ==========
 
+JUNE 25, 2013
+-----------
+- Adding some more rules for handling deseos y recomendaciones.
+
 JUNE 19, 2013
 -----------
 - Changes in GrammarDocuSPinTX.pl so that it works with the appropriate paths (after slight changes in path names)
