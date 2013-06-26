@@ -3,6 +3,10 @@ Change log
 
 JUNE 25, 2013
 -----------
+- Adapted rule to handle desire expressions using nouns like necesidad de que VERB+MSubj so that there can be a NP or a clitic pronoun between the que and the verb (using the function TEMPLATE of CG3).
+
+JUNE 25, 2013
+-----------
 - Adding some more rules for handling deseos y recomendaciones.
 
 JUNE 19, 2013

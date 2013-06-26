@@ -226,7 +226,7 @@ LIST GramPron = (@Gram:Pron:Otros) (@Gram:Pron:ObjetoDoble);
 
 TEMPLATE VP-VerbosExpresarDeseos = (0 VerbosExpresarDeseos) OR (0 VerbosExpresarDeseos LINK 1 Adverbio OR MejorLiteral);
 TEMPLATE IniciadoresDeSubordinadasConQue = ((1 Que) OR (1 Adverbio LINK 1 Que) OR (1 MejorLiteral LINK 1 Que));
-TEMPLATE SintagmaNominal-Y-O-Clitico = (((1 DetAllIncluded LINK 1 Sustantivo OR Adj)) OR (1 PronombresCliticosTODOS OR SeLiteral));
+TEMPLATE SintagmaNominal-Y-O-Clitico = (-1 Sustantivo OR Adj LINK -1 DetAllIncluded) OR (-1 PronombresCliticosTODOS OR SeLiteral);
 
 #LATEX\part{Secciones previas}
 BEFORE-SECTIONS
@@ -733,17 +733,17 @@ ADDRELATION (Func:Deseos:Ajenos) Verbo IF (0 VerbosExpresarDeseos) (1 DetAllIncl
     # 42140:  a querer ser el Llanero Solitario , digo , no <esperas> tu niña que se comporte así , y esta niña
 
     # ## LA NECESIDAD DE QUE X SUBJUNTIVO
-ADDRELATION (Func:Deseos:Ajenos) Sustantivo IF (0 NombresExpresarDeseos) (1 De OR Para) (2 Que) (3 DetAllIncluded) (4 Sustantivo OR Adj) TO (*5 Verbo + Subjuntivo BARRIER GrupoNominal OR LimiteOracionSimple OR FiniteVerbForms);
+
+ADDRELATION (Func:Deseos:Ajenos) Sustantivo IF (0 NombresExpresarDeseos) (1 De OR Para) (2 Que) TO (*3 Verbo + Subjuntivo BARRIER LimiteOracionSimple OR FiniteVerbForms LINK T:SintagmaNominal-Y-O-Clitico);
 #LATEX T: R:Func:Deseos:Ajenos
 #LATEX E: (...) sí siento la \emph{necesidad de que nuestros jóvenes sepan} dominar (...)
-#LATEX D: Se aplica sobre sustantivos como necesidad, demanda, petición seguidos de ``de/para que''. Esta regla admite un sintagma nominal entre el ``que'' y el subjuntivo.
-    # 53281:  ... yo trabajo en una preparatoria y sí siento la <necesidad de que> nuestros jóvenes sepan dominar lo que es el español como
-
-ADDRELATION (Func:Deseos:Ajenos) Sustantivo IF (0 NombresExpresarDeseos) (1 De OR Para) (2 Que) (3 PronombresCliticosTODOS OR SeLiteral) TO (*4 Verbo + Subjuntivo BARRIER GrupoNominal OR LimiteOracionSimple OR FiniteVerbForms);
-#LATEX T: R:Func:Deseos:Ajenos
 #LATEX E: (...) completamente gratis , sin \emph{necesidad de que me tengan} que pagar.
-#LATEX D: Se aplica sobre sustantivos como necesidad, demanda, petición seguidos de ``de/para que''. Esta regla admite un clítico entre el ``que'' y el subjuntivo.
-    # 78110:  algo , les muestro algo , completamente gratis , sin <necesidad de que> me tengan que pagar . Muy bien , y platíqueme
+#LATEX D: Se aplica sobre sustantivos como necesidad, demanda, petición seguidos de ``de/para que''. Esta regla admite un clítico entre el ``que'' y el subjuntivo, o un sintagma nominal (Det N, Det Adj) entre el ``que'' y el subjuntivo.
+
+## ADDRELATION (Func:Deseos:Ajenos) Sustantivo IF (0 NombresExpresarDeseos) (1 De OR Para) (2 Que) (3 DetAllIncluded) (4 Sustantivo OR Adj) TO (*5 Verbo + Subjuntivo BARRIER GrupoNominal OR LimiteOracionSimple OR FiniteVerbForms);
+## ADDRELATION (Func:Deseos:Ajenos) Sustantivo IF (0 NombresExpresarDeseos) (1 De OR Para) (2 Que) (3 PronombresCliticosTODOS OR SeLiteral) TO (*4 Verbo + Subjuntivo BARRIER GrupoNominal OR LimiteOracionSimple OR FiniteVerbForms);
+
+	 # 78110:  algo , les muestro algo , completamente gratis , sin <necesidad de que> me tengan que pagar . Muy bien , y platíqueme
 
 
     # ## PEDIR
