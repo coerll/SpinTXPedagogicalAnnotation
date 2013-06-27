@@ -1,6 +1,11 @@
 Change log
 ==========
 
+JUNE 27, 2013
+-----------
+- Added rules to repair readings for para and creen.
+- Added more rules to handle exponents of function for deseos and purposes using para.
+
 JUNE 25, 2013
 -----------
 - Adapted rule to handle desire expressions using nouns like necesidad de que VERB+MSubj so that there can be a NP or a clitic pronoun between the que and the verb (using the function TEMPLATE of CG3).

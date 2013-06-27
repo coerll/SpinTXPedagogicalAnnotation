@@ -1,6 +1,6 @@
 MAPPING-PREFIX = @ ;
 DELIMITERS = "<$.>" "<$?>" "<$!>" "<$:>";
-
+##PARENTHESES = ("<(>" "<)>") ("<[>" "<]>") ("<{>" "<}>") ("<...>)
 ## -- #LATEX T: [Espacio para la etiqueta que asigna la regla.]
 ## -- #LATEX E: [Espacio para incluir \emph{un ejemplo} con la parte relevante en cursiva.] 
 ## -- #LATEX D: [Espacio para describir con palabras lo que hace la regla.]
@@ -34,7 +34,7 @@ LIST Verbo = (Verb);
 LIST Infinitive = (VLinf) (VEinf) (VHinf) (VSinf);
 LIST Gerundio = (VLger) (VEger) (VHger) (VSger);
 LIST PronombrePersonal = (PPX);
-LIST DetAllByPOS = (ART) (DM) (PPO); # habrá que refinar la definición, p.e., incluye palabras como mío, mía, míos, que claramente son adjetivos y no determinantes (esto viene de TreeTagger)
+LIST DetAllByPOS = (ART) (DM) (PPO) ("alguno" QU); # habrá que refinar la definición, p.e., incluye palabras como mío, mía, míos, que claramente son adjetivos y no determinantes (esto viene de TreeTagger)
 
 LIST Sustantivo = (NC) (NP) (NMEA) (NMON) ;
 LIST Articulo = (ART);
@@ -140,6 +140,9 @@ SET PorOPara = Por OR Para;
 SET SerOServir = Ser OR Servir;
 
 #LATEX\chapter{LIST y SET basados en palabras (literales)}
+LIST MismoLiteral = ("<mismo>") ("<Mismo>") ("<MISMO>") ;
+LIST OjalaLiteral = ("<ojalá>") ("<Ojalá>") ("<OJALÁ>");
+LIST CreenLiteral = ("<creen>") ("<CREEN>") ("<Creen>");
 LIST YoLiteral = ("<yo>") ("<Yo>") ("<YO>") ;
 LIST TuLiteral = ("<tú>") ("<Tú>") ("<TÚ>") ;
 LIST ElOEllaLiterales = ("<él>") ("<Él>") ("<ÉL>") ("<ella>") ("<Ella>") ("<ELLA>") ;
@@ -225,8 +228,9 @@ LIST GramPron = (@Gram:Pron:Otros) (@Gram:Pron:ObjetoDoble);
 #LATEXDOCU Los ``templates'' son un tipo de entidad especial en CG3 que sirve para expresar contextos o secuencias de palabras, lemas o etiquetas morfosintácticas que ocurren frecuentemente. 
 
 TEMPLATE VP-VerbosExpresarDeseos = (0 VerbosExpresarDeseos) OR (0 VerbosExpresarDeseos LINK 1 Adverbio OR MejorLiteral);
-TEMPLATE IniciadoresDeSubordinadasConQue = ((1 Que) OR (1 Adverbio LINK 1 Que) OR (1 MejorLiteral LINK 1 Que));
+TEMPLATE IniciadoresDeSubordinadasConQue = (1 Que) OR (1 Adverbio LINK 1 Que) OR (1 MejorLiteral LINK 1 Que);
 TEMPLATE SintagmaNominal-Y-O-Clitico = (-1 Sustantivo OR Adj LINK -1 DetAllIncluded) OR (-1 PronombresCliticosTODOS OR SeLiteral);
+TEMPLATE SintagmaPreposicional = (-1 Sustantivo LINK -1 DetAllIncluded LINK -1 Prep) OR (-1 Sustantivo LINK -1 Prep);
 
 #LATEX\part{Secciones previas}
 BEFORE-SECTIONS
@@ -304,6 +308,21 @@ SUBSTITUTE ("tener" Verb VMfin) ("tener" Verb VMfin Past Subj Plural 3rd) TARGET
 #LATEX T: Añade lectura de pasado de subjuntivo a tener cuando este recibe el tag VMFin. 
 #LATEX E: \emph{tengan} 
 #LATEX D: Se aplica sólo a ``tengan''.
+
+SUBSTITUTE ("para" Conjunction CSUBI) ("para" Preposition PREP) TARGET ("para");
+#LATEX T: Cambia la lectura de conjunción de subordinación de infinitivas por la de preposición. 
+#LATEX E: \emph{tengan} 
+#LATEX D: Se aplica sólo a ``para'' como lema.
+#LATEXREM Aunque es verdad que ``para'' puede ir seguida de un infinitivo para formar una subordinada infinitiva esta es una función que pueden desempeñar otras preposiciones, y creo que no por ello hay que cambiarles su categoría gramatical principal.
+
+SUBSTITUTE ("crear" Verb VLfin Past Subj Plural 3rd) ("creer" Verb VLfin Pres Indi Plural 3rd) TARGET ("<creen>") IF (1 LoLiteral) (2 MismoLiteral) (3 Que);
+SUBSTITUTE ("crear" Verb VLfin Past Subj Plural 3rd) ("creer" Verb VLfin Pres Indi Plural 3rd) TARGET ("<creen>") IF (1 En OR Que);
+SUBSTITUTE ("crear" Verb VLfin Past Subj Plural 3rd) ("creer" Verb VLfin Pres Indi Plural 3rd) TARGET ("<creen>")  IF (-2 NoAdv) (-1 PronombresCliticosTODOS OR SeLiteral);
+#LATEX T: Varias reglas para dar la lectura indicativa de ``creer'' a la forma ``creen'' en lugar de la subjuntiva de ``crear''. 
+#LATEX E: \emph{tengan} 
+#LATEX D: Se aplica teniendo en cuenta algunos contextos que generalmente decantaran la lectura hacia la interpretación prevista (creer).
+
+#SUBSTITUTE ("ojalá" Noun NP Singular) ("ojalá" Interjection Interj) TARGET ("para");
 
 #LATEX\part{Secciones principales}
 
@@ -692,11 +711,11 @@ ADDRELATION (Gram:SerEstar:EstarAux) VerboEstar IF (0 Infinitive) TO (1 Gerundio
 ## SECTION -- RULES TO ADD PAST GUSTAR AND SIMILAR VERBS
 #LATEX\chapter{Funciones comunicativas}
 
-#LATEX\section{Expresar deseos sobre uno mismo u otros con incertidumbre/en el futuro}
+#LATEX\section{Expresar deseos con incertidumbre/en el futuro}
 
 #LATEXDOCU Esta sección contiene reglas que sirven para detectar estructuras lingüísticas generalmente utilizadas para expresar deseos que implican a uno mismo o a terceros. Esto hace, a menudo y según en qué construcciones, que sea necesario el subjuntivo. Así, por ejemplo, diremos ``me gustaría que te casaras conmigo'' para hacerle entender a nuestro interlocutor lo que deseamos que realice, pero en cambio diremos ``me gustaría casarme conmigo'' cuando queremos expresar que es nuestro deseo el que se realice. El primero usa subjuntivo y el segundo no.
 
-#LATEX\subsection{Expresar deseos sobre otros con incertidumbre/en el futuro}
+#LATEX\subsection{Expresar deseos con incertidumbre/en el futuro con agentes distintos en principal y subordinada}
 
     # ESPERAR/PEDIR + QUE + (SUJETO) + (CLITICO) + SUBJUNTIVO
     # ESPERAR + (SUJETO) + QUE + (CLITICO) + SUBJUNTIVO
@@ -725,6 +744,11 @@ ADDRELATION (Func:Deseos:Ajenos) Verbo IF (0 VerbosExpresarDeseos) (1 Que) (2 De
 #LATEX D: Permite la presencia de un sujeto entre el ``que'' y el subjuntivo.
     # 67630:  de América Latina . Creo que ... el español ... <espero> que el español se vuelva tal vez otro idioma oficial
  
+ADDRELATION (Func:Deseos:Ajenos) OjalaLiteral IF (0 OjalaLiteral) (1 Que) (2 DetAllIncluded) (3 Sustantivo) TO (*4 Verbo + Subjuntivo BARRIER GrupoNominal OR LimiteOracionSimple OR FiniteVerbForms);
+#LATEX T: R:Func:Deseos:Ajenos
+#LATEX E: Este ... \emph{ojalá que algún día cambie} , ¿ no ? Pero . ¿ Y tú opinas
+#LATEX D: Permite la presencia de un sintagma nominal sujeto entre el ``que'' y el subjuntivo.
+
 ADDRELATION (Func:Deseos:Ajenos) Verbo IF (0 VerbosExpresarDeseos) (1 DetAllIncluded) (2 Sustantivo OR Adj) (3 Que) (4 PronombresCliticosTODOS OR SeLiteral) TO (*5 Verbo + Subjuntivo BARRIER GrupoNominal OR LimiteOracionSimple OR FiniteVerbForms);
 #LATEX T: R:Func:Deseos:Ajenos
 #LATEX E: (...) no \emph{esperas tu niña que se comporte} así (...)
@@ -736,17 +760,21 @@ ADDRELATION (Func:Deseos:Ajenos) Verbo IF (0 VerbosExpresarDeseos) (1 DetAllIncl
 
 ADDRELATION (Func:Deseos:Ajenos) Sustantivo IF (0 NombresExpresarDeseos) (1 De OR Para) (2 Que) TO (*3 Verbo + Subjuntivo BARRIER LimiteOracionSimple OR FiniteVerbForms LINK T:SintagmaNominal-Y-O-Clitico);
 #LATEX T: R:Func:Deseos:Ajenos
-#LATEX E: (...) sí siento la \emph{necesidad de que nuestros jóvenes sepan} dominar (...)
-#LATEX E: (...) completamente gratis , sin \emph{necesidad de que me tengan} que pagar.
-#LATEX D: Se aplica sobre sustantivos como necesidad, demanda, petición seguidos de ``de/para que''. Esta regla admite un clítico entre el ``que'' y el subjuntivo, o un sintagma nominal (Det N, Det Adj) entre el ``que'' y el subjuntivo.
+#LATEX E: (...) sin \emph{necesidad de que me tengan} que pagar.
+#LATEX D: Marca la ocurrencia de nombres como ``necesidad, petición'' seguidos de un ``para'' o un ``que'' y un verbo subjuntivo, y permite que aparezca un clítico o un sintagma nominal (Det N, Det Adj) entre el ``que'' y el verbo en subjuntivo.
+#LATEXREM: Esta regla utiliza el operador ``T:''. Esta ``T'' indica que los que sigue a los dos puntos (:) es un TEMPLATE definido más arriba, en la zona de definición de LIST y SET. Para más detalles véase la documentación vislcg3 y el grupo de debate (GoogleGroup).
 
+## Las dos reglas que siguen están sólo para mostrar que son equivalentes a la anterior.
 ## ADDRELATION (Func:Deseos:Ajenos) Sustantivo IF (0 NombresExpresarDeseos) (1 De OR Para) (2 Que) (3 DetAllIncluded) (4 Sustantivo OR Adj) TO (*5 Verbo + Subjuntivo BARRIER GrupoNominal OR LimiteOracionSimple OR FiniteVerbForms);
 ## ADDRELATION (Func:Deseos:Ajenos) Sustantivo IF (0 NombresExpresarDeseos) (1 De OR Para) (2 Que) (3 PronombresCliticosTODOS OR SeLiteral) TO (*4 Verbo + Subjuntivo BARRIER GrupoNominal OR LimiteOracionSimple OR FiniteVerbForms);
 
 	 # 78110:  algo , les muestro algo , completamente gratis , sin <necesidad de que> me tengan que pagar . Muy bien , y platíqueme
 
-
-    # ## PEDIR
+#LATEX\section{Expresar objetivos y finalidades con ``para''}
+ADDRELATION (Func:Expresar:Finalidades) Prep IF (0 Para) (1 Verbo + Infinitive) TO (*2 Que BARRIER LimiteOracionSimple OR FiniteVerbForms LINK 1 Verbo + Subjuntivo);
+#LATEX T: R:Func:Expresar:Finalidades
+#LATEX E: (...) Yo crecí pensando que para orar o \emph{para pedirle a Dios que hiciera algo} (...)
+#LATEX D: XXX
     # XXXXX: Yo crecí pensando que para orar o para <pedirle a Dios> que hiciera algo o para confesar mis pecados
 
 #LATEX\subsection{Estilo indirecto}
@@ -766,8 +794,6 @@ ADDRELATION (Func:Deseos:Ajenos) Sustantivo IF (0 NombresExpresarDeseos) (1 De O
     # 9657:  hacer los ... para que hagamos . , yo digo <que es muy bueno que sepan> l0s dos idiomas . ¿ Dónde trabajas ? En K-
 
 
-    # ## OJALÁ
-    # 79460:  pero lamentablemente el mundo es así . Este ... ojalá <que algún día cambie> , ¿ no ? Pero . ¿ Y tú opinas
 
 #LATEX\section{Expresar opiniones, dudas}
 
