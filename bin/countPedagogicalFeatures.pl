@@ -234,7 +234,7 @@ foreach my $key (sort (keys(%FeatureCounterAllFiles))){
 print STDOUT "\n";
 
 open (FOUT,">SpintxPedagogicalMetadata.tsv");
-print FOUT "ClipId\tGram\tPrag\tHerit\tVocab\n";
+print FOUT "ClipId\tGram\tPrag\tFunc\tHerit\tVocab\n";
 print FOUT $ToPrintAtTheEndIncremental;
 close (FOUT);
 
@@ -258,7 +258,8 @@ sub PrintDataForFile {
         #$PrintToReturnForOneFileInfo .= "," . $key . "," . $HashWithCounts{$key};
     }
 
-    my (@TempSortedArray,@GramTagsForOneFileInfo,@PragTagsForOneFileInfo,@HeritTagsForOneFileInfo,@VocabTagsForOneFileInfo);
+    my (@TempSortedArray,@GramTagsForOneFileInfo,@PragTagsForOneFileInfo,@HeritTagsForOneFileInfo,
+    @VocabTagsForOneFileInfo,@FuncTagsForOneFileInfo);
     my $MainCategory = "";
     @TempSortedArray = sort keys(%HashWithCounts);
     
@@ -277,7 +278,17 @@ sub PrintDataForFile {
         elsif ($t =~ m/^(@|R:)Prag:(.*)$/ & $MainCategory eq "Prag") {
             $MainCategory = "Prag";
             push(@PragTagsForOneFileInfo,$2);
-        } #KKK
+        } 
+        #--- Func
+        elsif ($t eq "\@Func" | $t eq "R:Func") {
+            $MainCategory = "Func";
+            next;
+        }
+        elsif ($t =~ m/^(@|R:)Func:(.*)$/ & $MainCategory eq "Func") {
+            $MainCategory = "Func";
+            push(@FuncTagsForOneFileInfo,$2);
+        }
+        #--- Herit
         elsif ($t eq "\@Herit" | $t eq "R:Herit") {
             $MainCategory = "Herit";
             next;
@@ -285,7 +296,8 @@ sub PrintDataForFile {
         elsif ($t =~ m/^(@|R:)Herit:(.*)$/ & $MainCategory eq "Herit") {
             $MainCategory = "Herit";
             push(@HeritTagsForOneFileInfo,$2);
-        } #KKK
+        }
+        #--- Vocab
         elsif ($t eq "\@Vocab" | $t eq "R:Vocab") {
             $MainCategory = "Vocab";
             next;
@@ -293,10 +305,10 @@ sub PrintDataForFile {
         elsif ($t =~ m/^(@|R:)Vocab:(.*)$/ & $MainCategory eq "Vocab") {
             $MainCategory = "Vocab";
             push(@VocabTagsForOneFileInfo,$2);
-        } #KKK
+        }
     }
 
-    $PrintToReturnForOneFileInfo .= join (",",@GramTagsForOneFileInfo) . "\t" . join (",",@PragTagsForOneFileInfo) . "\t" . join (",",@HeritTagsForOneFileInfo). "\t" . join (",",@VocabTagsForOneFileInfo);
+    $PrintToReturnForOneFileInfo .= join (",",@GramTagsForOneFileInfo) . "\t" . join (",",@PragTagsForOneFileInfo) . "\t" . join (",",@FuncTagsForOneFileInfo) . "\t" . join (",",@HeritTagsForOneFileInfo). "\t" . join (",",@VocabTagsForOneFileInfo);
         
     $PrintToReturn .= "\n";
     $PrintToReturnForOneFileInfo .= "\n";

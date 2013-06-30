@@ -221,6 +221,14 @@ foreach $file (@ARGV) {
             if ($lemma eq "<unknown>") {
                 $lemma = "UNK";
             }
+            if ($lemma eq "") {
+                $lemma = lc($word);
+                unless ($opts{'silent'}) {
+                    print STDERR "\n WARNING: Line " . $FileLineCounter . " in " . $file . " has no lemma.\n" ;
+                    print STDERR "   This token will be assigned as lemma the word itself in lower case.\n";
+                }
+            }
+            
 
             # March 5: punctuation is now a token in itself
 #            if ($punct eq "" || $punct eq"_") {

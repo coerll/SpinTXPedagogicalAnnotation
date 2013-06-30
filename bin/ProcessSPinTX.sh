@@ -53,8 +53,8 @@ if [[ "$1" == "all" ]] || [[ "$1" = "json" ]]; then
 fi
 
 cut -f 2 ${OUTDIR}/SpintxMetadataVocab.tsv > ${OUTDIR}/JustVocabColUnigram.txt
-cut -f 5 ${OUTDIR}/SpintxPedagogicalMetadata.tsv > ${OUTDIR}/JustVocabColNgram.txt
-cut -f 1-4 ${OUTDIR}/SpintxPedagogicalMetadata.tsv > ${OUTDIR}/AllButVocab.txt
+cut -f 6 ${OUTDIR}/SpintxPedagogicalMetadata.tsv > ${OUTDIR}/JustVocabColNgram.txt
+cut -f 1-5 ${OUTDIR}/SpintxPedagogicalMetadata.tsv > ${OUTDIR}/AllButVocab.txt
 paste -d \, ${OUTDIR}/JustVocabColNgram.txt ${OUTDIR}/JustVocabColUnigram.txt > ${OUTDIR}/JustVocabColALL.txt
 paste ${OUTDIR}/AllButVocab.txt ${OUTDIR}/JustVocabColALL.txt > ${OUTDIR}/ClipMetadataPedagogical-DRAFT.tsv
 cat ${OUTDIR}/ClipMetadataPedagogical-DRAFT.tsv | sed 's/Vocab,Vocab/Vocab/g' > ${OUTDIR}/ClipMetadataPedagogical-DRAFT2.tsv

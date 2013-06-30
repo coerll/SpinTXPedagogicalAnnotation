@@ -597,36 +597,38 @@ ADD (@Gram:Gustar:Interlocutor) FiniteVerbForms IF  (-1 Tu) (0 Gustar-Like + 3aP
 #LATEX D: Secuencia del lema TE y un forma de GUSTAR en tercera persona del singular.
 
 #LATEX\subsection{Usos de \emph{gustar} para expresar gustos de otras personas}
-ADDRELATION (Gram:Gustar:Ajenos) FiniteVerbForms (0 Gustar-Like + 3aPersAmbig) TO (-1 LeLema);
+ADDRELATION (Gram:Gustar:Ajenos) LeLema (0 LeLema) TO (1 Gustar-Like + 3aPersAmbig);
 #LATEX T: R:Gram:Gustar:Ajenos a la forma del verbo GUSTAR
-#LATEX E: Dime, \emph{le gusta} vivir en Estados Unidosa tu hijo.] 
+#LATEX E: Dime, \emph{le gusta} vivir en Estados Unidosa tu hijo.
 #LATEX D: Secuencia del lema LE y un forma de GUSTAR en tercera persona del singular.
 
 #LATEX\section{Expresar sorpresa}
 #LATEXDOCU Veáse \url{http://dev.coerll.utexas.edu/spanishtx/spe/html/adv13.html}.
 #LATEX\subsection{Usos de \emph{sorprender}}
 
-ADDRELATION (Gram:Gustar:Otros) FiniteVerbForms (0 Sorprender-Like + 3aPersAmbig) TO (-1 Yo);
+ADDRELATION (Gram:Gustar:Otros) Yo (0 Yo) TO (1 Sorprender-Like + 3aPersAmbig);
+ADDRELATION (Gram:Gustar:Otros) Yo (0 Yo) To (*1 Sorprender-Like BARRIER GrupoNominal OR LimiteOracionSimple LINK -1 Haber + 3aPersAmbig);
 #LATEX T: Asigna Gram:Gustar:Otros (Gram:ExpresarSorpresas:Propias) a la forma de SORPRENDER
 #LATEX E: Siempre \emph{me sorprende} su forma de hablar.
 #LATEX D: [Espacio para describir con palabras lo que hace la regla.]
 
-ADDRELATION (Gram:Gustar:Otros) FiniteVerbForms (0 Sorprender-Like + 3aPersAmbig) TO (-1 Tu);
+ADDRELATION (Gram:Gustar:Otros) Tu (0 Tu) To (1 Sorprender-Like + 3aPersAmbig);
 #LATEX T: Asigna Gram:Gustar:Otros (antes era Gram:ExpresarSorpresas:Interlocutor) a la forma de SORPRENDER
 #LATEX E: ¿Y \emph{te sorprende} su forma de hablar?
 #LATEX D: [Espacio para describir con palabras lo que hace la regla.]
 
-ADDRELATION (Gram:Gustar:Otros) Part (0 Sorprender-Like) TO (*-1 Tu BARRIER GrupoNominal OR LimiteOracionSimple LINK 1 Haber + 3aPersAmbig);
+#ADDRELATION (Gram:Gustar:Otros) Part (0 Sorprender-Like) TO (*-1 Tu BARRIER GrupoNominal OR LimiteOracionSimple LINK 1 Haber + 3aPersAmbig);
+ADDRELATION (Gram:Gustar:Otros) Tu (0 Tu) To (*1 Sorprender-Like BARRIER GrupoNominal OR LimiteOracionSimple LINK -1 Haber + 3aPersAmbig);
 #LATEX T: Asigna Gram:Gustar:Otros (antes era Gram:ExpresarSorpresas:Interlocutor) a la forma de HABER
 #LATEX E: ¿Hay alguna palabra mexicana que \emph{te haya sorprendido}?
 #LATEX D: [Espacio para describir con palabras lo que hace la regla.]
 
-ADDRELATION (Gram:Gustar:Otros) FiniteVerbForms (0 Sorprender-Like + 3aPersAmbig) TO (-1 LeLema);
+ADDRELATION (Gram:Gustar:Otros) LeLema (0 LeLema) To (1 Sorprender-Like + 3aPersAmbig);
 #LATEX T: Asigna Gram:Gustar:Otros (antes era Gram:ExpresarSorpresas:Ajenas) a la forma de SORPRENDER
 #LATEX E: ¿Y \emph{le sorprende} su forma de hablar?
 #LATEX D: [Espacio para describir con palabras lo que hace la regla.]
 
-ADDRELATION (Gram:Gustar:Otros) Part (0 Sorprender-Like) TO (*-1 LeLema BARRIER GrupoNominal OR LimiteOracionSimple LINK 1 Haber + 3aPersAmbig);
+ADDRELATION (Gram:Gustar:Otros) LeLema (0 LeLema) TO (*1 Sorprender-Like BARRIER GrupoNominal OR LimiteOracionSimple LINK -1 Haber + 3aPersAmbig);
 #LATEX T: Asigna Gram:Gustar:Otros (antes era Gram:ExpresarSorpresas:Ajenas) a la forma de HABER
 #LATEX E: ¿Hay alguna palabra mexicana que \emph{le haya sorprendido}?
 #LATEX D: [Espacio para describir con palabras lo que hace la regla.]

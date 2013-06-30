@@ -3,6 +3,12 @@ Change log
 
 JUNE 27, 2013
 -----------
+- Changed countPedagogicalFeatures.pl to allow for a Func column in ClipPedagogicalMetadata.tsv (as said before this is currently not clean enough and has to be done manually)
+- Changed rules that established relations between words occuring further left to words occuring further right. This created weird higlihthings on the web, for instance, in sentence like "Dime, le gusta vivir en Estados Unidosa tu hijo." where the expression "le gusta" is marked as relevant for some grammar points, "le" was marked as the end point and "gusta" as the start point and that would make things weird in displaying.
+- Also changed ProcessSPinTX.sh to adapt to the Func annotations. Otherwise the ClipMetadataPedagogical.tsv table was not properly generated.
+
+JUNE 27, 2013
+-----------
 - Added rules to repair readings for para and creen.
 - Added more rules to handle exponents of function for deseos and purposes using para.
 
