@@ -1,6 +1,10 @@
 Change log
 ==========
 
+JUNE 27, 2013 (bis)
+-------------
+- Added new PDF documentation of the pedagogical annotation grammar.
+
 JUNE 27, 2013
 -----------
 - Changed countPedagogicalFeatures.pl to allow for a Func column in ClipPedagogicalMetadata.tsv (as said before this is currently not clean enough and has to be done manually)

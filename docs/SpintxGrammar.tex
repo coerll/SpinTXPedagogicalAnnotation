@@ -48,6 +48,9 @@ DOCU
 \section{Los SET}
 \chapter{LIST y SET basados en palabras (literales)}
 \chapter{LIST y SET basados en etiquetas pedagógicas}
+\chapter{Definiciones de \emph{templates}}
+Los ``templates'' son un tipo de entidad especial en CG3 que sirve para expresar contextos o secuencias de palabras, lemas o etiquetas morfosintácticas que ocurren frecuentemente. 
+
 \part{Secciones previas}
 \paragraph*{Rule}
 \fbox{
@@ -154,10 +157,14 @@ DOCU
 \fbox{
 \parbox{.9\linewidth}{\texttt{SUBSTITUTE ("UNK" Noun NC Plural) ("mío" Pronoun PPO Plural) TARGET ("<mis>") OR ("<Mis>");}}
 }
+\paragraph*{Rule}
+\fbox{
+\parbox{.9\linewidth}{\texttt{SUBSTITUTE ("UNK" Noun NC Plural) ("nuestro" Pronoun PPO Plural) TARGET ("<nuestros>") OR ("<Nuestros>");}}
+}
 \begin{itemize}
 \item ETIQ: Cambia lectura de "UNK" Noun NC Plural a "mío" Pronoun PPO Plural a "mis".
 \item EJEM: \emph{mis,Mis} 
-\item DESC: [Ninguna.
+\item DESC: Lo hacemos con nuestros (y quizás habrá que añadir otros posesivos).
 \end{itemize}
 
 \paragraph*{Rule}
@@ -189,7 +196,47 @@ OBSERVACIÓN: Notad la ``r'' al final del TARGET en la regla. Indica que lo ante
 \begin{itemize}
 \item ETIQ: Cambia lectura Command Plural 2nd y lema a ``platíquenos'' 
 \item EJEM: \emph{platíquenos} 
-\item DESC: Se aplica sólo a pltíquenos.
+\item DESC: Se aplica sólo a ``platíquenos''.
+\end{itemize}
+
+\paragraph*{Rule}
+\fbox{
+\parbox{.9\linewidth}{\texttt{SUBSTITUTE ("tener" Verb VMfin) ("tener" Verb VMfin Past Subj Plural 3rd) TARGET ("<tengan>");}}
+}
+\begin{itemize}
+\item ETIQ: Añade lectura de pasado de subjuntivo a tener cuando este recibe el tag VMFin. 
+\item EJEM: \emph{tengan} 
+\item DESC: Se aplica sólo a ``tengan''.
+\end{itemize}
+
+\paragraph*{Rule}
+\fbox{
+\parbox{.9\linewidth}{\texttt{SUBSTITUTE ("para" Conjunction CSUBI) ("para" Preposition PREP) TARGET ("para");}}
+}
+\begin{itemize}
+\item ETIQ: Cambia la lectura de conjunción de subordinación de infinitivas por la de preposición. 
+\item EJEM: \emph{tengan} 
+\item DESC: Se aplica sólo a ``para'' como lema.
+\end{itemize}
+
+OBSERVACIÓN: Aunque es verdad que ``para'' puede ir seguida de un infinitivo para formar una subordinada infinitiva esta es una función que pueden desempeñar otras preposiciones, y creo que no por ello hay que cambiarles su categoría gramatical principal.
+
+\paragraph*{Rule}
+\fbox{
+\parbox{.9\linewidth}{\texttt{SUBSTITUTE ("crear" Verb VLfin Past Subj Plural 3rd) ("creer" Verb VLfin Pres Indi Plural 3rd) TARGET ("<creen>") IF (1 LoLiteral) (2 MismoLiteral) (3 Que);}}
+}
+\paragraph*{Rule}
+\fbox{
+\parbox{.9\linewidth}{\texttt{SUBSTITUTE ("crear" Verb VLfin Past Subj Plural 3rd) ("creer" Verb VLfin Pres Indi Plural 3rd) TARGET ("<creen>") IF (1 En OR Que);}}
+}
+\paragraph*{Rule}
+\fbox{
+\parbox{.9\linewidth}{\texttt{SUBSTITUTE ("crear" Verb VLfin Past Subj Plural 3rd) ("creer" Verb VLfin Pres Indi Plural 3rd) TARGET ("<creen>")  IF (-2 NoAdv) (-1 PronombresCliticosTODOS OR SeLiteral);}}
+}
+\begin{itemize}
+\item ETIQ: Varias reglas para dar la lectura indicativa de ``creer'' a la forma ``creen'' en lugar de la subjuntiva de ``crear''. 
+\item EJEM: \emph{tengan} 
+\item DESC: Se aplica teniendo en cuenta algunos contextos que generalmente decantaran la lectura hacia la interpretación prevista (creer).
 \end{itemize}
 
 \part{Secciones principales}
@@ -199,8 +246,7 @@ Esta estrategia se utiliza para evitar que una misma palabra reciba por partida 
 
 Para evitar este tipo de duplicidades también se podría usar una estrategia basada en la distinción entre ADD y MAP (véase la documentación de vislcg3). Por ahora no se ha hecho, porque esto impide la asignación de múltiples etiquetas a un mismo token/una misma palabra.
 
-NOTA: Ahora mismo sólo estamos asignando hasta tres niveles de descripción pedagógica. Veáse el Google Doc Pedagogical tipologies \url{https://docs.google.com/spreadsheet/ccc?key=0AlyBsKogCRnwdDd3ZWRjejZlQU5XZWl6WVVUZmtKcEE&usp=sharing}.
-
+REM: Ahora mismo sólo estamos asignando hasta tres niveles de descripción pedagógica. Veáse el Google Doc Pedagogical tipologies \url{https://docs.google.com/spreadsheet/ccc?key=0AlyBsKogCRnwdDd3ZWRjejZlQU5XZWl6WVVUZmtKcEE&usp=sharing}.
 \chapter{Uso de los determinantes}
 \section{Usos de los artículos definidos}
 Identificaremos los usos de los artículos definidos \emph{el, la, los, las}, y el artículo (en algunas gramáticas considerado pronombre) \emph{lo} cuando va seguido de un adjetivo.
@@ -293,7 +339,7 @@ Identificaremos los usos de los artículos definidos \emph{el, la, los, las}, y 
 \section{Género masculino en palabras terminadas en ``a''}
 \paragraph*{Rule}
 \fbox{
-\parbox{.9\linewidth}{\texttt{ADDRELATION (Gram:Genero:ExcepMasc) DetAll IF (0 ElDetLiteral + SG OR UnDetLiteral + SG OR ArtPronDemo + SG) TO (1 SustMascAcabadosEnA + Nombre + SG) ;}}
+\parbox{.9\linewidth}{\texttt{ADDRELATION (Gram:Genero:ExcepMasc) DetAllIncluded IF (0 ElDetLiteral + SG OR UnDetLiteral + SG OR ArtPronDemo + SG) TO (1 SustMascAcabadosEnA + Nombre + SG) ;}}
 }
 \begin{itemize}
 \item ETIQ: Asigna R:Gram:Genero:ExcepMasc
@@ -304,7 +350,7 @@ Identificaremos los usos de los artículos definidos \emph{el, la, los, las}, y 
 \section{Cambio de artículo femenino a masculina en palabras con ``a'' tónica inicial}
 \paragraph*{Rule}
 \fbox{
-\parbox{.9\linewidth}{\texttt{ADDRELATION (Gram:Genero:ExcepArtFem) DetAll IF (0 ElDetLiteral) TO (1 SustFemConATonicaInicial + Nombre + SG) ;}}
+\parbox{.9\linewidth}{\texttt{ADDRELATION (Gram:Genero:ExcepArtFem) Articulo IF (0 ElDetLiteral) TO (1 SustFemConATonicaInicial + Nombre + SG) ;}}
 }
 \begin{itemize}
 \item ETIQ: Asigna R:Gram:Genero:ExcepArtFem
@@ -315,11 +361,11 @@ Identificaremos los usos de los artículos definidos \emph{el, la, los, las}, y 
 \chapter{Uso de los adjetivos}
 \paragraph*{Rule}
 \fbox{
-\parbox{.9\linewidth}{\texttt{ADD (Gram:Adj:Ord) AdjOrd IF (0 AdjOrd) (NOT 0 LiteralPrimeroOrTercero + SG) (-1 DetAll + SG OR Prep OR PrepContract OR Verbo) (1 Sustantivo + SG);}}
+\parbox{.9\linewidth}{\texttt{ADD (Gram:Adj:Ord) AdjOrd IF (0 AdjOrd) (NOT 0 LiteralPrimeroOrTercero + SG) (-1 DetAllIncluded + SG OR Prep OR PrepContract OR Verbo) (1 Sustantivo + SG);}}
 }
 \paragraph*{Rule}
 \fbox{
-\parbox{.9\linewidth}{\texttt{ADD (Gram:Adj:Ord) AdjOrd IF (0 AdjOrd) (NOT 0 LiteralPrimeroOrTercero + PL) (-1 DetAll + PL OR Prep OR Verbo) (1 Sustantivo + PL); }}
+\parbox{.9\linewidth}{\texttt{ADD (Gram:Adj:Ord) AdjOrd IF (0 AdjOrd) (NOT 0 LiteralPrimeroOrTercero + PL) (-1 DetAllIncluded + PL OR Prep OR Verbo) (1 Sustantivo + PL); }}
 }
 \begin{itemize}
 \item ETIQ: Asigna Gram:Adj:Ord
@@ -334,7 +380,7 @@ Veáse \url{http://dev.coerll.utexas.edu/spanishtx/spe/html/adv11.html}.
 \subsection{El uso de \emph{para} para expresar el destinatario o audiencia de una acción}
 \paragraph*{Rule}
 \fbox{
-\parbox{.9\linewidth}{\texttt{ADD (@Gram:Prep:Para) Prep IF (-1 SerOServir + Verbo) (0 Para) (NOT 0 GramPrep) (1 DetAll) (2 Personas);}}
+\parbox{.9\linewidth}{\texttt{ADD (@Gram:Prep:Para) Prep IF (-1 SerOServir + Verbo) (0 Para) (NOT 0 GramPrep) (1 DetAllIncluded) (2 Personas);}}
 }
 \begin{itemize}
 \item ETIQ: Asigna @Gram:Prep:Para
@@ -628,11 +674,11 @@ Veáse \url{http://dev.coerll.utexas.edu/spanishtx/spe/html/beg05.html}.
 \subsection{Usos de \emph{gustar} para expresar gustos de otras personas}
 \paragraph*{Rule}
 \fbox{
-\parbox{.9\linewidth}{\texttt{ADDRELATION (Gram:Gustar:Ajenos) FiniteVerbForms (0 Gustar-Like + 3aPersAmbig) TO (-1 LeLema);}}
+\parbox{.9\linewidth}{\texttt{ADDRELATION (Gram:Gustar:Ajenos) LeLema (0 LeLema) TO (1 Gustar-Like + 3aPersAmbig);}}
 }
 \begin{itemize}
 \item ETIQ: R:Gram:Gustar:Ajenos a la forma del verbo GUSTAR
-\item EJEM: Dime, \emph{le gusta} vivir en Estados Unidosa tu hijo.] 
+\item EJEM: Dime, \emph{le gusta} vivir en Estados Unidosa tu hijo.
 \item DESC: Secuencia del lema LE y un forma de GUSTAR en tercera persona del singular.
 \end{itemize}
 
@@ -642,7 +688,11 @@ Veáse \url{http://dev.coerll.utexas.edu/spanishtx/spe/html/adv13.html}.
 \subsection{Usos de \emph{sorprender}}
 \paragraph*{Rule}
 \fbox{
-\parbox{.9\linewidth}{\texttt{ADDRELATION (Gram:Gustar:Otros) FiniteVerbForms (0 Sorprender-Like + 3aPersAmbig) TO (-1 Yo);}}
+\parbox{.9\linewidth}{\texttt{ADDRELATION (Gram:Gustar:Otros) Yo (0 Yo) TO (1 Sorprender-Like + 3aPersAmbig);}}
+}
+\paragraph*{Rule}
+\fbox{
+\parbox{.9\linewidth}{\texttt{ADDRELATION (Gram:Gustar:Otros) Yo (0 Yo) To (*1 Sorprender-Like BARRIER GrupoNominal OR LimiteOracionSimple LINK -1 Haber + 3aPersAmbig);}}
 }
 \begin{itemize}
 \item ETIQ: Asigna Gram:Gustar:Otros (Gram:ExpresarSorpresas:Propias) a la forma de SORPRENDER
@@ -652,7 +702,7 @@ Veáse \url{http://dev.coerll.utexas.edu/spanishtx/spe/html/adv13.html}.
 
 \paragraph*{Rule}
 \fbox{
-\parbox{.9\linewidth}{\texttt{ADDRELATION (Gram:Gustar:Otros) FiniteVerbForms (0 Sorprender-Like + 3aPersAmbig) TO (-1 Tu);}}
+\parbox{.9\linewidth}{\texttt{ADDRELATION (Gram:Gustar:Otros) Tu (0 Tu) To (1 Sorprender-Like + 3aPersAmbig);}}
 }
 \begin{itemize}
 \item ETIQ: Asigna Gram:Gustar:Otros (antes era Gram:ExpresarSorpresas:Interlocutor) a la forma de SORPRENDER
@@ -662,7 +712,7 @@ Veáse \url{http://dev.coerll.utexas.edu/spanishtx/spe/html/adv13.html}.
 
 \paragraph*{Rule}
 \fbox{
-\parbox{.9\linewidth}{\texttt{ADDRELATION (Gram:Gustar:Otros) Part (0 Sorprender-Like) TO (*-1 Tu BARRIER GrupoNominal OR LimiteOracionSimple LINK 1 Haber + 3aPersAmbig);}}
+\parbox{.9\linewidth}{\texttt{ADDRELATION (Gram:Gustar:Otros) Tu (0 Tu) To (*1 Sorprender-Like BARRIER GrupoNominal OR LimiteOracionSimple LINK -1 Haber + 3aPersAmbig);}}
 }
 \begin{itemize}
 \item ETIQ: Asigna Gram:Gustar:Otros (antes era Gram:ExpresarSorpresas:Interlocutor) a la forma de HABER
@@ -672,7 +722,7 @@ Veáse \url{http://dev.coerll.utexas.edu/spanishtx/spe/html/adv13.html}.
 
 \paragraph*{Rule}
 \fbox{
-\parbox{.9\linewidth}{\texttt{ADDRELATION (Gram:Gustar:Otros) FiniteVerbForms (0 Sorprender-Like + 3aPersAmbig) TO (-1 LeLema);}}
+\parbox{.9\linewidth}{\texttt{ADDRELATION (Gram:Gustar:Otros) LeLema (0 LeLema) To (1 Sorprender-Like + 3aPersAmbig);}}
 }
 \begin{itemize}
 \item ETIQ: Asigna Gram:Gustar:Otros (antes era Gram:ExpresarSorpresas:Ajenas) a la forma de SORPRENDER
@@ -682,7 +732,7 @@ Veáse \url{http://dev.coerll.utexas.edu/spanishtx/spe/html/adv13.html}.
 
 \paragraph*{Rule}
 \fbox{
-\parbox{.9\linewidth}{\texttt{ADDRELATION (Gram:Gustar:Otros) Part (0 Sorprender-Like) TO (*-1 LeLema BARRIER GrupoNominal OR LimiteOracionSimple LINK 1 Haber + 3aPersAmbig);}}
+\parbox{.9\linewidth}{\texttt{ADDRELATION (Gram:Gustar:Otros) LeLema (0 LeLema) TO (*1 Sorprender-Like BARRIER GrupoNominal OR LimiteOracionSimple LINK -1 Haber + 3aPersAmbig);}}
 }
 \begin{itemize}
 \item ETIQ: Asigna Gram:Gustar:Otros (antes era Gram:ExpresarSorpresas:Ajenas) a la forma de HABER
@@ -818,21 +868,84 @@ No se etiquetan las ocurrencias de ser como auxiliar en las construcciones pasiv
 \end{figure}
 
 \chapter{Funciones comunicativas}
-\section{Expresar deseos sobre uno mismo u otros con incertidumbre/en el futuro}
-\paragraph*{Rule}
-\fbox{
-\parbox{.9\linewidth}{\texttt{ADDRELATION (Func:Deseos:Ajenos) Verbo IF (0 VerbosExpresarDeseos) (1 Que) (2 GrupoNominal OR PronombresCliticosTODOS) TO (*3 Verbo + Subjuntivo BARRIER GrupoNominal OR LimiteOracionSimple OR FiniteVerbForms);}}
-}
+\section{Expresar deseos con incertidumbre/en el futuro}
+Esta sección contiene reglas que sirven para detectar estructuras lingüísticas generalmente utilizadas para expresar deseos que implican a uno mismo o a terceros. Esto hace, a menudo y según en qué construcciones, que sea necesario el subjuntivo. Así, por ejemplo, diremos ``me gustaría que te casaras conmigo'' para hacerle entender a nuestro interlocutor lo que deseamos que realice, pero en cambio diremos ``me gustaría casarme conmigo'' cuando queremos expresar que es nuestro deseo el que se realice. El primero usa subjuntivo y el segundo no.
+
+\subsection{Expresar deseos con incertidumbre/en el futuro con agentes distintos en principal y subordinada}
 \paragraph*{Rule}
 \fbox{
 \parbox{.9\linewidth}{\texttt{ADDRELATION (Func:Deseos:Ajenos) Verbo IF (0 VerbosExpresarDeseos) (1 Que) TO (*2 Verbo + Subjuntivo BARRIER GrupoNominal OR LimiteOracionSimple OR FiniteVerbForms);}}
 }
 \begin{itemize}
 \item ETIQ: R:Func:Deseos:Ajenos
-\item EJEM: [Pendiente de documentar]
-\item DESC: [Pendiente de documentar]
+\item EJEM: (...) me sorprendió mi mamá porque no \emph{esperaba que me regalaran} nada (...)
+\item DESC: Permite la presencia de clíticos entre el ``que'' y el subjuntivo que le sigue.
 \end{itemize}
 
+\paragraph*{Rule}
+\fbox{
+\parbox{.9\linewidth}{\texttt{ADDRELATION (Func:Deseos:Ajenos) Verbo IF (0 VerbosExpresarDeseos) (1 Adverbio OR MejorLiteral LINK 1 Que) TO (*3 Verbo + Subjuntivo BARRIER GrupoNominal OR LimiteOracionSimple OR FiniteVerbForms);}}
+}
+\begin{itemize}
+\item ETIQ: R:Func:Deseos:Ajenos
+\item EJEM: (...) me  \emph{gustaría mejor que te casaras} conmigo (...)
+\item DESC: Permite la presencia de adverbios entre el verbo de la principal y el ``que''.
+\end{itemize}
+
+\paragraph*{Rule}
+\fbox{
+\parbox{.9\linewidth}{\texttt{ADDRELATION (Func:Deseos:Ajenos) Verbo IF (0 VerbosExpresarDeseos) (1 Que) (2 DetAllIncluded) (3 Sustantivo) (4 PronombresCliticosTODOS OR SeLiteral) TO (*5 Verbo + Subjuntivo BARRIER GrupoNominal OR LimiteOracionSimple OR FiniteVerbForms);}}
+}
+\begin{itemize}
+\item ETIQ: R:Func:Deseos:Ajenos
+\item EJEM: (...) \emph{espero que el español se vuelva} tal vez otro idioma oficial (...)
+\item DESC: Permite la presencia de un sujeto entre el ``que'' y el subjuntivo.
+\end{itemize}
+
+\paragraph*{Rule}
+\fbox{
+\parbox{.9\linewidth}{\texttt{ADDRELATION (Func:Deseos:Ajenos) OjalaLiteral IF (0 OjalaLiteral) (1 Que) (2 DetAllIncluded) (3 Sustantivo) TO (*4 Verbo + Subjuntivo BARRIER GrupoNominal OR LimiteOracionSimple OR FiniteVerbForms);}}
+}
+\begin{itemize}
+\item ETIQ: R:Func:Deseos:Ajenos
+\item EJEM: Este ... \emph{ojalá que algún día cambie} , ¿ no ? Pero . ¿ Y tú opinas
+\item DESC: Permite la presencia de un sintagma nominal sujeto entre el ``que'' y el subjuntivo.
+\end{itemize}
+
+\paragraph*{Rule}
+\fbox{
+\parbox{.9\linewidth}{\texttt{ADDRELATION (Func:Deseos:Ajenos) Verbo IF (0 VerbosExpresarDeseos) (1 DetAllIncluded) (2 Sustantivo OR Adj) (3 Que) (4 PronombresCliticosTODOS OR SeLiteral) TO (*5 Verbo + Subjuntivo BARRIER GrupoNominal OR LimiteOracionSimple OR FiniteVerbForms);}}
+}
+\begin{itemize}
+\item ETIQ: R:Func:Deseos:Ajenos
+\item EJEM: (...) no \emph{esperas tu niña que se comporte} así (...)
+\item DESC: Permite un alteración sintáctica entre el sujeto de la subordinada y la posición del ``que''. Esto es algo inusual en la lengua escrita, pero dejamos la regla por si en el futuro permite detectar construcciones similares en la lengua oral.
+\end{itemize}
+
+\paragraph*{Rule}
+\fbox{
+\parbox{.9\linewidth}{\texttt{ADDRELATION (Func:Deseos:Ajenos) Sustantivo IF (0 NombresExpresarDeseos) (1 De OR Para) (2 Que) TO (*3 Verbo + Subjuntivo BARRIER LimiteOracionSimple OR FiniteVerbForms LINK T:SintagmaNominal-Y-O-Clitico);}}
+}
+\begin{itemize}
+\item ETIQ: R:Func:Deseos:Ajenos
+\item EJEM: (...) sin \emph{necesidad de que me tengan} que pagar.
+\item DESC: Marca la ocurrencia de nombres como ``necesidad, petición'' seguidos de un ``para'' o un ``que'' y un verbo subjuntivo, y permite que aparezca un clítico o un sintagma nominal (Det N, Det Adj) entre el ``que'' y el verbo en subjuntivo.
+\end{itemize}
+
+REM: Esta regla utiliza el operador ``T:''. Esta ``T'' indica que los que sigue a los dos puntos (:) es un TEMPLATE definido más arriba, en la zona de definición de LIST y SET. Para más detalles véase la documentación vislcg3 y el grupo de debate (GoogleGroup).
+\section{Expresar objetivos y finalidades con ``para''}
+\paragraph*{Rule}
+\fbox{
+\parbox{.9\linewidth}{\texttt{ADDRELATION (Func:Expresar:Finalidades) Prep IF (0 Para) (1 Verbo + Infinitive) TO (*2 Que BARRIER LimiteOracionSimple OR FiniteVerbForms LINK 1 Verbo + Subjuntivo);}}
+}
+\begin{itemize}
+\item ETIQ: R:Func:Expresar:Finalidades
+\item EJEM: (...) Yo crecí pensando que para orar o \emph{para pedirle a Dios que hiciera algo} (...)
+\item DESC: XXX
+\end{itemize}
+
+\subsection{Estilo indirecto}
+\subsection{Expresando opiniones}
 \section{Expresar opiniones, dudas}
 \section{Expresar objetivos (con para que)}
 OBSERVACIÓN: Oración sacada del corpus. 45388:  que viene a vivir a ? . ¿ Qué le <recomendaría> a un hispano que viene a vivir a o a (...) . Esta frase anterior no es la misma construcción (que la de los deseos con sjubjuntivo) porque el que ``viene a vivir'' es una adjetival de hispano, no una subordinada de recomendar.
