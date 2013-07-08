@@ -29,6 +29,8 @@ if [[ "$1" == "all" ]] || [[ "$1" == "tt2cg3" ]]; then
   ttagger2OtherFormats.pl -outformat cg3 *.txt
 fi
 
+###------------------
+###------------------
 if [[ "$1" == "all" ]] || [[ "$1" == "cg3" ]]; then
   echo "Tagging with vislcg3..."
   cd "$CG3DIR"
@@ -39,6 +41,22 @@ if [[ "$1" == "all" ]] || [[ "$1" == "cg3" ]]; then
 ##  echo "Created file ${OUTDIR}/${CG3OUT}.out"
   done
 fi
+
+###------------------
+
+if [[ "$1" == "cg3trace" ]]; then
+echo "Excuting vislcg3 with -t (trace) option for grammar writers..."
+cd "$CG3DIR"
+
+for i in *.cg3; do
+CG3OUT=`expr "$i" : '\(.*\)\.cg3'` 
+vislcg3 -t -g ${GRAMMARS}/SpintxGrammar.rle -I ${i} -O ${OUTDIR}/${CG3OUT}.out
+##  echo "Created file ${OUTDIR}/${CG3OUT}.out"
+done
+fi
+
+###------------------
+###------------------
 
 if [[ "$1" == "all" ]] || [[ "$1" = "counts" ]]; then
   echo "Counting/Adding up clip level information..."

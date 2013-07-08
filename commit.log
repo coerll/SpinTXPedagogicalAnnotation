@@ -1,6 +1,11 @@
 Change log
 ==========
 
+JULY 8, 2013
+------------
+- Added option cg3trace to PorcessSPinTX.sh so that cg3 can be executed with trace option easily by grammar writers.
+- Added .gitignore files to some of the folders
+
 JUNE 27, 2013 (bis)
 -------------
 - Added new PDF documentation of the pedagogical annotation grammar.
