@@ -110,7 +110,11 @@ else{
 # ---------------------------------------;
 
 # -- STARTING EXECUTION OF CONVERSION
-print STDERR "Generating word level annotation files in JSON format...\n";
+print STDERR " First: removing old files...\n";
+system ("rm $OutputDirWLA/*.json");
+system ("rm $OutputDirWLA/*.tsv");
+
+
 
 foreach $file (@ARGV) {
     

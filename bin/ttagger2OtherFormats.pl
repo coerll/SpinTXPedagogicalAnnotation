@@ -140,6 +140,12 @@ foreach $file (@ARGV) {
             print STDERR " Expected formats are cg3 or cqp.\n";
             exit;
         }
+        
+        if ($name eq "_AllClips.") {
+            print STDERR "\n WARNING! \n";
+            print STDERR " File $file will be ignored.\n";
+            next;
+        }
 
         # reading contents of the file to be processed
         open (FILE,"$file");

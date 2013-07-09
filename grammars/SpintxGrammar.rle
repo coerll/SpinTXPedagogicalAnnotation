@@ -35,7 +35,7 @@ LIST Infinitive = (VLinf) (VEinf) (VHinf) (VSinf);
 LIST Gerundio = (VLger) (VEger) (VHger) (VSger);
 LIST PronombrePersonal = (PPX);
 LIST DetAllByPOS = (ART) (DM) (PPO) ("alguno" QU); # habrá que refinar la definición, p.e., incluye palabras como mío, mía, míos, que claramente son adjetivos y no determinantes (esto viene de TreeTagger)
-
+LIST Futuro = (Fut);
 LIST Sustantivo = (NC) (NP) (NMEA) (NMON) ;
 LIST Articulo = (ART);
 LIST Conjuncion = (Conjunction);
@@ -128,6 +128,7 @@ LIST NoAdv = ("no" NEG);
 LIST VerbosExpresarDeseos = ("esperar") ("pedir") ("gustar") ("encantar");
 LIST NombresExpresarDeseos = ("esperanza") ("necesidad") ("petición") ("demanda") ;
 LIST VerbosExpresarRecomendaciones = ("recomendar") ("sugerir") ("aconsejar") ("necesitar");
+LIST LemaIr = ("ir");
 
 ## ("dentista")
 
@@ -573,6 +574,13 @@ ADDRELATION (Gram:PerfPerif Gram:Aux:Haber) FiniteVerbForms (0 Haber + FiniteVer
 #LATEX T: Asigna R:Gram:PerfPerif a la forma del verbo HABER
 #LATEX E: \emph{ha cantado, ha corrido, ha andado dormido} (cualquier ocurrencia)
 #LATEX D: Requiere una forma finita de HABER seguida de un participio
+
+#LATEX\subsection{Futuro: con o sin perífrasis}
+### FITA JUL 9
+ADD (@Gram:VFut:Conjugado) FiniteVerbForms IF (0 FiniteVerbForms + Futuro);
+
+ADDRELATION (Gram:VFut:Perifrasis) FiniteVerbForms IF (0 LemaIr) (1 APrep) TO (2 Verbo + Infinitive)
+
 
 #LATEX\section{Verbos piscológicos: gustar, encantar, sorprender y otros}
 #LATEXDOCU Veáse \url{http://dev.coerll.utexas.edu/spanishtx/spe/html/adv13.html}.
@@ -1051,3 +1059,6 @@ ADDRELATION (Vocab:Fraseol:VerbPrep) Verbo IF  (0 ("empezar")) TO (*1 Prep BARRI
 
 #ADD (@Gram:Det:Art) Articulo IF (0 Lo) (*1 Adj BARRIER NPBoundary);
 
+## SEMANTIC CHALLENGES
+# distinguish necesitar, two meanings: you need a photo-ID vs. you need to go to the doctor (consejo vs necesidad)
+# distinguish ir a + INF when it has future meaning or meaning de desplazamiento like in voy a comprar al mercado (check if more common order is voy al mercado a comprar)

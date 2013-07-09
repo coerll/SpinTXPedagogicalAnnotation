@@ -25,6 +25,21 @@ if [[ "$1" == "help" ]] || [[ "$1" == "" ]]; then
   exit 1
 fi
 
+if [[ "$1" == "all" ]]; then
+  echo "Removing older versions of cg3 files in $CG3DIR ..."
+  cd "$CG3DIR"
+  rm *.cg3
+  echo "Removing older versions of out, pla and tsv files in $OUTDIR ..."
+  cd "$OUTDIR"
+  rm *.out *.pla *.tsv
+fi
+
+if [[ "$1" == "cg3" ]] || [[ "$1" == "cg3trace" ]]; then
+  echo "Removing older versions of cg3 files in $CG3DIR ..."
+  cd "$CG3DIR"
+  rm *.cg3
+fi
+
 ###------------------
 ## CONVERSION TO CG3 FORMAT
 ###------------------
