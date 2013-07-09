@@ -17,12 +17,17 @@ if [[ "$1" == "help" ]] || [[ "$1" == "" ]]; then
   echo "    all -- Do all processes"
   echo "    tt2cg3 -- Convert TreeTagger format files to CG3 format"
   echo "    cg3 -- Apply CG3 grammar files for pedagogical annotation"
+  echo "    cg3trace -- Apply CG3 grammar files for pedagogical annotation 
+	    with rule trace functionalities (and exit)"
   echo "    counts -- Do the counts at the clip level"
   echo "    json -- Generate the json formatted version of the annotation files"
   echo "    help -- Print this help page"
   exit 1
 fi
 
+###------------------
+## CONVERSION TO CG3 FORMAT
+###------------------
 if [[ "$1" == "all" ]] || [[ "$1" == "tt2cg3" ]]; then
   echo "Conversion from TreeTagger format to CG3 format..."
   cd "$TXTDIR"
@@ -30,6 +35,7 @@ if [[ "$1" == "all" ]] || [[ "$1" == "tt2cg3" ]]; then
 fi
 
 ###------------------
+## ANNOTATION WITH PEDAGOGICAL INFORMATION USING VISLCG3
 ###------------------
 if [[ "$1" == "all" ]] || [[ "$1" == "cg3" ]]; then
   echo "Tagging with vislcg3..."
@@ -43,6 +49,7 @@ if [[ "$1" == "all" ]] || [[ "$1" == "cg3" ]]; then
 fi
 
 ###------------------
+## ANNOTATION WITH PEDAGOGICAL INFORMATION USING VISLCG3 USING ** RULE TRACE **
 
 if [[ "$1" == "cg3trace" ]]; then
 echo "Excuting vislcg3 with -t (trace) option for grammar writers..."
@@ -53,9 +60,11 @@ CG3OUT=`expr "$i" : '\(.*\)\.cg3'`
 vislcg3 -t -g ${GRAMMARS}/SpintxGrammar.rle -I ${i} -O ${OUTDIR}/${CG3OUT}.out
 ##  echo "Created file ${OUTDIR}/${CG3OUT}.out"
 done
+exit 0
 fi
 
 ###------------------
+## CLIP LEVEL COUNTS AND JSON GENERATION FORMATS
 ###------------------
 
 if [[ "$1" == "all" ]] || [[ "$1" = "counts" ]]; then
@@ -70,14 +79,14 @@ if [[ "$1" == "all" ]] || [[ "$1" = "json" ]]; then
   echo "Done!"
 fi
 
-cut -f 2 ${OUTDIR}/SpintxMetadataVocab.tsv > ${OUTDIR}/JustVocabColUnigram.txt
-cut -f 6 ${OUTDIR}/SpintxPedagogicalMetadata.tsv > ${OUTDIR}/JustVocabColNgram.txt
-cut -f 1-5 ${OUTDIR}/SpintxPedagogicalMetadata.tsv > ${OUTDIR}/AllButVocab.txt
-paste -d \, ${OUTDIR}/JustVocabColNgram.txt ${OUTDIR}/JustVocabColUnigram.txt > ${OUTDIR}/JustVocabColALL.txt
-paste ${OUTDIR}/AllButVocab.txt ${OUTDIR}/JustVocabColALL.txt > ${OUTDIR}/ClipMetadataPedagogical-DRAFT.tsv
-cat ${OUTDIR}/ClipMetadataPedagogical-DRAFT.tsv | sed 's/Vocab,Vocab/Vocab/g' > ${OUTDIR}/ClipMetadataPedagogical-DRAFT2.tsv
-perl -pe  's/\t,/\t/g' < ${OUTDIR}/ClipMetadataPedagogical-DRAFT2.tsv > ${OUTDIR}/ClipMetadataPedagogical.tsv
+if [[ "$1" == "all" ]] || [[ "$1" = "counts" ]]; then
+  cut -f 2 ${OUTDIR}/SpintxMetadataVocab.tsv > ${OUTDIR}/JustVocabColUnigram.txt
+  cut -f 6 ${OUTDIR}/SpintxPedagogicalMetadata.tsv > ${OUTDIR}/JustVocabColNgram.txt
+  cut -f 1-5 ${OUTDIR}/SpintxPedagogicalMetadata.tsv > ${OUTDIR}/AllButVocab.txt
+  paste -d \, ${OUTDIR}/JustVocabColNgram.txt ${OUTDIR}/JustVocabColUnigram.txt > ${OUTDIR}/JustVocabColALL.txt
+  paste ${OUTDIR}/AllButVocab.txt ${OUTDIR}/JustVocabColALL.txt > ${OUTDIR}/ClipMetadataPedagogical-DRAFT.tsv
+  cat ${OUTDIR}/ClipMetadataPedagogical-DRAFT.tsv | sed 's/Vocab,Vocab/Vocab/g' > ${OUTDIR}/ClipMetadataPedagogical-DRAFT2.tsv
+  perl -pe  's/\t,/\t/g' < ${OUTDIR}/ClipMetadataPedagogical-DRAFT2.tsv > ${OUTDIR}/ClipMetadataPedagogical.tsv
+fi
 
-## split -l 10000 ${CLIPSWLA}/ClipsWLAOneFile.tsv ${CLIPSWLA}/ForTokenTagsPedagogical
-
-
+exit 0

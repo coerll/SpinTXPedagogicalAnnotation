@@ -1,5 +1,6 @@
 #!/bin/bash
 
+TXTDIR="$SPINTX_HOME/data/SpinTXCorpusData/ClipTags"
 CQPDIR="$SPINTX_HOME/data/SpinTXCorpusData/ClipCQP"
 
 echo "Compiling SPinTX in a local installation of cqp"
@@ -7,6 +8,15 @@ echo "This script assumes cqp is installed"
 
 cd "$CQPDIR"
 
+echo "Removing old SPinTX *.tsv files"
+rm *.tsv
+
+###------------------
+echo "Conversion from TreeTagger format to CQP format..."
+cd "$TXTDIR"
+ttagger2OtherFormats.pl -outformat cqp *.txt
+
+cd "$CQPDIR"
 echo "Removing old SPinTX single file all-spintx.cpr"
 rm all-spintx.cpr
 

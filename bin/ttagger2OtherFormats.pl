@@ -228,6 +228,12 @@ foreach $file (@ARGV) {
                     print STDERR "   This token will be assigned as lemma the word itself in lower case.\n";
                 }
             }
+            if (($word eq "el" || $word eq "El" || $word eq "los" || $word eq "Los") && $lemma eq "el" && $POSTag eq "ART") {
+                $Gender = "Masc";
+            }
+            if (($word eq "la" || $word eq "La" || $word eq "las" || $word eq "Las") && $lemma eq "el" && $POSTag eq "ART") {
+                $Gender = "Fem";
+            }
             
 
             # March 5: punctuation is now a token in itself

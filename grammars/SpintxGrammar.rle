@@ -127,7 +127,7 @@ LIST SustFemConATonicaInicial = ("área") ("agua") ("habla") ("arma") ("alma");
 LIST NoAdv = ("no" NEG);
 LIST VerbosExpresarDeseos = ("esperar") ("pedir") ("gustar") ("encantar");
 LIST NombresExpresarDeseos = ("esperanza") ("necesidad") ("petición") ("demanda") ;
-LIST VerbosExpresarRecomendaciones = ("recomendar") ("sugerir") ("aconsejar");
+LIST VerbosExpresarRecomendaciones = ("recomendar") ("sugerir") ("aconsejar") ("necesitar");
 
 ## ("dentista")
 
@@ -772,6 +772,33 @@ ADDRELATION (Func:Deseos:Ajenos) Sustantivo IF (0 NombresExpresarDeseos) (1 De O
 
 	 # 78110:  algo , les muestro algo , completamente gratis , sin <necesidad de que> me tengan que pagar . Muy bien , y platíqueme
 
+#LATEX\subsection{Expresar recomendaciones y sugerencias}
+ADDRELATION (Func:Expresar:Sugerencias) Verbo IF (0 VerbosExpresarRecomendaciones) (1 Que) TO (*2 Verbo + Subjuntivo BARRIER LimiteOracionSimple OR FiniteVerbForms);
+
+    # ## SUGERIR
+    # 41625:  el ... el ... el médico les dice que él <sugiere> que apaguen la máquina de ... de incubadora porque mi
+    
+ADDRELATION (Func:Expresar:Sugerencias) Verbo IF (0 VerbosExpresarRecomendaciones + 2aPers OR VerbosExpresarRecomendaciones + 3aPers) TO (1 Verbo + Infinitive);
+
+   ##  81738:  compañeros de escuela y mis amigos también fueron muy conscientes de que <necesitaban hablar> un poquito más lento cuando estaban conmigo ... ahora , cuando me
+   ##  84720:  que aquí tú necesitas algo y vas a la tienda , allá <necesitabas esperar> haber cuando encontrabas lo que podías encontrar , entonces había mercados en
+   ##  23624:  o algo , pero yo , honestamente , creo que uno siempre <necesita saber> de donde uno viene , y no perder eso . Si uno
+   ##  89450:  y que no se va a ir , que ahí está , <necesitas resolver> tus problemas . Entonces , yo llevo dieciséis años de casada caminando
+
+## Expresando necesidades de uno mismo
+   ##  86193:  sintiera mal mami . Y es todo , es todo lo que <necesitaba hacer> con Yanesa , el sólo hecho de que me estés haciendo sentir
+   ## 143445:  quisieron convalidar mis estudios cuando yo llegué acá a Estados Unidos y <necesitaba ahorrar> dinero para ... para estudiar en el college , comencé a trabajar
+   ##  99671:  lo que nos enseñaron en escuela fue la ... las cosas que <necesitábamos saber> sobre Estados Unidos , sobre Tejas . Las cosas que necesitábamos que
+   ## 139003:  no tanto por aprender o por tener una carrera , sino porque <necesitaba conocer> todos los aspectos de la cultura de aquí y básicamente descubrí que
+
+   ##  27818:  y puedo comunicar mis ideas , y lo voy a hacer si <necesito hacerlo> . Y bueno , siendo el ... el ... esta , esta
+   ##  82289:  me doy cuenta de que es una señora y la señora dice <necesito hablar> con Olga Alexeuna , Olga Alexeuna , Olga Alexeuna , ¿ está
+   ##  82362:  , pero no puedes decirlo y la persona se empezó a enojar <necesito hablar> con Olga Alexeuna , pásele el teléfono a Olga Alexeuna , ¿
+
+   ## 144034:  sería muy , muy interesante , pero por ejemplo para ese trabajo <necesitas ser> ciudadano , así que es ... es muy importante . Sí ,
+   ##  87016:  y yo estoy más que dispuesta a trabajar con usted nada más <necesito estar> en casa cuando AISD no tiene clases . Entonces se sueltan riendo
+
+
 #LATEX\section{Expresar objetivos y finalidades con ``para''}
 ADDRELATION (Func:Expresar:Finalidades) Prep IF (0 Para) (1 Verbo + Infinitive) TO (*2 Que BARRIER LimiteOracionSimple OR FiniteVerbForms LINK 1 Verbo + Subjuntivo);
 #LATEX T: R:Func:Expresar:Finalidades
@@ -784,9 +811,7 @@ ADDRELATION (Func:Expresar:Finalidades) Prep IF (0 Para) (1 Verbo + Infinitive) 
     # ## DECIR USADO COMO PEDIR (o simplemente estilo indirecto de una órden)
     # 76646:  marcas , yo no tenía idea que querían entonces tenía <que decirles que me señalaran> cuál marca querían . En Colombia hay tres o cuatro
 
-    # ## SUGERIR
-    # 41625:  el ... el ... el médico les dice que él <sugiere> que apaguen la máquina de ... de incubadora porque mi
-    
+
     # ## ME GUSTAR QUE SUBJUNTIVO (problemas con repeticiones oralidad)
     # me gustaría <que ... que siguieran> siendo como es uno
     

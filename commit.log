@@ -1,6 +1,11 @@
 Change log
 ==========
 
+JULY 9, 2013
+------------
+- Added some comments to ProcessSPinTX.sh for documentation purposes
+- Added a patch to add gender Fem or Masc to definite articles el, la, los, las so that CQP does not complain for compilation (this is not of much use to pedagogical annotation right now, but it is for practical purposes when using CQP to inform rule writing)
+
 JULY 8, 2013
 ------------
 - Added option cg3trace to PorcessSPinTX.sh so that cg3 can be executed with trace option easily by grammar writers.
