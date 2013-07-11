@@ -74,10 +74,10 @@ if ($opts{'outformat'}) {
 	$OutputFormat = $opts{'outformat'};
 }
 else {
-	print STDERR "\n EXECUTION ABORTED. An ouput format is required. \n";
-	print STDERR " Expected format is pdf.\n";
-	print STDERR "\n Use -outformat pdf to declare it.\n";
-    exit;
+	print STDERR "\n WARNING. No ouput format defined. \n";
+	print STDERR " Default output format is *tex, as a 
+    previous step to generate a pdf.\n";
+	$OutputFormat = "pdf";
 }
 
 # ---------------------------------------;
@@ -123,7 +123,21 @@ $ToPrint .= "\\begin{document}
 \\maketitle
 \\tableofcontents
 
+\\cleardoublepage
+
+%%%%%% Final dels agraments
+\\chapter*{Acknowledgements}
+This research is funded by the Longhorn Innovation Fund for Technology (LIFT) for the grant period September 1, 2012 – August 31, 2013.
+
+More information on the Corpus to Classroom website:\\\\
+\\url{http://sites.la.utexas.edu/corpus-to-classroom/}
+
 ";
+
+##\\\\
+##\\vspace{2ex}{\\footnotesize Este documento forma parte del proyecto Corpus to Classroom\\\\
+##    (\\url{http://sites.la.utexas.edu/corpus-to-classroom/})}
+
     
 foreach $file (@ARGV) {
     
@@ -151,7 +165,7 @@ foreach $file (@ARGV) {
             $PDFFile = $OutputDir.$name."pdf";
         }
         else {
-            print STDERR "\n EXECUTION ABORTED. Unexpected ouput format. \n";
+            print STDERR "\n EXECUTION ABORTED. Unexpected output format. \n";
             print STDERR " Currently only pdf is supported as an output format.\n";
             exit;
         }

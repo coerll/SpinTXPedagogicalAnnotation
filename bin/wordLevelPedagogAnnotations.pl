@@ -67,7 +67,7 @@ my @JSONStringsWholeCorpus; # this is a scalar to store the JSON data at the cor
 my @CSVStringsWholeCorpus; # this is a scalar to store the JSON data at the corpus level printed in a file at the very end of the process
 my @JSONStringsWholeFileArray;
 my @CSVStringsWholeFileArray;
-my $VocabListSingleFileForWholeCorpusToPrint = "ClipId\tVocab\n";
+my $VocabListSingleFileForWholeCorpusToPrint = "clip_id\tvocab_tags\n";
 my @ForVocabListSingleFileForWholeCorpus;
 
 # TEST

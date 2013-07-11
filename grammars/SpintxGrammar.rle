@@ -578,9 +578,14 @@ ADDRELATION (Gram:PerfPerif Gram:Aux:Haber) FiniteVerbForms (0 Haber + FiniteVer
 #LATEX\subsection{Futuro: con o sin perífrasis}
 ### FITA JUL 9
 ADD (@Gram:VFut:Conjugado) FiniteVerbForms IF (0 FiniteVerbForms + Futuro);
+#LATEX T: Asigna @Gram:VFut:Conjugado a la forma del verbo
+#LATEX E: A veces íbamos en bicicleta en el sexto grado me \emph{compré} una moto de Estados Unidos (...)
+#LATEX D: Cualquier forma de un verbo inambiguamente conjugado en futuro.
 
 ADDRELATION (Gram:VFut:Perifrasis) FiniteVerbForms IF (0 LemaIr) (1 APrep) TO (2 Verbo + Infinitive)
-
+#LATEX T: Asigna RGram:VFut:Perifrasis a la locución.
+#LATEX E: (...) porque siempre \emph{va a haber} gente que ... que se te \emph{va a meter} en el camino
+#LATEX D: Cualquier forma de un verbo inambiguamente conjugado en futuro.
 
 #LATEX\section{Verbos piscológicos: gustar, encantar, sorprender y otros}
 #LATEXDOCU Veáse \url{http://dev.coerll.utexas.edu/spanishtx/spe/html/adv13.html}.

@@ -35,6 +35,15 @@
 \maketitle
 \tableofcontents
 
+\cleardoublepage
+
+%%%%%% Final dels agraments
+\chapter*{Acknowledgements}
+This research is funded by the Longhorn Innovation Fund for Technology (LIFT) for the grant period September 1, 2012 – August 31, 2013.
+
+More information on the Corpus to Classroom website:\\
+\url{http://sites.la.utexas.edu/corpus-to-classroom/}
+
 \chapter*{Introducción}
 Este documento describe el proceso de anotación de las transcripciones de los clips del corpus SPinTX (Spanish in Texas) con información pedagógica para facilitar el uso de los mismos en la enseñanza y el aprendizaje de español como lengua extranjera.
 
@@ -633,6 +642,27 @@ Veáse \url{http://dev.coerll.utexas.edu/spanishtx/spe/html/adv11.html}.
 \item DESC: Requiere una forma finita de HABER seguida de un participio
 \end{itemize}
 
+\subsection{Futuro: con o sin perífrasis}
+\paragraph*{Rule}
+\fbox{
+\parbox{.9\linewidth}{\texttt{ADD (@Gram:VFut:Conjugado) FiniteVerbForms IF (0 FiniteVerbForms + Futuro);}}
+}
+\begin{itemize}
+\item ETIQ: Asigna @Gram:VFut:Conjugado a la forma del verbo
+\item EJEM: A veces íbamos en bicicleta en el sexto grado me \emph{compré} una moto de Estados Unidos (...)
+\item DESC: Cualquier forma de un verbo inambiguamente conjugado en futuro.
+\end{itemize}
+
+\paragraph*{Rule}
+\fbox{
+\parbox{.9\linewidth}{\texttt{ADDRELATION (Gram:VFut:Perifrasis) FiniteVerbForms IF (0 LemaIr) (1 APrep) TO (2 Verbo + Infinitive)}}
+}
+\begin{itemize}
+\item ETIQ: Asigna RGram:VFut:Perifrasis a la locución.
+\item EJEM: (...) porque siempre \emph{va a haber} gente que ... que se te \emph{va a meter} en el camino
+\item DESC: Cualquier forma de un verbo inambiguamente conjugado en futuro.
+\end{itemize}
+
 \section{Verbos piscológicos: gustar, encantar, sorprender y otros}
 Veáse \url{http://dev.coerll.utexas.edu/spanishtx/spe/html/adv13.html}.
 
@@ -933,6 +963,15 @@ Esta sección contiene reglas que sirven para detectar estructuras lingüística
 \end{itemize}
 
 REM: Esta regla utiliza el operador ``T:''. Esta ``T'' indica que los que sigue a los dos puntos (:) es un TEMPLATE definido más arriba, en la zona de definición de LIST y SET. Para más detalles véase la documentación vislcg3 y el grupo de debate (GoogleGroup).
+\subsection{Expresar recomendaciones y sugerencias}
+\paragraph*{Rule}
+\fbox{
+\parbox{.9\linewidth}{\texttt{ADDRELATION (Func:Expresar:Sugerencias) Verbo IF (0 VerbosExpresarRecomendaciones) (1 Que) TO (*2 Verbo + Subjuntivo BARRIER LimiteOracionSimple OR FiniteVerbForms);}}
+}
+\paragraph*{Rule}
+\fbox{
+\parbox{.9\linewidth}{\texttt{ADDRELATION (Func:Expresar:Sugerencias) Verbo IF (0 VerbosExpresarRecomendaciones + 2aPers OR VerbosExpresarRecomendaciones + 3aPers) TO (1 Verbo + Infinitive);}}
+}
 \section{Expresar objetivos y finalidades con ``para''}
 \paragraph*{Rule}
 \fbox{

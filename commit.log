@@ -1,6 +1,12 @@
 Change log
 ==========
 
+JULY 11
+-------
+- Minor changes in scripts to adapt to column names in Google Fusion tables
+- Changes in documentation generation process to add acknowledgements
+- Updated pdf documentation of the annotation grammar
+
 JULY 9, 2013
 ------------
 - Added some comments to ProcessSPinTX.sh for documentation purposes

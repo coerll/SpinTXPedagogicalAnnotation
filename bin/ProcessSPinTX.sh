@@ -100,7 +100,7 @@ if [[ "$1" == "all" ]] || [[ "$1" = "counts" ]]; then
   cut -f 1-5 ${OUTDIR}/SpintxPedagogicalMetadata.tsv > ${OUTDIR}/AllButVocab.txt
   paste -d \, ${OUTDIR}/JustVocabColNgram.txt ${OUTDIR}/JustVocabColUnigram.txt > ${OUTDIR}/JustVocabColALL.txt
   paste ${OUTDIR}/AllButVocab.txt ${OUTDIR}/JustVocabColALL.txt > ${OUTDIR}/ClipMetadataPedagogical-DRAFT.tsv
-  cat ${OUTDIR}/ClipMetadataPedagogical-DRAFT.tsv | sed 's/Vocab,Vocab/Vocab/g' > ${OUTDIR}/ClipMetadataPedagogical-DRAFT2.tsv
+  cat ${OUTDIR}/ClipMetadataPedagogical-DRAFT.tsv | sed 's/vocab_tags,vocab_tags/vocab_tags/g' > ${OUTDIR}/ClipMetadataPedagogical-DRAFT2.tsv
   perl -pe  's/\t,/\t/g' < ${OUTDIR}/ClipMetadataPedagogical-DRAFT2.tsv > ${OUTDIR}/ClipMetadataPedagogical.tsv
 fi
 

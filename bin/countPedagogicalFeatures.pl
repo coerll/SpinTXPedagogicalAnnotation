@@ -234,7 +234,7 @@ foreach my $key (sort (keys(%FeatureCounterAllFiles))){
 print STDOUT "\n";
 
 open (FOUT,">SpintxPedagogicalMetadata.tsv");
-print FOUT "ClipId\tGram\tPrag\tFunc\tHerit\tVocab\n";
+print FOUT "clip_id\tgram_tags\tprag_tags\tfunc_tags\therit_tags\tvocab_tags\n";
 print FOUT $ToPrintAtTheEndIncremental;
 close (FOUT);
 
