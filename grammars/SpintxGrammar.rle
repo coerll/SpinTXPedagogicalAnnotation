@@ -129,6 +129,8 @@ LIST VerbosExpresarDeseos = ("esperar") ("pedir") ("gustar") ("encantar");
 LIST NombresExpresarDeseos = ("esperanza") ("necesidad") ("petición") ("demanda") ;
 LIST VerbosExpresarRecomendaciones = ("recomendar") ("sugerir") ("aconsejar") ("necesitar");
 LIST LemaIr = ("ir");
+LIST AdjetivosUsadosEnRecomendaciones = ("importante") ("bueno");
+##LATEXREM Tal como está se aplicará a ``bueno'' y a ``mejor'' por igual. No se distinguen. 
 
 ## ("dentista")
 
@@ -323,6 +325,7 @@ SUBSTITUTE ("crear" Verb VLfin Past Subj Plural 3rd) ("creer" Verb VLfin Pres In
 #LATEX E: \emph{tengan} 
 #LATEX D: Se aplica teniendo en cuenta algunos contextos que generalmente decantaran la lectura hacia la interpretación prevista (creer).
 
+SUBSTITUTE ("UNK" Noun NC Plural) ("bueno" Adjective ADJ Plural Masc) TARGET ("<Buenos>");
 #SUBSTITUTE ("ojalá" Noun NP Singular) ("ojalá" Interjection Interj) TARGET ("para");
 
 #LATEX\part{Secciones principales}
@@ -787,11 +790,17 @@ ADDRELATION (Func:Deseos:Ajenos) Sustantivo IF (0 NombresExpresarDeseos) (1 De O
 
 #LATEX\subsection{Expresar recomendaciones y sugerencias}
 ADDRELATION (Func:Expresar:Sugerencias) Verbo IF (0 VerbosExpresarRecomendaciones) (1 Que) TO (*2 Verbo + Subjuntivo BARRIER LimiteOracionSimple OR FiniteVerbForms);
+#LATEX T: Asigna la etiqueta R:Func:Expresar:Sugerencias
+#LATEX E: el médico les dice que él \emph{sugiere que apaguen} la máquina de  
+#LATEX D: NA.
 
     # ## SUGERIR
     # 41625:  el ... el ... el médico les dice que él <sugiere> que apaguen la máquina de ... de incubadora porque mi
     
 ADDRELATION (Func:Expresar:Sugerencias) Verbo IF (0 VerbosExpresarRecomendaciones + 2aPers OR VerbosExpresarRecomendaciones + 3aPers) TO (1 Verbo + Infinitive);
+#LATEX T: Asigna la etiqueta R:Func:Expresar:Sugerencias
+#LATEX E: mis amigos también fueron muy conscientes de que \emph{necesitaban hablar} un poquito más lento cuando estaban conmigo 
+#LATEX D: NA.
 
    ##  81738:  compañeros de escuela y mis amigos también fueron muy conscientes de que <necesitaban hablar> un poquito más lento cuando estaban conmigo ... ahora , cuando me
    ##  84720:  que aquí tú necesitas algo y vas a la tienda , allá <necesitabas esperar> haber cuando encontrabas lo que podías encontrar , entonces había mercados en
@@ -808,15 +817,28 @@ ADDRELATION (Func:Expresar:Sugerencias) Verbo IF (0 VerbosExpresarRecomendacione
    ##  82289:  me doy cuenta de que es una señora y la señora dice <necesito hablar> con Olga Alexeuna , Olga Alexeuna , Olga Alexeuna , ¿ está
    ##  82362:  , pero no puedes decirlo y la persona se empezó a enojar <necesito hablar> con Olga Alexeuna , pásele el teléfono a Olga Alexeuna , ¿
 
-   ## 144034:  sería muy , muy interesante , pero por ejemplo para ese trabajo <necesitas ser> ciudadano , así que es ... es muy importante . Sí ,
-   ##  87016:  y yo estoy más que dispuesta a trabajar con usted nada más <necesito estar> en casa cuando AISD no tiene clases . Entonces se sueltan riendo
+ADDRELATION (Func:Expresar:Sugerencias) Verbo IF (0 Ser + Verbo) (*1 AdjetivosUsadosEnRecomendaciones BARRIER LimiteOracionSimple OR FiniteVerbForms OR GrupoNominal) (2 Que) TO (*3 Verbo + Subjuntivo BARRIER LimiteOracionSimple OR FiniteVerbForms);
+#LATEX T: Asigna la etiqueta R:Func:Expresar:Sugerencias
+#LATEX E: Usted cree que va a \emph{ser importante} que le enseñen a sus nietos los dos idiomas 
+#LATEX D: NA.
+  ## Usted cree que va a <ser importante> que le enseñen a sus nietos los dos idiomas
 
+ADDRELATION (Func:Expresar:Sugerencias) Verbo IF (0 Ser + Verbo) (*1 AdjetivosUsadosEnRecomendaciones BARRIER LimiteOracionSimple OR FiniteVerbForms OR GrupoNominal) TO (*2 Verbo + Infinitive BARRIER LimiteOracionSimple OR FiniteVerbForms LINK NOT 0 Ser);
+#LATEX T: Asigna la etiqueta R:Func:Expresar:Sugerencias
+#LATEX E: Ahorita mucha gente lo sabe hablar y \emph{es importante saber} comunicarte con otra gente
+#LATEX D: NA.
+  ## Ahorita mucha gente lo sabe hablar y <es importante> saber comunicarte con otra gente
+  ## por qué <era bueno> salir adelante
+
+### OTROS USOS DE NECESITAR -- SOME DAY
+
+#LATEXREM: Existen otros usos de necesitar, más parecidos a requerir como por ejemple (1)  [...] sería muy , muy interesante , pero por ejemplo para ese trabajo ``necesitas ser'' ciudadano , así que es ... es muy importante o (2) [...] yo estoy más que dispuesta a trabajar con usted nada más ``necesito estar'' en casa cuando AISD no tiene clases. Ambas oraciones muestran un uso que no está claro que sea un consejo o una recomendación, especialmente la primera. Ambas son necesidades, requerimientos externos o personales.
 
 #LATEX\section{Expresar objetivos y finalidades con ``para''}
 ADDRELATION (Func:Expresar:Finalidades) Prep IF (0 Para) (1 Verbo + Infinitive) TO (*2 Que BARRIER LimiteOracionSimple OR FiniteVerbForms LINK 1 Verbo + Subjuntivo);
 #LATEX T: R:Func:Expresar:Finalidades
 #LATEX E: (...) Yo crecí pensando que para orar o \emph{para pedirle a Dios que hiciera algo} (...)
-#LATEX D: XXX
+#LATEX D: NA.
     # XXXXX: Yo crecí pensando que para orar o para <pedirle a Dios> que hiciera algo o para confesar mis pecados
 
 #LATEX\subsection{Estilo indirecto}
@@ -1042,6 +1064,7 @@ ADDRELATION (Herit:Contacto:Mixtas) Verbo IF (0 ListaVerbosCorpusParaContactoMix
 ADDRELATION (Vocab:Entities:Geo) Articulo IF  (0 ("<El>")) TO (1 ("<Paso>"));
 ADDRELATION (Vocab:Entities:Geo) Nombre IF  (0 ("<Estados>")) TO (1 ("<Unidos>"));
 ADDRELATION (Vocab:Entities:Geo) Nombre IF  (0 ("<Ciudad>")) TO (1 ("<Juárez>"));
+ADDRELATION (Vocab:Entities:Geo) Adj IF  (0 ("<Buenos>")) TO (1 ("<Aires>"));
 #LATEX T: R:Vocab:Entities:Geo
 #LATEX E: \emph{Ciudad Juárez}, \emph{El Paso}, \emph{Estados Unidos}  
 #LATEX D: Reglas para anotar entidades frecuentes en el corpus. En este caso de nombres geográficos.

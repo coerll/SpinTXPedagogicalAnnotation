@@ -248,6 +248,10 @@ OBSERVACIÓN: Aunque es verdad que ``para'' puede ir seguida de un infinitivo pa
 \item DESC: Se aplica teniendo en cuenta algunos contextos que generalmente decantaran la lectura hacia la interpretación prevista (creer).
 \end{itemize}
 
+\paragraph*{Rule}
+\fbox{
+\parbox{.9\linewidth}{\texttt{SUBSTITUTE ("UNK" Noun NC Plural) ("bueno" Adjective ADJ Plural Masc) TARGET ("<Buenos>");}}
+}
 \part{Secciones principales}
 Las reglas de identificación de fenómenmos pedagógicos están ordenadas de más concretas a más generales. Así, por ejemplo, se detectan primero, cuando es posible, los distintos usos de \emph{para} (opinión, intención, destino, etc. como \emph{@Gram:Prep:Para:Opinion}...) y luego se marcan como simplemente \emph{@Gram:Prep:Para} el resto de ocurrencias de \emph{para}. Luego, se hace lo propio con otras preposiciones, hasta el punto que si para una preposición no hay reglas especiales, sus ocurrencias se marcan simplemente como \emph{@Gram:Prep}.
 
@@ -968,10 +972,43 @@ REM: Esta regla utiliza el operador ``T:''. Esta ``T'' indica que los que sigue 
 \fbox{
 \parbox{.9\linewidth}{\texttt{ADDRELATION (Func:Expresar:Sugerencias) Verbo IF (0 VerbosExpresarRecomendaciones) (1 Que) TO (*2 Verbo + Subjuntivo BARRIER LimiteOracionSimple OR FiniteVerbForms);}}
 }
+\begin{itemize}
+\item ETIQ: Asigna la etiqueta R:Func:Expresar:Sugerencias
+\item EJEM: el médico les dice que él \emph{sugiere que apaguen} la máquina de  
+\item DESC: NA.
+\end{itemize}
+
 \paragraph*{Rule}
 \fbox{
 \parbox{.9\linewidth}{\texttt{ADDRELATION (Func:Expresar:Sugerencias) Verbo IF (0 VerbosExpresarRecomendaciones + 2aPers OR VerbosExpresarRecomendaciones + 3aPers) TO (1 Verbo + Infinitive);}}
 }
+\begin{itemize}
+\item ETIQ: Asigna la etiqueta R:Func:Expresar:Sugerencias
+\item EJEM: mis amigos también fueron muy conscientes de que \emph{necesitaban hablar} un poquito más lento cuando estaban conmigo 
+\item DESC: NA.
+\end{itemize}
+
+\paragraph*{Rule}
+\fbox{
+\parbox{.9\linewidth}{\texttt{ADDRELATION (Func:Expresar:Sugerencias) Verbo IF (0 Ser + Verbo) (*1 AdjetivosUsadosEnRecomendaciones BARRIER LimiteOracionSimple OR FiniteVerbForms OR GrupoNominal) (2 Que) TO (*3 Verbo + Subjuntivo BARRIER LimiteOracionSimple OR FiniteVerbForms);}}
+}
+\begin{itemize}
+\item ETIQ: Asigna la etiqueta R:Func:Expresar:Sugerencias
+\item EJEM: Usted cree que va a \emph{ser importante} que le enseñen a sus nietos los dos idiomas 
+\item DESC: NA.
+\end{itemize}
+
+\paragraph*{Rule}
+\fbox{
+\parbox{.9\linewidth}{\texttt{ADDRELATION (Func:Expresar:Sugerencias) Verbo IF (0 Ser + Verbo) (*1 AdjetivosUsadosEnRecomendaciones BARRIER LimiteOracionSimple OR FiniteVerbForms OR GrupoNominal) TO (*2 Verbo + Infinitive BARRIER LimiteOracionSimple OR FiniteVerbForms LINK NOT 0 Ser);}}
+}
+\begin{itemize}
+\item ETIQ: Asigna la etiqueta R:Func:Expresar:Sugerencias
+\item EJEM: Ahorita mucha gente lo sabe hablar y \emph{es importante saber} comunicarte con otra gente
+\item DESC: NA.
+\end{itemize}
+
+REM: Existen otros usos de necesitar, más parecidos a requerir como por ejemple (1)  [...] sería muy , muy interesante , pero por ejemplo para ese trabajo ``necesitas ser'' ciudadano , así que es ... es muy importante o (2) [...] yo estoy más que dispuesta a trabajar con usted nada más ``necesito estar'' en casa cuando AISD no tiene clases. Ambas oraciones muestran un uso que no está claro que sea un consejo o una recomendación, especialmente la primera. Ambas son necesidades, requerimientos externos o personales.
 \section{Expresar objetivos y finalidades con ``para''}
 \paragraph*{Rule}
 \fbox{
@@ -980,7 +1017,7 @@ REM: Esta regla utiliza el operador ``T:''. Esta ``T'' indica que los que sigue 
 \begin{itemize}
 \item ETIQ: R:Func:Expresar:Finalidades
 \item EJEM: (...) Yo crecí pensando que para orar o \emph{para pedirle a Dios que hiciera algo} (...)
-\item DESC: XXX
+\item DESC: NA.
 \end{itemize}
 
 \subsection{Estilo indirecto}
@@ -1220,6 +1257,10 @@ OBSERVACIÓN: Sección en proceso de implementación.
 \paragraph*{Rule}
 \fbox{
 \parbox{.9\linewidth}{\texttt{ADDRELATION (Vocab:Entities:Geo) Nombre IF  (0 ("<Ciudad>")) TO (1 ("<Juárez>"));}}
+}
+\paragraph*{Rule}
+\fbox{
+\parbox{.9\linewidth}{\texttt{ADDRELATION (Vocab:Entities:Geo) Adj IF  (0 ("<Buenos>")) TO (1 ("<Aires>"));}}
 }
 \begin{itemize}
 \item ETIQ: R:Vocab:Entities:Geo

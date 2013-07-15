@@ -1,6 +1,13 @@
 Change log
 ==========
 
+JULY 15
+-------
+- Added rule to handle Buenos Aires as a compound name (not as two different words)
+- Added rules to handle recomendaciones based on es importante/mejor que...
+- Changed ProcessSPinTX.sh: it had a bug that deleted cg3 files when called using cg3 or cg3trace (instead of deleting *.out files)
+- Update grammar documentation in PDF doc.
+
 JULY 11
 -------
 - Minor changes in scripts to adapt to column names in Google Fusion tables
