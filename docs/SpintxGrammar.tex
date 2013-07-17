@@ -6,7 +6,7 @@
 \usepackage[utf8]{inputenc}
 
 %LANGUAGES
-\usepackage[english]{babel}
+%%\usepackage[english]{babel}
 
 % Add draft watermark
 \usepackage{draftwatermark}
@@ -276,12 +276,22 @@ Identificaremos los usos de los artículos definidos \emph{el, la, los, las}, y 
 
 \paragraph*{Rule}
 \fbox{
-\parbox{.9\linewidth}{\texttt{ADD (@Gram:Det:Art) Articulo IF (0 LoLiteral) (*1 Adj BARRIER FiniteVerbForms OR Conjuncion OR LimiteOracionSimple) ;}}
+\parbox{.9\linewidth}{\texttt{ADDRELATION (Gram:Det:LoAdj) Articulo IF (0 LoLiteral) TO (*1 Adj BARRIER FiniteVerbForms OR Conjuncion OR LimiteOracionSimple LINK NOT 0 MejorLiteral) ;}}
+}
+\paragraph*{Rule}
+\fbox{
+\parbox{.9\linewidth}{\texttt{ADDRELATION (Gram:Det:LoAdj) Articulo IF (0 LoLiteral) TO (1 Que) ;}}
+}
+\paragraph*{Rule}
+\fbox{
+\parbox{.9\linewidth}{\texttt{ADDRELATION (Gram:Det:LoAdj) Articulo IF (0 LoLiteral) TO (*2 Que BARRIER FiniteVerbForms OR Conjuncion OR LimiteOracionSimple LINK -1 Adj + SG OR Adverbio OR DetQU + SG LINK NOT 0 LemasQueNoSonDetQUStandard) ;}}
 }
 \begin{itemize}
-\item ETIQ: Asigna @Gram:Det:Art
-\item EJEM: \emph{lo} + ADJETIVO
-\item DESC: Cualquier ocurrencia de LO seguida de un adjetivo (con un adv opcional en medio).
+\item ETIQ: Asigna R:Gram:Det:Art
+\item EJEM: \emph{lo} + ADJETIVO 
+\item EJEM: \emph{lo} que 
+\item EJEM: \emph{lo} poco/importante/mucho que 
+\item DESC: Cualquier ocurrencia de LO seguida de un adjetivo o de un que. Puede haber un adverbio intercalado. Quizás habrá que refinar la regla algún día. No anota ``a lo mejor'', ya que esta locución se usa más frecuentement en el sentido de quizás (por los menos en SPinTX).
 \end{itemize}
 
 \section{Usos de los determinantes demostrativos}
@@ -1191,7 +1201,7 @@ OBSERVACIÓN: No añado \emph{precisamente} porque es ambiguo entre su lectura l
 \begin{itemize}
 \item ETIQ: R:Prag:MarcadoresDisc:Igualdad
 \item EJEM: \emph{o sea}
-\item DESC: [Espacio para describir con palabras lo que hace la regla.]
+\item DESC: NA.
 \end{itemize}
 
 \paragraph*{Rule}
@@ -1201,17 +1211,37 @@ OBSERVACIÓN: No añado \emph{precisamente} porque es ambiguo entre su lectura l
 \begin{itemize}
 \item ETIQ: R:Prag:MarcadoresDisc:Igualdad
 \item EJEM: porque uno \emph{no sólo} puede ayudar en el aspecto de inglés pero en el aspecto del español también
-\item DESC: [Espacio para describir con palabras lo que hace la regla.]
+\item DESC: NA.
 \end{itemize}
 
 \paragraph*{Rule}
 \fbox{
-\parbox{.9\linewidth}{\texttt{ADDRELATION (Prag:MarcadoresDisc:Igualdad) Tal TO (1 Vez);}}
+\parbox{.9\linewidth}{\texttt{ADD (@Prag:MarcadoresDisc:Probabilidad) Adverbio IF (0 QuizasConOSinEse);}}
 }
 \begin{itemize}
-\item ETIQ: R:Prag:MarcadoresDisc:NoTipificado
+\item ETIQ: R:Prag:MarcadoresDisc:Probabilidad
+\item EJEM: (...) lo que sí me gustaría es que \emph{quizás} no tuvieran un acento muy marcado (...)
+\item DESC: NA.
+\end{itemize}
+
+\paragraph*{Rule}
+\fbox{
+\parbox{.9\linewidth}{\texttt{ADDRELATION (Prag:MarcadoresDisc:Probabilidad) Tal TO (1 Vez);}}
+}
+\begin{itemize}
+\item ETIQ: R:Prag:MarcadoresDisc:Probabilidad
 \item EJEM: noto que \emph{tal vez} sus hijos hablan el spanglish más unos más que otros
-\item DESC: [Espacio para describir con palabras lo que hace la regla.]
+\item DESC: NA.
+\end{itemize}
+
+\paragraph*{Rule}
+\fbox{
+\parbox{.9\linewidth}{\texttt{ADDRELATION (Prag:MarcadoresDisc:Probabilidad) APrep (1 LoLiteral) TO (2 MejorLiteral);}}
+}
+\begin{itemize}
+\item ETIQ: R:Prag:MarcadoresDisc:Probabilidad
+\item EJEM: Pero, \emph{a lo mejor} era no más porque estaba chiquita (...)
+\item DESC: NA.
 \end{itemize}
 
 \subsection{Elementos discursivos usadors para ganar tiempo}

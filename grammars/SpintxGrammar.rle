@@ -35,7 +35,7 @@ LIST Infinitive = (VLinf) (VEinf) (VHinf) (VSinf);
 LIST Gerundio = (VLger) (VEger) (VHger) (VSger);
 LIST PronombrePersonal = (PPX);
 LIST DetAllByPOS = (ART) (DM) (PPO) ("alguno" QU); # habrá que refinar la definición, p.e., incluye palabras como mío, mía, míos, que claramente son adjetivos y no determinantes (esto viene de TreeTagger)
-LIST Futuro = (Fut);
+LIST DetQU = (QU); #
 LIST Sustantivo = (NC) (NP) (NMEA) (NMON) ;
 LIST Articulo = (ART);
 LIST Conjuncion = (Conjunction);
@@ -48,6 +48,7 @@ LIST PalabraEnIngles = (lang:en);
 LIST PalabraEnEspanol = (lang:es);
 LIST Pasado = (Past); #only for subjunctive (?)
 LIST Presente = (Pres);
+LIST Futuro = (Fut);
 LIST Subjuntivo = (Subj);
 LIST Imperativo = (Command);
 LIST LimiteOracionSimple = (CC) (CSUBX) (CSUBF) (CQUE) (CSUBI) ; # habrá que refinar la definición
@@ -77,6 +78,7 @@ LIST Personas = ("niño") ("mujer") ("hombre") ("chico") ("viejo") ("mayor") ("h
 LIST Ser = ("ser");
 LIST Servir = ("servir");
 LIST Bueno = ("bueno");
+##LATEXREM Tal como está se aplicará a ``bueno'' y a ``mejor'' por igual. No se distinguen. 
 LIST Malo = ("malo");
 LIST No = ("no");
 LIST Gustar-Like = ("gustar") ("interesar") ("fascinar") ("encantar");
@@ -130,7 +132,8 @@ LIST NombresExpresarDeseos = ("esperanza") ("necesidad") ("petición") ("demanda
 LIST VerbosExpresarRecomendaciones = ("recomendar") ("sugerir") ("aconsejar") ("necesitar");
 LIST LemaIr = ("ir");
 LIST AdjetivosUsadosEnRecomendaciones = ("importante") ("bueno");
-##LATEXREM Tal como está se aplicará a ``bueno'' y a ``mejor'' por igual. No se distinguen. 
+LIST LemasQueNoSonDetQUStandard = ("todo") ("nada") ("cualquier") ("tal") ("cada") ;
+LIST QuizasConOSinEse = ("quizás") ("quizá");
 
 ## ("dentista")
 
@@ -349,10 +352,14 @@ ADD (@Gram:Det:Art) Articulo IF (0 DetArtDefinidosLiterales) (NOT 1 FiniteVerbFo
 #LATEX E: \emph{el, la, los, las}
 #LATEX D: Cualquier ocurrencia no seguida de un verbo finito o un pronombre clítico, porque treetagger no distingue entre su lectura como determinante y la pronominal.
 
-ADD (@Gram:Det:Art) Articulo IF (0 LoLiteral) (*1 Adj BARRIER FiniteVerbForms OR Conjuncion OR LimiteOracionSimple) ;
-#LATEX T: Asigna @Gram:Det:Art
-#LATEX E: \emph{lo} + ADJETIVO
-#LATEX D: Cualquier ocurrencia de LO seguida de un adjetivo (con un adv opcional en medio).
+ADDRELATION (Gram:Det:LoAdj) Articulo IF (0 LoLiteral) TO (*1 Adj BARRIER FiniteVerbForms OR Conjuncion OR LimiteOracionSimple LINK NOT 0 MejorLiteral) ;
+ADDRELATION (Gram:Det:LoAdj) Articulo IF (0 LoLiteral) TO (1 Que) ;
+ADDRELATION (Gram:Det:LoAdj) Articulo IF (0 LoLiteral) TO (*2 Que BARRIER FiniteVerbForms OR Conjuncion OR LimiteOracionSimple LINK -1 Adj + SG OR Adverbio OR DetQU + SG LINK NOT 0 LemasQueNoSonDetQUStandard) ;
+#LATEX T: Asigna R:Gram:Det:Art
+#LATEX E: \emph{lo} + ADJETIVO 
+#LATEX E: \emph{lo} que 
+#LATEX E: \emph{lo} poco/importante/mucho que 
+#LATEX D: Cualquier ocurrencia de LO seguida de un adjetivo o de un que. Puede haber un adverbio intercalado. Quizás habrá que refinar la regla algún día. No anota ``a lo mejor'', ya que esta locución se usa más frecuentement en el sentido de quizás (por los menos en SPinTX).
 
 #LATEX\section{Usos de los determinantes demostrativos}
 
@@ -1008,17 +1015,27 @@ ADDRELATION (Prag:MarcadoresDisc:Igualdad) Prep IF (0 Por) TO (1 Ejemplo);
 ADDRELATION (Prag:MarcadoresDisc:Igualdad) ConjLetraO TO (1 Sea);
 #LATEX T: R:Prag:MarcadoresDisc:Igualdad
 #LATEX E: \emph{o sea}
-#LATEX D: [Espacio para describir con palabras lo que hace la regla.]
+#LATEX D: NA.
 
 ADDRELATION (Prag:MarcadoresDisc:Igualdad) No TO (1 SoloAcento);
 #LATEX T: R:Prag:MarcadoresDisc:Igualdad
 #LATEX E: porque uno \emph{no sólo} puede ayudar en el aspecto de inglés pero en el aspecto del español también
-#LATEX D: [Espacio para describir con palabras lo que hace la regla.]
+#LATEX D: NA.
 
-ADDRELATION (Prag:MarcadoresDisc:Igualdad) Tal TO (1 Vez);
-#LATEX T: R:Prag:MarcadoresDisc:NoTipificado
+ADD (@Prag:MarcadoresDisc:Probabilidad) Adverbio IF (0 QuizasConOSinEse);
+#LATEX T: R:Prag:MarcadoresDisc:Probabilidad
+#LATEX E: (...) lo que sí me gustaría es que \emph{quizás} no tuvieran un acento muy marcado (...)
+#LATEX D: NA.
+
+ADDRELATION (Prag:MarcadoresDisc:Probabilidad) Tal TO (1 Vez);
+#LATEX T: R:Prag:MarcadoresDisc:Probabilidad
 #LATEX E: noto que \emph{tal vez} sus hijos hablan el spanglish más unos más que otros
-#LATEX D: [Espacio para describir con palabras lo que hace la regla.]
+#LATEX D: NA.
+
+ADDRELATION (Prag:MarcadoresDisc:Probabilidad) APrep (1 LoLiteral) TO (2 MejorLiteral);
+#LATEX T: R:Prag:MarcadoresDisc:Probabilidad
+#LATEX E: Pero, \emph{a lo mejor} era no más porque estaba chiquita (...)
+#LATEX D: NA.
 
 #LATEX\subsection{Elementos discursivos usadors para ganar tiempo}
 ## Prag:MarcadoresDisc:Revision

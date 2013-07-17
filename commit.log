@@ -1,6 +1,13 @@
 Change log
 ==========
 
+JULY 17
+-------
+- Added/Extended rules to handle lo + adj or lo + que in a more fine-grained fashion
+- Added rules to handle in a unified manner things like quizá(s), tal vez and a lo mejor
+- Repaired bug in rule about future tenses
+- Update grammar documentation in PDF doc.
+
 JULY 15
 -------
 - Added rule to handle Buenos Aires as a compound name (not as two different words)
