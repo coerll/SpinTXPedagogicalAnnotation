@@ -51,7 +51,7 @@ LIST Presente = (Pres);
 LIST Futuro = (Fut);
 LIST Subjuntivo = (Subj);
 LIST Imperativo = (Command);
-LIST LimiteOracionSimple = (CC) (CSUBX) (CSUBF) (CQUE) (CSUBI) ; # habrá que refinar la definición
+LIST LimiteOracionSimple = (CC) (CCAD) (CSUBX) (CSUBF) (CQUE) (CSUBI) ; # habrá que refinar la definición
 
 #LATEX\section{Rasgos morfosintácticos}
 ## LIST MORPH FEATURES VERBS
@@ -134,7 +134,7 @@ LIST LemaIr = ("ir");
 LIST AdjetivosUsadosEnRecomendaciones = ("importante") ("bueno");
 LIST LemasQueNoSonDetQUStandard = ("todo") ("nada") ("cualquier") ("tal") ("cada") ;
 LIST QuizasConOSinEse = ("quizás") ("quizá");
-
+LIST ListaDeterminantesSeguros = ("cualquier") ("cada") ("ambo") ("alguno") ("tal") ("ninguno");
 ## ("dentista")
 
 ##de momento no se usa
@@ -244,7 +244,7 @@ BEFORE-SECTIONS
 SUBSTITUTE ("por" Adverb ADV) ("por" Preposition PREP) TARGET ("por");
 
 #LATEX\chapter{Reglas para rectificar errores del análisis morfosintático}
-SUBSTITUTE (Noun NC Singular Masculine) (Conjunction CC) TARGET ("pero");
+SUBSTITUTE (Noun NC Singular Masculine) (Conjunction CCAD) TARGET ("pero");
 #LATEX T: CC
 #LATEX E: \emph{pero} 
 #LATEX D: Regla para cambiar a \emph{pero} la lectura de nombre por la de conjunción. Ahora se aplica indiscriminadamente, pero podría ser conveniente controlar que antes del pero no hay un artículo. Por ejemplo: ``el pero de la cuestión es que podría romperse el motor''.
@@ -331,6 +331,12 @@ SUBSTITUTE ("crear" Verb VLfin Past Subj Plural 3rd) ("creer" Verb VLfin Pres In
 SUBSTITUTE ("UNK" Noun NC Plural) ("bueno" Adjective ADJ Plural Masc) TARGET ("<Buenos>");
 #SUBSTITUTE ("ojalá" Noun NP Singular) ("ojalá" Interjection Interj) TARGET ("para");
 
+SUBSTITUTE ("cierta|cierto" Determiner QU) ("cierta|cierto" Determiner QU Plural Fem) TARGET ("<ciertas>") OR ("<Ciertas>");
+SUBSTITUTE ("cierta|cierto" Determiner QU) ("cierta|cierto" Determiner QU Singular Fem) TARGET ("<cierta>") OR ("<Cierta>");
+#LATEX T: Reglas para dar a cierta(s) el lema cierto. El lema cierta no se corresponde con ninguna lectura documentada en los diccionarios de referencia (RAE o DEM). 
+#LATEX E: \emph{cierta}, \emph{cierta}
+#LATEX D: NA.
+
 #LATEX\part{Secciones principales}
 
 SECTION
@@ -394,6 +400,34 @@ ADD (@Gram:Det:CuantIndef) UnoLiteral IF (1 De) (NOT -1 Infinitive);
 #LATEX E: Que no los puedo criticar porque yo soy \emph{uno} de ellos (...)
 #LATEX D: Cualquier ocurrencia de un determinante posesivo seguido de un nombre (se admiten ADV y ADJ intercalados).
 
+ADD (@Gram:Det:CuantIndef) DetQU IF (1 ListaDeDeterminantesSeguros + DetQU) (NOT -1 Infinitive);
+
+##                               cualquier                             54
+##                               cada                                  47
+##                               ambo                                   2
+##                               alguno                               232
+##                               tal                                   42
+##                               ninguno                               26
+
+## PR
+##                               algo                                 266
+##                               nada                                 229
+
+## (none)                        todo                                 640
+##                               otro                                 341
+##                               pocos                                 93
+##                               mucho                                321
+##                               cierto                                37
+##                               cierta|cierto                         12
+##                               demás                                32
+##                               varios                                29
+##                               tanto                                 17
+##                               dicho                                 14
+##                               medio                                  5
+##                               doble                                  4
+##                               cuarto                                 3
+##                               diversos                               2
+##                               demasiado                              1
 
 #LATEX\chapter{Género gramatical y artículos}
 

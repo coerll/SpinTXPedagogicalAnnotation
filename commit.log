@@ -1,6 +1,10 @@
 Change log
 ==========
 
+JULY 19
+-------
+- Started to add new rules of the identification of cuantitativos e indefinidos
+
 JULY 17
 -------
 - Added/Extended rules to handle lo + adj or lo + que in a more fine-grained fashion

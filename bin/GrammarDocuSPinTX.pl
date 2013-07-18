@@ -92,7 +92,7 @@ $ToPrint .= "%to add links but not color
 \\usepackage[utf8]{inputenc}
 
 %LANGUAGES
-\\usepackage[english]{babel}
+\\usepackage[spanish,english]{babel}
 
 % Add draft watermark
 \\usepackage{draftwatermark}
