@@ -3,6 +3,11 @@ Change log
 
 JULY 19
 -------
+- Continuation with cuantitativos and indefinidos
+- Found a lot of inconsistent decisions on the side of TreeTagger regarding cuantitativos and indefinidos and decided to retag them to to other tags
+
+JULY 18
+-------
 - Started to add new rules of the identification of cuantitativos e indefinidos
 
 JULY 17

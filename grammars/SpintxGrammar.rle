@@ -96,6 +96,7 @@ LIST MarcDiscRevision = ("pero") ("aunque") ("exepto");
 LIST Sin = ("sin");
 LIST Embargo = ("embargo");
 LIST De = ("de");
+LIST DeODel = ("de") ("del");
 LIST Hecho = ("hecho") ("<hecho>");
 LIST En = ("en");
 LIST Realidad = ("realidad");
@@ -134,7 +135,7 @@ LIST LemaIr = ("ir");
 LIST AdjetivosUsadosEnRecomendaciones = ("importante") ("bueno");
 LIST LemasQueNoSonDetQUStandard = ("todo") ("nada") ("cualquier") ("tal") ("cada") ;
 LIST QuizasConOSinEse = ("quizás") ("quizá");
-LIST ListaDeterminantesSeguros = ("cualquier") ("cada") ("ambo") ("alguno") ("tal") ("ninguno");
+LIST ListaDeDeterminantesSeguros = ("cualquier") ("cada") ("ambo") ("alguno") ("tal") ("ninguno");
 ## ("dentista")
 
 ##de momento no se usa
@@ -180,6 +181,8 @@ LIST LiteralPrimero = ("<primero>") ("<PRIMERO>") ("<Primero>");
 LIST LiteralTercero = ("<tercero>") ("<TERCERO>") ("<Tercero>");
 LIST UnoLiteral = ("<uno>") ("<UNO>") ("<Uno>");
 LIST MejorLiteral = ("<mejor>") ("<MEJOR>") ("<Mejor>");
+LIST PorLiteral = ("<por>") ("<POR>") ("<Por>");
+LIST MedioLiteral = ("<medio>") ("<MEDIO>") ("<Medio>");
 SET LiteralPrimeroOrTercero = LiteralTercero OR LiteralPrimero;
 
 LIST MiSingLiteral = ("<mi>") ("<MI>") ("<Mi>");
@@ -336,6 +339,26 @@ SUBSTITUTE ("cierta|cierto" Determiner QU) ("cierta|cierto" Determiner QU Singul
 #LATEX T: Reglas para dar a cierta(s) el lema cierto. El lema cierta no se corresponde con ninguna lectura documentada en los diccionarios de referencia (RAE o DEM). 
 #LATEX E: \emph{cierta}, \emph{cierta}
 #LATEX D: NA.
+##                               cierta|cierto                         12 ### LES CAMBIO EL LEMA A CIERTO
+
+SUBSTITUTE ("cuarto" Determiner QU) ("cuarto" Noun NC Singular Masc) TARGET ("<cuarto>") OR ("<Cuarto>") IF (NOT 1 Nombre);
+SUBSTITUTE ("cuarto" Determiner QU) ("cuarto" Adjective ORD Singular Masc) TARGET ("<cuarto>") OR ("<Cuarto>") IF (1C Nombre + SG);
+#LATEX T: For some reason TreeTagger tags cuarto as DetQU. I assume this is because they include cardinals in this category, which is a very arguable decision in my opinion. I decided to change it to either noun or adjective depending on the contexts. 
+#LATEX E: (...) nosotras teníamos que compartir nuestros, nuestro \emph{cuarto}, teníamos tres niñas por cuarto (...)  (Noun)
+#LATEX E: (...) ellos eran, los paraguayitos eran de \emph{cuarto} grado. (Adjective)
+#LATEX D: NA.
+
+SUBSTITUTE ("doble" Determiner QU) ("doble" Adjective ADJ Singular Masc-Fem) TARGET ("<doble>") OR ("<Doble>");
+#LATEX T: Contrary to TreeTagger RAE and most standard sources of Spanish linguistics think that doble is an adjective, even if it can be modifying a noun as some determiners can. For this, I decided to change its reading to adjective depending always. 
+#LATEX E: (...) \emph{doble}
+#LATEX D: NA.
+##                               doble                                  4
+
+## TO DO SUBSTITUTE RULES
+##                               medio                                  5
+## el medio / del medio / por medio de / en medio --> Noun
+## y media / medio/a + ADJ --> Adjective
+## Prep + medio/a + Noun ---> Adjective
 
 #LATEX\part{Secciones principales}
 
@@ -400,7 +423,7 @@ ADD (@Gram:Det:CuantIndef) UnoLiteral IF (1 De) (NOT -1 Infinitive);
 #LATEX E: Que no los puedo criticar porque yo soy \emph{uno} de ellos (...)
 #LATEX D: Cualquier ocurrencia de un determinante posesivo seguido de un nombre (se admiten ADV y ADJ intercalados).
 
-ADD (@Gram:Det:CuantIndef) DetQU IF (1 ListaDeDeterminantesSeguros + DetQU) (NOT -1 Infinitive);
+ADD (@Gram:Det:CuantIndef) DetQU IF (1 ListaDeDeterminantesSeguros + DetQU);
 
 ##                               cualquier                             54
 ##                               cada                                  47
@@ -409,25 +432,27 @@ ADD (@Gram:Det:CuantIndef) DetQU IF (1 ListaDeDeterminantesSeguros + DetQU) (NOT
 ##                               tal                                   42
 ##                               ninguno                               26
 
+##ADD (@Gram:Det:CuantIndef) DetQU IF (1 ListaDeDeterminantesSeguros + DetQU);
+##                               mucho                                321
+##                               cierto                                37
+##                               varios                                29
+##                               tanto                                 17
+##                               dicho                                 14
+##                               diversos                               2
+##                               demasiado                              1
+
+## A VECES CON ART (excepto Juan y demás compañeros)
+##                               pocos                                 93
+##                               otro                                 341
+## SIEMPRE CON ART (excepto Juan y demás compañeros)
+##                               demás                                32
+
+## COMPLICADITO
+## (none)                        todo                                 640
 ## PR
 ##                               algo                                 266
 ##                               nada                                 229
 
-## (none)                        todo                                 640
-##                               otro                                 341
-##                               pocos                                 93
-##                               mucho                                321
-##                               cierto                                37
-##                               cierta|cierto                         12
-##                               demás                                32
-##                               varios                                29
-##                               tanto                                 17
-##                               dicho                                 14
-##                               medio                                  5
-##                               doble                                  4
-##                               cuarto                                 3
-##                               diversos                               2
-##                               demasiado                              1
 
 #LATEX\chapter{Género gramatical y artículos}
 
@@ -522,6 +547,7 @@ ADD (@Gram:Prep:Por) Prep IF (0 Por) (NOT 0 GramPrep) (1 LemasDePalabrasEnLocuci
 
 ##ADD (@Gram:Prep:Por:Locuciones) Prep IF (0 Por) (NOT 0 GramPrep) (1 LoLiteral) (2 LemasDePalabrasEnLocucionesConPor);
 ADD (@Gram:Prep:Por) Prep IF (0 Por) (NOT 0 GramPrep) (1 LoLiteral) (2 LemasDePalabrasEnLocucionesConPor);
+ADD (@Gram:Prep:Por) (CSUBF) IF (0 Por) (NOT 0 GramPrep) (1 LoLiteral) (2 LemasDePalabrasEnLocucionesConPor);
 #LATEX T: Asigna @Gram:Prep:Por.
 #LATEX E: \emph{por lo tanto}, \emph{por lo regular}
 #LATEX D: Requiere \emph{por} seguida por LO y alguna palabra en la lista de palabras predefinidas \emph{LemasDePalabrasEnLocucionesConPor}
@@ -1120,6 +1146,8 @@ ADDRELATION (Vocab:Entities:Geo) Adj IF  (0 ("<Buenos>")) TO (1 ("<Aires>"));
 #LATEX E: \emph{Ciudad Juárez}, \emph{El Paso}, \emph{Estados Unidos}  
 #LATEX D: Reglas para anotar entidades frecuentes en el corpus. En este caso de nombres geográficos.
 
+#LATEX\section{Verbos con regímenes especiales}
+
 #LATEX\subsection{Combinaciones de verbo y preposición de régimen}
 ADDRELATION (Vocab:Fraseol:VerbPrep) Verbo IF  (0 ("hablar")) TO (*1 Prep BARRIER LimiteOracionSimple OR GrupoNominal OR Verbo);
 ADDRELATION (Vocab:Fraseol:VerbPrep) Verbo IF  (0 ("pensar")) TO (*1 Prep BARRIER LimiteOracionSimple OR GrupoNominal OR Verbo);
@@ -1127,6 +1155,14 @@ ADDRELATION (Vocab:Fraseol:VerbPrep) Verbo IF  (0 ("empezar")) TO (*1 Prep BARRI
 #LATEX T: R:Vocab:Fraseol:VerbPrep
 #LATEX E: \emph{hablar PREP}, \emph{pensar PREP}, \emph{empezar PREP}  
 #LATEX D: Ahora no se distingue entre usos lexicalizados y usos composicionales (p.e., ``empezar en San Antonio y terminar en Austin'' se trata igual que ``empezé con la tradición en la preparatoria'') 
+
+#LATEX\section{Locuciones}
+
+#LATEX\subsection{Locuciones adverbiales}
+
+ADDRELATION (Vocab:Fraseol:LocAdv) PorLiteral IF  (0 PorLiteral) TO (*1 DeODel BARRIER LimiteOracionSimple OR GrupoNominal OR Verbo LINK -1 MedioLiteral);
+# por medio de
+
 ##AFTER-SECTIONS
 
 
