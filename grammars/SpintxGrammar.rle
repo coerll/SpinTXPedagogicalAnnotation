@@ -23,7 +23,7 @@ LIST Nombre = (Noun);
 LIST Adverbio = (ADV);
 LIST Prep = (Preposition) (PREP);
 LIST PrepContract = (PDEL);
-LIST FiniteVerbForms = (VLfin) (VEfin) (VHfin) ;
+LIST FiniteVerbForms = (VLfin) (VEfin) (VHfin) (VSfin) (VMfin) ;
 LIST FiniteFormsInPast = (VLfin Indi Pret) (VEfin Indi Pret) ;
 LIST PretImperfSimple = (Imp Indi) ;
 LIST PretPerfSimple = (Pret Indi) ;
@@ -35,7 +35,7 @@ LIST Infinitive = (VLinf) (VEinf) (VHinf) (VSinf);
 LIST Gerundio = (VLger) (VEger) (VHger) (VSger);
 LIST PronombrePersonal = (PPX);
 LIST DetAllByPOS = (ART) (DM) (PPO) ("alguno" QU); # habrá que refinar la definición, p.e., incluye palabras como mío, mía, míos, que claramente son adjetivos y no determinantes (esto viene de TreeTagger)
-LIST DetQU = (QU); #
+LIST DetQU = (Determiner QU); #
 LIST Sustantivo = (NC) (NP) (NMEA) (NMON) ;
 LIST Articulo = (ART);
 LIST Conjuncion = (Conjunction);
@@ -135,11 +135,14 @@ LIST LemaIr = ("ir");
 LIST AdjetivosUsadosEnRecomendaciones = ("importante") ("bueno");
 LIST LemasQueNoSonDetQUStandard = ("todo") ("nada") ("cualquier") ("tal") ("cada") ;
 LIST QuizasConOSinEse = ("quizás") ("quizá");
-LIST ListaDeDeterminantesSeguros = ("cualquier") ("cada") ("ambo") ("alguno") ("tal") ("ninguno");
+LIST ListaDeDeterminantesSeguros = ("cualquier") ("cada") ("ambos") ("alguno") ("tal") ("ninguno");
+LIST ListaDeDeterminantesSegurosSiNoEstanEnMasc = ("mucho") ("tanto") ("demasiado") ("cierto") ("varios") ("diversos") ("poco");
 ## ("dentista")
-
+LIST NingunoLiteral = ("<Ninguno>") ("<ninguno>") ("<NINGUNO>");
 ##de momento no se usa
 LIST VerboSaberAmbiguoConSer = ("saber|ser");
+LIST OtroLema = ("otro");
+LIST PocoLema = ("poco");
 
 #LATEX\section{Los SET}
 SET BuenoOMalo = Bueno OR Malo;
@@ -174,7 +177,7 @@ LIST ErasLiteral = ("<eras>") ("<Eras>") ("<ERAS>");
 LIST DiLiteral = ("<di>") ("<Di>") ("<DI>") ;
 LIST LosLiteral = ("<los>") ("<Los>") ("<LOS>");
 LIST ElDetLiteral = ("<el>") ("<El>") ("<EL>");
-LIST UnDetLiteral = ("<un>") ("<Una>") ("<UNA>");
+LIST UnDetLiteral = ("<un>") ("<Un>") ("<UN>");
 LIST LaLiteral = ("<la>") ("<LA>") ("<La>");
 LIST LasLiteral = ("<las>") ("<LAS>") ("<Las>");
 LIST LiteralPrimero = ("<primero>") ("<PRIMERO>") ("<Primero>");
@@ -183,6 +186,7 @@ LIST UnoLiteral = ("<uno>") ("<UNO>") ("<Uno>");
 LIST MejorLiteral = ("<mejor>") ("<MEJOR>") ("<Mejor>");
 LIST PorLiteral = ("<por>") ("<POR>") ("<Por>");
 LIST MedioLiteral = ("<medio>") ("<MEDIO>") ("<Medio>");
+LIST DemasLiteral = ("<demás>") ("<DEMÁS>") ("<Demás>");
 SET LiteralPrimeroOrTercero = LiteralTercero OR LiteralPrimero;
 
 LIST MiSingLiteral = ("<mi>") ("<MI>") ("<Mi>");
@@ -304,7 +308,7 @@ SUBSTITUTE ("dar|decir" Verb VLfin Pres Command Sing 2nd) ("dar" Verb VLfin Pret
 
 SUBSTITUTE (Verb VLinf Pres Command Plural 2nd) (Verb VLinf) TARGET ("<(.*)(ar|er|ir|ír)>"r); 
 #LATEX T: Cambia lectura Command Plural 2nd a los infinitivos marcados como imperativo (y que estrictamente no los son)
-#LATEX E: \emph{decir,nadar,temer} 
+#LATEX E: \emph{decir, nadar, temer} 
 #LATEX D: Se aplica a cualquier infinitivo con la lectura arriba mencionada. A pesar de que los imperativos pueden tener esta función de mandatopragmáticamente hablando, consideramos que no se deben etiquetar morfológicamente como tales.
 #LATEXREM Notad la ``r'' al final del TARGET en la regla. Indica que lo anterior debe ser tratado como una expresión regular. Si no, la regla no se aplica.
 
@@ -353,6 +357,18 @@ SUBSTITUTE ("doble" Determiner QU) ("doble" Adjective ADJ Singular Masc-Fem) TAR
 #LATEX E: (...) \emph{doble}
 #LATEX D: NA.
 ##                               doble                                  4
+
+SUBSTITUTE ("ambo" Determiner QU) ("ambos" Determiner QU Plural Masc) TARGET ("<ambos>") OR ("<Ambos>");
+SUBSTITUTE ("ambo" Determiner QU) ("ambos" Determiner QU Plural Fem) TARGET ("<ambas>") OR ("<Ambas>");
+#LATEX T: TreeTagger assignes lemma ambo to determiner ambos. The word ambo exists, but it has nothing to do (nowadays) with the determiner ambos/ambas. It will always be handled as a determiner. 
+#LATEX E: (...) \emph{ambos}, \emph{ambas} ...
+#LATEX D: NA.
+
+SUBSTITUTE ("poco" Noun NC) ("poco" Adverb ADV) TARGET ("<poquito>") OR ("<POQUITO>") IF (NOT -1 UnDetLiteral);
+SUBSTITUTE ("poco" Noun NC) ("poco" Adjective ADJ Singular Masc) TARGET ("<poquito>") OR ("<POQUITO>") IF (-1 UnDetLiteral);
+#LATEX T: TreeTagger asigna la lectura nominal a poco en algunos contextos en que consideramos que debería ser adverbio o adjectivo. Estas reglas lo tratan.
+#LATEX E: (...) \emph{ambos}, \emph{ambas} ...
+#LATEX D: NA.
 
 ## TO DO SUBSTITUTE RULES
 ##                               medio                                  5
@@ -423,33 +439,35 @@ ADD (@Gram:Det:CuantIndef) UnoLiteral IF (1 De) (NOT -1 Infinitive);
 #LATEX E: Que no los puedo criticar porque yo soy \emph{uno} de ellos (...)
 #LATEX D: Cualquier ocurrencia de un determinante posesivo seguido de un nombre (se admiten ADV y ADJ intercalados).
 
-ADD (@Gram:Det:CuantIndef) DetQU IF (1 ListaDeDeterminantesSeguros + DetQU);
+ADD (@Gram:Det:CuantIndef) DetQU IF (0 ListaDeDeterminantesSeguros) (NOT 0 NingunoLiteral);
+#LATEX T: Asigna @Gram:Det:CuantIndef
+#LATEX E: (...) porque él vivía aquí , en El Paso e iba \emph{cada} ocho días.
+#LATEX D: Se aplica a cualquier ocurrencia de determinantes cuantitativos o indefinidos que consideramos ``seguros'' en el sentido de que no tienen intepretación adverbial: ``cualquier'', ``cada'', ``ambos'', ``alguno'', ``tal'' o ``ningún''.
 
-##                               cualquier                             54
-##                               cada                                  47
-##                               ambo                                   2
-##                               alguno                               232
-##                               tal                                   42
-##                               ninguno                               26
+ADD (@Gram:Det:CuantIndef) DetQU IF (0 ("<(.*)(os|as|a)>"r) + ListaDeDeterminantesSegurosSiNoEstanEnMasc) (NOT -1 DetAllIncluded);
+#LATEX T: Asigna @Gram:Det:CuantIndef
+#LATEX E: (...) éramos \emph{muchos} primos y fue muy una experiencia bonita.
+#LATEX D: Se aplica a cualquier ocurrencia de determinantes cuantitativos o indefinidos que consideramos ``seguros'' en femenino, masculino plural o femenino plural. En masculino singular pueden tener lectura adverbial y por ello proponemos tratarlos a parte (con otro conjunto de reglas, pero con el mimsmo etiquetaje). Ejemplos: ``mucho'', ``poco'', ``tanto'', ``demasiado'', ``cierto'', ``varios'', y ``diversos''. A pesar de que TreeTagger etiqueta  ``dicho'' como determinante en algunos contextos, nosotros lo corregimos a posteriori y lo etiquetamos siempre como participio.
+##                               pocos                                 93
 
-##ADD (@Gram:Det:CuantIndef) DetQU IF (1 ListaDeDeterminantesSeguros + DetQU);
-##                               mucho                                321
-##                               cierto                                37
-##                               varios                                29
-##                               tanto                                 17
-##                               dicho                                 14
-##                               diversos                               2
-##                               demasiado                              1
+ADDRELATION (Gram:Det:DetCombi) (Determiner) IF (0 DetAllIncluded) TO (1 ListaDeDeterminantesSegurosSiNoEstanEnMasc OR DemasLiteral OR OtroLema LINK NOT 0 Adverbio);
+#LATEX T: Asigna @Gram:Det:DetCombi
+#LATEX E: (...) \emph{las demás} mamás que estaban fuera, eran como si fueran nuestras propias madres.
+#LATEX D: Se aplica sobre combinaciones de determinantes
+##                               demás                                32
+##                               pocos                                 93
 
 ## A VECES CON ART (excepto Juan y demás compañeros)
-##                               pocos                                 93
 ##                               otro                                 341
 ## SIEMPRE CON ART (excepto Juan y demás compañeros)
-##                               demás                                32
 
 ## COMPLICADITO
 ## (none)                        todo                                 640
+## todos los, todas mis, todos aquellos, etc.
+
 ## PR
+## (none)                        todo                                 640
+## estábamos todos y no faltaba nadie
 ##                               algo                                 266
 ##                               nada                                 229
 
@@ -1163,6 +1181,8 @@ ADDRELATION (Vocab:Fraseol:VerbPrep) Verbo IF  (0 ("empezar")) TO (*1 Prep BARRI
 ADDRELATION (Vocab:Fraseol:LocAdv) PorLiteral IF  (0 PorLiteral) TO (*1 DeODel BARRIER LimiteOracionSimple OR GrupoNominal OR Verbo LINK -1 MedioLiteral);
 # por medio de
 
+ADDRELATION (Vocab:Fraseol:LocAdv) UnDetLiteral TO (*1 PocoLema BARRIER LimiteOracionSimple OR GrupoNominal OR Verbo LINK 1C Adj);
+
 ##AFTER-SECTIONS
 
 
@@ -1174,6 +1194,13 @@ ADDRELATION (Vocab:Fraseol:LocAdv) PorLiteral IF  (0 PorLiteral) TO (*1 DeODel B
 
 #ADD (@Gram:Det:Art) Articulo IF (0 Lo) (*1 Adj BARRIER NPBoundary);
 
+#LATEX\part{Comentarios y observaciones}
+
+#LATEX\chapter{Retos en la identificación de ``no''-palabras}
+#LATEXDOC En ocasiones los hablantes bilingües utilizan palabras que no forma parte de ningún diccionario estándar (en un proceso muy parecido al que realizan los y las aprendices de una segunda lengua). Por ejemplo, en nuestro corpus tenemos a un hablante que dice ``trato de hablar mucho con mis primos me tartudeo (sic) poquito''. Claramente la palabra que quiere utilizar es ``tartajeo'' o ``tartamudeo'', pero le sale otra. Una búsqueda rápida en Google me confirma que algunos pocos hablantes de español usan esta mimsa palabra. En todo caso, es un reto identificar que hay un proceso creativo de formación verbal ``tartadear'' y, por tanto, ``tartadeo''. 
+
+#LATEX\chapter{Retos en la identificación de usos semánticos}
+#LATEXDOC Por escribir.
 ## SEMANTIC CHALLENGES
 # distinguish necesitar, two meanings: you need a photo-ID vs. you need to go to the doctor (consejo vs necesidad)
 # distinguish ir a + INF when it has future meaning or meaning de desplazamiento like in voy a comprar al mercado (check if more common order is voy al mercado a comprar)

@@ -1,6 +1,13 @@
 Change log
 ==========
 
+JULY 22
+-------
+- Added VSfin and VMfin to the set FiniteVerbForms (which precluded certain annotations to take place)
+- Added new rules to further indentify Gram:Det:CuantIndef
+- Added rules to identify det combinations like "los demás", "los pocos" or "muchos otros" (the classification of "otro" as determiner is controverted, but currently we assume it (and leave a possible discussion for a later moment).
+- Several updates in the grammar documentation
+
 JULY 19
 -------
 - Continuation with cuantitativos and indefinidos

@@ -68,7 +68,7 @@ Los ``templates'' son un tipo de entidad especial en CG3 que sirve para expresar
 \chapter{Reglas para rectificar errores del análisis morfosintático}
 \paragraph*{Rule}
 \fbox{
-\parbox{.9\linewidth}{\texttt{SUBSTITUTE (Noun NC Singular Masculine) (Conjunction CC) TARGET ("pero");}}
+\parbox{.9\linewidth}{\texttt{SUBSTITUTE (Noun NC Singular Masculine) (Conjunction CCAD) TARGET ("pero");}}
 }
 \begin{itemize}
 \item ETIQ: CC
@@ -192,7 +192,7 @@ Los ``templates'' son un tipo de entidad especial en CG3 que sirve para expresar
 }
 \begin{itemize}
 \item ETIQ: Cambia lectura Command Plural 2nd a los infinitivos marcados como imperativo (y que estrictamente no los son)
-\item EJEM: \emph{decir,nadar,temer} 
+\item EJEM: \emph{decir, nadar, temer} 
 \item DESC: Se aplica a cualquier infinitivo con la lectura arriba mencionada. A pesar de que los imperativos pueden tener esta función de mandatopragmáticamente hablando, consideramos que no se deben etiquetar morfológicamente como tales.
 \end{itemize}
 
@@ -252,6 +252,73 @@ OBSERVACIÓN: Aunque es verdad que ``para'' puede ir seguida de un infinitivo pa
 \fbox{
 \parbox{.9\linewidth}{\texttt{SUBSTITUTE ("UNK" Noun NC Plural) ("bueno" Adjective ADJ Plural Masc) TARGET ("<Buenos>");}}
 }
+\paragraph*{Rule}
+\fbox{
+\parbox{.9\linewidth}{\texttt{SUBSTITUTE ("cierta|cierto" Determiner QU) ("cierta|cierto" Determiner QU Plural Fem) TARGET ("<ciertas>") OR ("<Ciertas>");}}
+}
+\paragraph*{Rule}
+\fbox{
+\parbox{.9\linewidth}{\texttt{SUBSTITUTE ("cierta|cierto" Determiner QU) ("cierta|cierto" Determiner QU Singular Fem) TARGET ("<cierta>") OR ("<Cierta>");}}
+}
+\begin{itemize}
+\item ETIQ: Reglas para dar a cierta(s) el lema cierto. El lema cierta no se corresponde con ninguna lectura documentada en los diccionarios de referencia (RAE o DEM). 
+\item EJEM: \emph{cierta}, \emph{cierta}
+\item DESC: NA.
+\end{itemize}
+
+\paragraph*{Rule}
+\fbox{
+\parbox{.9\linewidth}{\texttt{SUBSTITUTE ("cuarto" Determiner QU) ("cuarto" Noun NC Singular Masc) TARGET ("<cuarto>") OR ("<Cuarto>") IF (NOT 1 Nombre);}}
+}
+\paragraph*{Rule}
+\fbox{
+\parbox{.9\linewidth}{\texttt{SUBSTITUTE ("cuarto" Determiner QU) ("cuarto" Adjective ORD Singular Masc) TARGET ("<cuarto>") OR ("<Cuarto>") IF (1C Nombre + SG);}}
+}
+\begin{itemize}
+\item ETIQ: For some reason TreeTagger tags cuarto as DetQU. I assume this is because they include cardinals in this category, which is a very arguable decision in my opinion. I decided to change it to either noun or adjective depending on the contexts. 
+\item EJEM: (...) nosotras teníamos que compartir nuestros, nuestro \emph{cuarto}, teníamos tres niñas por cuarto (...)  (Noun)
+\item EJEM: (...) ellos eran, los paraguayitos eran de \emph{cuarto} grado. (Adjective)
+\item DESC: NA.
+\end{itemize}
+
+\paragraph*{Rule}
+\fbox{
+\parbox{.9\linewidth}{\texttt{SUBSTITUTE ("doble" Determiner QU) ("doble" Adjective ADJ Singular Masc-Fem) TARGET ("<doble>") OR ("<Doble>");}}
+}
+\begin{itemize}
+\item ETIQ: Contrary to TreeTagger RAE and most standard sources of Spanish linguistics think that doble is an adjective, even if it can be modifying a noun as some determiners can. For this, I decided to change its reading to adjective depending always. 
+\item EJEM: (...) \emph{doble}
+\item DESC: NA.
+\end{itemize}
+
+\paragraph*{Rule}
+\fbox{
+\parbox{.9\linewidth}{\texttt{SUBSTITUTE ("ambo" Determiner QU) ("ambos" Determiner QU Plural Masc) TARGET ("<ambos>") OR ("<Ambos>");}}
+}
+\paragraph*{Rule}
+\fbox{
+\parbox{.9\linewidth}{\texttt{SUBSTITUTE ("ambo" Determiner QU) ("ambos" Determiner QU Plural Fem) TARGET ("<ambas>") OR ("<Ambas>");}}
+}
+\begin{itemize}
+\item ETIQ: TreeTagger assignes lemma ambo to determiner ambos. The word ambo exists, but it has nothing to do (nowadays) with the determiner ambos/ambas. It will always be handled as a determiner. 
+\item EJEM: (...) \emph{ambos}, \emph{ambas} ...
+\item DESC: NA.
+\end{itemize}
+
+\paragraph*{Rule}
+\fbox{
+\parbox{.9\linewidth}{\texttt{SUBSTITUTE ("poco" Noun NC) ("poco" Adverb ADV) TARGET ("<poquito>") OR ("<POQUITO>") IF (NOT -1 UnDetLiteral);}}
+}
+\paragraph*{Rule}
+\fbox{
+\parbox{.9\linewidth}{\texttt{SUBSTITUTE ("poco" Noun NC) ("poco" Adjective ADJ Singular Masc) TARGET ("<poquito>") OR ("<POQUITO>") IF (-1 UnDetLiteral);}}
+}
+\begin{itemize}
+\item ETIQ: TreeTagger asigna la lectura nominal a poco en algunos contextos en que consideramos que debería ser adverbio o adjectivo. Estas reglas lo tratan.
+\item EJEM: (...) \emph{ambos}, \emph{ambas} ...
+\item DESC: NA.
+\end{itemize}
+
 \part{Secciones principales}
 Las reglas de identificación de fenómenmos pedagógicos están ordenadas de más concretas a más generales. Así, por ejemplo, se detectan primero, cuando es posible, los distintos usos de \emph{para} (opinión, intención, destino, etc. como \emph{@Gram:Prep:Para:Opinion}...) y luego se marcan como simplemente \emph{@Gram:Prep:Para} el resto de ocurrencias de \emph{para}. Luego, se hace lo propio con otras preposiciones, hasta el punto que si para una preposición no hay reglas especiales, sus ocurrencias se marcan simplemente como \emph{@Gram:Prep}.
 
@@ -356,6 +423,36 @@ Identificaremos los usos de los artículos definidos \emph{el, la, los, las}, y 
 \item ETIQ: Asigna @Gram:Det:CuantIndef
 \item EJEM: Que no los puedo criticar porque yo soy \emph{uno} de ellos (...)
 \item DESC: Cualquier ocurrencia de un determinante posesivo seguido de un nombre (se admiten ADV y ADJ intercalados).
+\end{itemize}
+
+\paragraph*{Rule}
+\fbox{
+\parbox{.9\linewidth}{\texttt{ADD (@Gram:Det:CuantIndef) DetQU IF (0 ListaDeDeterminantesSeguros) (NOT 0 NingunoLiteral);}}
+}
+\begin{itemize}
+\item ETIQ: Asigna @Gram:Det:CuantIndef
+\item EJEM: (...) porque él vivía aquí , en El Paso e iba \emph{cada} ocho días.
+\item DESC: Se aplica a cualquier ocurrencia de determinantes cuantitativos o indefinidos que consideramos ``seguros'' en el sentido de que no tienen intepretación adverbial: ``cualquier'', ``cada'', ``ambos'', ``alguno'', ``tal'' o ``ningún''.
+\end{itemize}
+
+\paragraph*{Rule}
+\fbox{
+\parbox{.9\linewidth}{\texttt{ADD (@Gram:Det:CuantIndef) DetQU IF (0 ("<(.*)(os|as|a)>"r) + ListaDeDeterminantesSegurosSiNoEstanEnMasc) (NOT -1 DetAllIncluded);}}
+}
+\begin{itemize}
+\item ETIQ: Asigna @Gram:Det:CuantIndef
+\item EJEM: (...) éramos \emph{muchos} primos y fue muy una experiencia bonita.
+\item DESC: Se aplica a cualquier ocurrencia de determinantes cuantitativos o indefinidos que consideramos ``seguros'' en femenino, masculino plural o femenino plural. En masculino singular pueden tener lectura adverbial y por ello proponemos tratarlos a parte (con otro conjunto de reglas, pero con el mimsmo etiquetaje). Ejemplos: ``mucho'', ``poco'', ``tanto'', ``demasiado'', ``cierto'', ``varios'', y ``diversos''. A pesar de que TreeTagger etiqueta  ``dicho'' como determinante en algunos contextos, nosotros lo corregimos a posteriori y lo etiquetamos siempre como participio.
+\end{itemize}
+
+\paragraph*{Rule}
+\fbox{
+\parbox{.9\linewidth}{\texttt{ADDRELATION (Gram:Det:DetCombi) (Determiner) IF (0 DetAllIncluded) TO (1 ListaDeDeterminantesSegurosSiNoEstanEnMasc OR DemasLiteral OR OtroLema LINK NOT 0 Adverbio);}}
+}
+\begin{itemize}
+\item ETIQ: Asigna @Gram:Det:DetCombi
+\item EJEM: (...) \emph{las demás} mamás que estaban fuera, eran como si fueran nuestras propias madres.
+\item DESC: Se aplica sobre combinaciones de determinantes
 \end{itemize}
 
 \chapter{Género gramatical y artículos}
@@ -495,6 +592,10 @@ Veáse \url{http://dev.coerll.utexas.edu/spanishtx/spe/html/adv11.html}.
 \paragraph*{Rule}
 \fbox{
 \parbox{.9\linewidth}{\texttt{ADD (@Gram:Prep:Por) Prep IF (0 Por) (NOT 0 GramPrep) (1 LoLiteral) (2 LemasDePalabrasEnLocucionesConPor);}}
+}
+\paragraph*{Rule}
+\fbox{
+\parbox{.9\linewidth}{\texttt{ADD (@Gram:Prep:Por) (CSUBF) IF (0 Por) (NOT 0 GramPrep) (1 LoLiteral) (2 LemasDePalabrasEnLocucionesConPor);}}
 }
 \begin{itemize}
 \item ETIQ: Asigna @Gram:Prep:Por.
@@ -1298,6 +1399,7 @@ OBSERVACIÓN: Sección en proceso de implementación.
 \item DESC: Reglas para anotar entidades frecuentes en el corpus. En este caso de nombres geográficos.
 \end{itemize}
 
+\section{Verbos con regímenes especiales}
 \subsection{Combinaciones de verbo y preposición de régimen}
 \paragraph*{Rule}
 \fbox{
@@ -1317,4 +1419,19 @@ OBSERVACIÓN: Sección en proceso de implementación.
 \item DESC: Ahora no se distingue entre usos lexicalizados y usos composicionales (p.e., ``empezar en San Antonio y terminar en Austin'' se trata igual que ``empezé con la tradición en la preparatoria'') 
 \end{itemize}
 
+\section{Locuciones}
+\subsection{Locuciones adverbiales}
+\paragraph*{Rule}
+\fbox{
+\parbox{.9\linewidth}{\texttt{ADDRELATION (Vocab:Fraseol:LocAdv) PorLiteral IF  (0 PorLiteral) TO (*1 DeODel BARRIER LimiteOracionSimple OR GrupoNominal OR Verbo LINK -1 MedioLiteral);}}
+}
+\paragraph*{Rule}
+\fbox{
+\parbox{.9\linewidth}{\texttt{ADDRELATION (Vocab:Fraseol:LocAdv) UnDetLiteral TO (*1 PocoLema BARRIER LimiteOracionSimple OR GrupoNominal OR Verbo LINK 1C Adj);}}
+}
+\part{Comentarios y observaciones}
+\chapter{Retos en la identificación de ``no''-palabras}
+DOC En ocasiones los hablantes bilingües utilizan palabras que no forma parte de ningún diccionario estándar (en un proceso muy parecido al que realizan los y las aprendices de una segunda lengua). Por ejemplo, en nuestro corpus tenemos a un hablante que dice ``trato de hablar mucho con mis primos me tartudeo (sic) poquito''. Claramente la palabra que quiere utilizar es ``tartajeo'' o ``tartamudeo'', pero le sale otra. Una búsqueda rápida en Google me confirma que algunos pocos hablantes de español usan esta mimsa palabra. En todo caso, es un reto identificar que hay un proceso creativo de formación verbal ``tartadear'' y, por tanto, ``tartadeo''. 
+\chapter{Retos en la identificación de usos semánticos}
+DOC Por escribir.
 \end{document}
