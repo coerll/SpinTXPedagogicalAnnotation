@@ -11,7 +11,7 @@ DELIMITERS = "<$.>" "<$?>" "<$!>" "<$:>";
 #LATEX\chapter*{Introducción}
 #LATEXDOCU Este documento describe el proceso de anotación de las transcripciones de los clips del corpus SPinTX (Spanish in Texas) con información pedagógica para facilitar el uso de los mismos en la enseñanza y el aprendizaje de español como lengua extranjera.
 
-#LATEXDOCU 
+#LATEXDOCU
 
 #LATEX\part{Definición de LIST y SET}
 #LATEX\chapter{LIST y SET basados en información morfosintáctica}
@@ -52,6 +52,7 @@ LIST Futuro = (Fut);
 LIST Subjuntivo = (Subj);
 LIST Imperativo = (Command);
 LIST LimiteOracionSimple = (CC) (CCAD) (CSUBX) (CSUBF) (CQUE) (CSUBI) ; # habrá que refinar la definición
+LIST Puntuacion = (Punctuation);
 
 #LATEX\section{Rasgos morfosintácticos}
 ## LIST MORPH FEATURES VERBS
@@ -214,6 +215,8 @@ SET DetPosMascSing =  NuestroPluLiteral OR VuestroPluLiteral;
 
 SET DetAllIncluded = DetAllByPOS OR DetPosSing OR DetPosPlu OR DetPosFemPlu OR DetPosMascPlu OR DetPosFemSing OR DetPosMascSing;
 
+SET DetAllIncludedNoPosPlural = DetAllByPOS OR DetPosSing OR DetPosFemSing OR DetPosMascSing;
+
 SET GrupoNominal = Sustantivo OR Adj OR DetAllIncluded; # habrá que refinar la definición de grupo nominal
 
 LIST ElLiteralMayusc = ("<El>");
@@ -221,7 +224,12 @@ LIST PasoLiteralMayusc = ("<Paso>");
 LIST EstadosLiteralMayusc = ("<Estados>");
 LIST UnidosLiteralMayusc = ("<Unidos>");
 
+LIST Todas = ("<todas>") ("<TODAS>") ("<Todas>");
 LIST Todos = ("<todos>") ("<TODOS>") ("<Todos>");
+LIST Toda = ("<toda>") ("<TODA>") ("<Toda>");
+LIST Todo = ("<todo>") ("<TODO>") ("<Todo>");
+SET TodosYTodasLiteral = Todos OR Todas;
+SET TodoYTodaLiteral = Todo OR Toda;
 LIST Modos = ("<modos>") ("<MODOS>") ("<Modos>");
 LIST Es = ("<es>") ("<Es>") ("<ES>");
 
@@ -370,6 +378,16 @@ SUBSTITUTE ("poco" Noun NC) ("poco" Adjective ADJ Singular Masc) TARGET ("<poqui
 #LATEX E: (...) \emph{ambos}, \emph{ambas} ...
 #LATEX D: NA.
 
+
+SUBSTITUTE ("y" Other ALFS) ("y" Conjunciton CC) TARGET ("<y>") OR ("<Y>");
+SUBSTITUTE ("Y" Other ALFS) ("y" Conjunciton CC) TARGET ("<y>") OR ("<Y>");
+SUBSTITUTE ("o" Other ALFS) ("o" Conjunciton CC) TARGET ("<o>") OR ("<O>");
+SUBSTITUTE ("O" Other ALFS) ("o" Conjunciton CC) TARGET ("<o>") OR ("<O>");
+SUBSTITUTE ("a" Other ALFS) ("a" Preposition PREP) TARGET ("<a>") OR ("<A>") (NOT 1 PalabraEnIngles);
+#LATEX T: TreeTagger asigna la lectura ALFS a palabras como ``y'', ``o'' o ``a''. Estas reglas lo reparan.
+#LATEX E: (...) \emph{y}, \emph{o}, \emph{a} ...
+#LATEX D: Todavía quedan algunas letras sueltas que reciben esta etiqueta, pero no he seguido trabajando en ello porque son un número absoluto y relativo bastante bajo.
+
 ## TO DO SUBSTITUTE RULES
 ##                               medio                                  5
 ## el medio / del medio / por medio de / en medio --> Noun
@@ -456,14 +474,20 @@ ADDRELATION (Gram:Det:DetCombi) (Determiner) IF (0 DetAllIncluded) TO (1 ListaDe
 #LATEX D: Se aplica sobre combinaciones de determinantes
 ##                               demás                                32
 ##                               pocos                                 93
-
-## A VECES CON ART (excepto Juan y demás compañeros)
 ##                               otro                                 341
-## SIEMPRE CON ART (excepto Juan y demás compañeros)
 
-## COMPLICADITO
+ADDRELATION (Gram:Det:DetCombi) (Determiner) IF (0 TodosYTodasLiteral OR TodoYTodaLiteral) TO (1 DetAllIncluded);
+#LATEX T: Asigna @Gram:Det:DetCombi
+#LATEX E: Mi papá mudaba todas las cosas, \emph{todos los} muebles los ponía en el barco (...)
+#LATEX D: Se aplica sobre combinaciones de determinantes
 ## (none)                        todo                                 640
 ## todos los, todas mis, todos aquellos, etc.
+
+
+ADD (@Gram:Det:TodoEsp) (Determiner) IF (0 Todo) (NOT 1 DetAllIncludedNoPosPlural OR Prep OR FiniteVerbForms OR Adverbio OR LimiteOracionSimple OR Puntuacion OR SeLiteral);
+#LATEX T: Asigna @Gram:Det:TodoEsp
+#LATEX E: 
+#LATEX D: No se aplica si va seguido de determinante, verbo conjugado o preposición porque entonces se trata de otro tipo de uso (seguramente el pronominal, como en ``se quebró todo'' o el pre-especificador, como en ``se comió todo el arroz'')
 
 ## PR
 ## (none)                        todo                                 640
@@ -1159,7 +1183,10 @@ ADDRELATION (Herit:Contacto:Mixtas) Verbo IF (0 ListaVerbosCorpusParaContactoMix
 ADDRELATION (Vocab:Entities:Geo) Articulo IF  (0 ("<El>")) TO (1 ("<Paso>"));
 ADDRELATION (Vocab:Entities:Geo) Nombre IF  (0 ("<Estados>")) TO (1 ("<Unidos>"));
 ADDRELATION (Vocab:Entities:Geo) Nombre IF  (0 ("<Ciudad>")) TO (1 ("<Juárez>"));
+ADDRELATION (Vocab:Entities:Geo) Nombre IF  (0 ("<Rancho>")) TO (1 ("<Viejo>"));
 ADDRELATION (Vocab:Entities:Geo) Adj IF  (0 ("<Buenos>")) TO (1 ("<Aires>"));
+ADDRELATION (Vocab:Entities:Geo) Nombre IF  (0 ("<Río>")) TO (1 ("<Grande>") LINK NOT 1 ("<City>")) ;
+ADDRELATION (Vocab:Entities:Geo) Nombre IF  (0 ("<Río>")) TO (2 ("<City>") LINK -1 ("<Grande>") ) ;
 #LATEX T: R:Vocab:Entities:Geo
 #LATEX E: \emph{Ciudad Juárez}, \emph{El Paso}, \emph{Estados Unidos}  
 #LATEX D: Reglas para anotar entidades frecuentes en el corpus. En este caso de nombres geográficos.

@@ -3,6 +3,12 @@ Change log
 
 JULY 22
 -------
+- Added more rules to handle CuantIndef
+- Added rules to handel some cases of todo X, todo DET X
+- Added repairing rules for y, o and a (related to ALFS)
+
+JULY 22
+-------
 - Added VSfin and VMfin to the set FiniteVerbForms (which precluded certain annotations to take place)
 - Added new rules to further indentify Gram:Det:CuantIndef
 - Added rules to identify det combinations like "los demás", "los pocos" or "muchos otros" (the classification of "otro" as determiner is controverted, but currently we assume it (and leave a possible discussion for a later moment).
