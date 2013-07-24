@@ -144,6 +144,9 @@ LIST NingunoLiteral = ("<Ninguno>") ("<ninguno>") ("<NINGUNO>");
 LIST VerboSaberAmbiguoConSer = ("saber|ser");
 LIST OtroLema = ("otro");
 LIST PocoLema = ("poco");
+LIST AlgoLema = ("algo");
+LIST NadaLema = ("nada");
+LIST AdvIntensificadorAdjetivos = ("muy") ("más") ("tan");
 
 #LATEX\section{Los SET}
 SET BuenoOMalo = Bueno OR Malo;
@@ -467,6 +470,13 @@ ADD (@Gram:Det:CuantIndef) DetQU IF (0 ("<(.*)(os|as|a)>"r) + ListaDeDeterminant
 #LATEX E: (...) éramos \emph{muchos} primos y fue muy una experiencia bonita.
 #LATEX D: Se aplica a cualquier ocurrencia de determinantes cuantitativos o indefinidos que consideramos ``seguros'' en femenino, masculino plural o femenino plural. En masculino singular pueden tener lectura adverbial y por ello proponemos tratarlos a parte (con otro conjunto de reglas, pero con el mimsmo etiquetaje). Ejemplos: ``mucho'', ``poco'', ``tanto'', ``demasiado'', ``cierto'', ``varios'', y ``diversos''. A pesar de que TreeTagger etiqueta  ``dicho'' como determinante en algunos contextos, nosotros lo corregimos a posteriori y lo etiquetamos siempre como participio.
 ##                               pocos                                 93
+
+###XXXX @Gram:Det:Pron FITA 
+ADD (@Gram:Det:Pron) DetQU IF (0 AlgoLema) (NOT 1 Adj OR AdvIntensificadorAdjetivos);
+ADD (@Gram:Det:Pron) DetQU IF (0 NadaLema) (NOT 1 Adj OR AdvIntensificadorAdjetivos);
+#LATEX T: Asigna @Gram:Det:Pron
+#LATEX E: 
+#LATEX D: Se aplica sobre combinaciones de determinantes
 
 ADDRELATION (Gram:Det:DetCombi) (Determiner) IF (0 DetAllIncluded) TO (1 ListaDeDeterminantesSegurosSiNoEstanEnMasc OR DemasLiteral OR OtroLema LINK NOT 0 Adverbio);
 #LATEX T: Asigna @Gram:Det:DetCombi
@@ -1161,6 +1171,8 @@ ADDRELATION (Herit:Contacto:Mixtas) Verbo IF (0 ListaVerbosCorpusParaContactoMix
 #LATEX T: R:Herit:Contacto:Mixtas
 #LATEX E: \emph{hacer request}, \emph{comer turkey}
 #LATEX D: Anota secuencias de un verbo seguid de una o más palabras en inglés. Por ahora lo limitamos a ser, hacer, decir y comer porque TreeTagger anota como verbo algunas palabras que no lo son y no queremos generar ruido para los usuarios.
+
+ADDRELATION (Herit:Contacto:Mixtas) (Determiner) IF (0 DetAllIncluded) TO (**1 PalabraEnIngles BARRIER PalabraEnEspanol);
 
 ### FITA: no s'està mapejant la info de llengua i per tant la regla anterior no funciona
 ### 02/21/2013
