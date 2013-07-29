@@ -53,6 +53,7 @@ LIST Subjuntivo = (Subj);
 LIST Imperativo = (Command);
 LIST LimiteOracionSimple = (CC) (CCAD) (CSUBX) (CSUBF) (CQUE) (CSUBI) ; # habrá que refinar la definición
 LIST Puntuacion = (Punctuation);
+LIST DetCardinales = (CARD);
 
 #LATEX\section{Rasgos morfosintácticos}
 ## LIST MORPH FEATURES VERBS
@@ -91,6 +92,7 @@ LIST Os = ("vosotros" PPX);
 LIST LeLema = ("él" PPC);
 LIST PretPerfRelations = (r:PretPerifAux) (r:PretPerifMain);
 LIST Que = ("que");
+LIST QueConAcento = ("qué" INT);
 LIST UstedLema = ("usted");
 LIST ConjLetraO = ("o");
 LIST MarcDiscRevision = ("pero") ("aunque") ("exepto");
@@ -147,7 +149,8 @@ LIST PocoLema = ("poco");
 LIST AlgoLema = ("algo");
 LIST NadaLema = ("nada");
 LIST AdvIntensificadorAdjetivos = ("muy") ("más") ("tan");
-
+LIST SustantivosQueDenotanNecesidades = ("descanso") ("ayuda") ("baño") ("automóvil") ("leche") ("comida") ("hora") ("tiempo") ("día") ("año") ("dinero") ("plata");
+LIST NecesitarLema = ("necesitar");
 #LATEX\section{Los SET}
 SET BuenoOMalo = Bueno OR Malo;
 SET PorOPara = Por OR Para;
@@ -178,6 +181,7 @@ LIST AquelloLiteral = ("<aquello>") ("<AQUELLO>") ("<Aquello>");
 LIST AquelLiteral = ("<aquel>") ("<AQUEL>") ("<Aquel>");
 LIST EranLiteral = ("<eran>") ("<Eran>") ("<ERAN>");
 LIST ErasLiteral = ("<eras>") ("<Eras>") ("<ERAS>");
+LIST EraMayusLiteral = ("<Era>") ("<ERA>");
 LIST DiLiteral = ("<di>") ("<Di>") ("<DI>") ;
 LIST LosLiteral = ("<los>") ("<Los>") ("<LOS>");
 LIST ElDetLiteral = ("<el>") ("<El>") ("<EL>");
@@ -191,6 +195,8 @@ LIST MejorLiteral = ("<mejor>") ("<MEJOR>") ("<Mejor>");
 LIST PorLiteral = ("<por>") ("<POR>") ("<Por>");
 LIST MedioLiteral = ("<medio>") ("<MEDIO>") ("<Medio>");
 LIST DemasLiteral = ("<demás>") ("<DEMÁS>") ("<Demás>");
+LIST MasLiteral = ("<más>") ("<MÁS>") ("<Más>");
+LIST YLiteral = ("y") ("Y");
 SET LiteralPrimeroOrTercero = LiteralTercero OR LiteralPrimero;
 
 LIST MiSingLiteral = ("<mi>") ("<MI>") ("<Mi>");
@@ -246,6 +252,7 @@ SET EstoEsoAquello = EstoLiteral OR EsoLiteral OR AquelloLiteral;
 ## PEDAGOGICAL TAGS
 LIST GramPrep = (@Gram:Prep:Por) (@Gram:Prep:Por:Locuciones) (@Gram:Prep:Para) (@Gram:Prep:Para:Opinion) (@Gram:Prep:Para:Destinatario) (@Gram:Prep:Para:Habilidad);
 LIST GramPron = (@Gram:Pron:Otros) (@Gram:Pron:ObjetoDoble);
+LIST YaAnotadoComoNecesidad = (R:Func:Necesidades);
 
 #LATEX\chapter{Definiciones de \emph{templates}}
 
@@ -260,6 +267,7 @@ TEMPLATE SintagmaPreposicional = (-1 Sustantivo LINK -1 DetAllIncluded LINK -1 P
 BEFORE-SECTIONS
 
 SUBSTITUTE ("por" Adverb ADV) ("por" Preposition PREP) TARGET ("por");
+SUBSTITUTE ("por" PDEL) ("por" Preposition PREP) TARGET ("por");
 
 #LATEX\chapter{Reglas para rectificar errores del análisis morfosintático}
 SUBSTITUTE (Noun NC Singular Masculine) (Conjunction CCAD) TARGET ("pero");
@@ -302,6 +310,7 @@ SUBSTITUTE ("maestro" Adjective ADJ Plural) ("maestro" Noun Plural) TARGET ("mae
 
 SUBSTITUTE ("erar|ser" Verb VLfin Past Subj Sing 2nd) ("ser" Verb VSfin Imp Indi Sing 2nd) TARGET ErasLiteral;
 SUBSTITUTE ("erar|ser" Verb VLfin Past Subj Plural 2nd_or_3rd) ("ser" Verb VSfin Imp Indi Plural 3rd) TARGET EranLiteral;
+SUBSTITUTE ("UNK" Noun NC) ("ser" Verb VSfin Imp Indi Sing 1st_or_3rd) TARGET EraMayusLiteral;
 #LATEX T: Cambia lectura de "eras" y "eran" de lema ambiguo entre erar y ser a sólo lema ser.
 #LATEX E: \emph{eras, eran} 
 #LATEX D: Consideramos erar un verbo muy poco frecuente. Si hiciera falta, se podría refinar la regla.
@@ -391,11 +400,12 @@ SUBSTITUTE ("a" Other ALFS) ("a" Preposition PREP) TARGET ("<a>") OR ("<A>") (NO
 #LATEX E: (...) \emph{y}, \emph{o}, \emph{a} ...
 #LATEX D: Todavía quedan algunas letras sueltas que reciben esta etiqueta, pero no he seguido trabajando en ello porque son un número absoluto y relativo bastante bajo.
 
-## TO DO SUBSTITUTE RULES
-##                               medio                                  5
-## el medio / del medio / por medio de / en medio --> Noun
-## y media / medio/a + ADJ --> Adjective
-## Prep + medio/a + Noun ---> Adjective
+SUBSTITUTE ("medio" Preposition PDEL) ("medio" Noun NC Singular Masc) TARGET MedioLiteral IF (-1 PorLiteral) (1 PrepContract);
+SUBSTITUTE ("medio" Adjective ADJ) ("medio" Determiner QU Singular Masc) TARGET MedioLiteral IF (1C Adj);
+SUBSTITUTE ("medio" Noun NC Singular) ("medio" Determiner QU Singular Masc) TARGET MedioLiteral IF (0C MedioLiteral) (NOT 0 DetQU) (*-2 DetCardinales OR UnDetLiteral BARRIER FiniteVerbForms OR Conjuncion OR LimiteOracionSimple) (-1 YLiteral);
+#LATEX T: Pasa de PDEL a NC a ``medio''. O de NC a QU, según los contextos.
+#LATEX E: (...) \emph{un año y medio}, lo hice \emph{por medio de} su hermana ...
+#LATEX D: TreeTagger asigna lecturas curiosas a ``medio''. Entre ellas PDEL en ``por medio de'' o nombre en expresiones como ``un año y medio''. Escribo un pare de reglas para cambiar esto, pero la verdad es que medio es una de esas palabras complicadas a la que cabría prestar atención (junto con el resto de determinantes y los llamados adjetivos pronominales, porque tiene un comportamiento peculiar).
 
 #LATEX\part{Secciones principales}
 
@@ -471,23 +481,23 @@ ADD (@Gram:Det:CuantIndef) DetQU IF (0 ("<(.*)(os|as|a)>"r) + ListaDeDeterminant
 #LATEX D: Se aplica a cualquier ocurrencia de determinantes cuantitativos o indefinidos que consideramos ``seguros'' en femenino, masculino plural o femenino plural. En masculino singular pueden tener lectura adverbial y por ello proponemos tratarlos a parte (con otro conjunto de reglas, pero con el mimsmo etiquetaje). Ejemplos: ``mucho'', ``poco'', ``tanto'', ``demasiado'', ``cierto'', ``varios'', y ``diversos''. A pesar de que TreeTagger etiqueta  ``dicho'' como determinante en algunos contextos, nosotros lo corregimos a posteriori y lo etiquetamos siempre como participio.
 ##                               pocos                                 93
 
-###XXXX @Gram:Det:Pron FITA 
 ADD (@Gram:Det:Pron) DetQU IF (0 AlgoLema) (NOT 1 Adj OR AdvIntensificadorAdjetivos);
 ADD (@Gram:Det:Pron) DetQU IF (0 NadaLema) (NOT 1 Adj OR AdvIntensificadorAdjetivos);
+ADD (@Gram:Det:Pron) DetQU IF (0 AlgoLema OR NadaLema) (1C Adj);
 #LATEX T: Asigna @Gram:Det:Pron
 #LATEX E: 
-#LATEX D: Se aplica sobre combinaciones de determinantes
+#LATEX D: Se aplica a varios usos de ``nada'' y ``algo'', que demuestran que tiene un comportamiento esencialmente pronominal, porque nunca pueden aparecer modificando a un sustantivo.
 
-ADDRELATION (Gram:Det:DetCombi) (Determiner) IF (0 DetAllIncluded) TO (1 ListaDeDeterminantesSegurosSiNoEstanEnMasc OR DemasLiteral OR OtroLema LINK NOT 0 Adverbio);
-#LATEX T: Asigna @Gram:Det:DetCombi
+ADDRELATION (Gram:Det:Combi) (Determiner) IF (0 DetAllIncluded) TO (1 ListaDeDeterminantesSegurosSiNoEstanEnMasc OR DemasLiteral OR OtroLema LINK NOT 0 Adverbio);
+#LATEX T: Asigna @Gram:Det:Combi
 #LATEX E: (...) \emph{las demás} mamás que estaban fuera, eran como si fueran nuestras propias madres.
 #LATEX D: Se aplica sobre combinaciones de determinantes
 ##                               demás                                32
 ##                               pocos                                 93
 ##                               otro                                 341
 
-ADDRELATION (Gram:Det:DetCombi) (Determiner) IF (0 TodosYTodasLiteral OR TodoYTodaLiteral) TO (1 DetAllIncluded);
-#LATEX T: Asigna @Gram:Det:DetCombi
+ADDRELATION (Gram:Det:Combi) (Determiner) IF (0 TodosYTodasLiteral OR TodoYTodaLiteral) TO (1 DetAllIncluded);
+#LATEX T: Asigna @Gram:Det:Combi
 #LATEX E: Mi papá mudaba todas las cosas, \emph{todos los} muebles los ponía en el barco (...)
 #LATEX D: Se aplica sobre combinaciones de determinantes
 ## (none)                        todo                                 640
@@ -908,16 +918,16 @@ ADDRELATION (Func:Deseos:Ajenos) Sustantivo IF (0 NombresExpresarDeseos) (1 De O
 	 # 78110:  algo , les muestro algo , completamente gratis , sin <necesidad de que> me tengan que pagar . Muy bien , y platíqueme
 
 #LATEX\subsection{Expresar recomendaciones y sugerencias}
-ADDRELATION (Func:Expresar:Sugerencias) Verbo IF (0 VerbosExpresarRecomendaciones) (1 Que) TO (*2 Verbo + Subjuntivo BARRIER LimiteOracionSimple OR FiniteVerbForms);
-#LATEX T: Asigna la etiqueta R:Func:Expresar:Sugerencias
+ADDRELATION (Func:Sugerencias) Verbo IF (0 VerbosExpresarRecomendaciones) (1 Que) TO (*2 Verbo + Subjuntivo BARRIER LimiteOracionSimple OR FiniteVerbForms);
+#LATEX T: Asigna la etiqueta R:Func:Sugerencias
 #LATEX E: el médico les dice que él \emph{sugiere que apaguen} la máquina de  
 #LATEX D: NA.
 
     # ## SUGERIR
     # 41625:  el ... el ... el médico les dice que él <sugiere> que apaguen la máquina de ... de incubadora porque mi
     
-ADDRELATION (Func:Expresar:Sugerencias) Verbo IF (0 VerbosExpresarRecomendaciones + 2aPers OR VerbosExpresarRecomendaciones + 3aPers) TO (1 Verbo + Infinitive);
-#LATEX T: Asigna la etiqueta R:Func:Expresar:Sugerencias
+ADDRELATION (Func:Sugerencias) Verbo IF (0 VerbosExpresarRecomendaciones + 2aPers OR VerbosExpresarRecomendaciones + 3aPers) TO (1 Verbo + Infinitive);
+#LATEX T: Asigna la etiqueta R:Func:Sugerencias
 #LATEX E: mis amigos también fueron muy conscientes de que \emph{necesitaban hablar} un poquito más lento cuando estaban conmigo 
 #LATEX D: NA.
 
@@ -936,14 +946,14 @@ ADDRELATION (Func:Expresar:Sugerencias) Verbo IF (0 VerbosExpresarRecomendacione
    ##  82289:  me doy cuenta de que es una señora y la señora dice <necesito hablar> con Olga Alexeuna , Olga Alexeuna , Olga Alexeuna , ¿ está
    ##  82362:  , pero no puedes decirlo y la persona se empezó a enojar <necesito hablar> con Olga Alexeuna , pásele el teléfono a Olga Alexeuna , ¿
 
-ADDRELATION (Func:Expresar:Sugerencias) Verbo IF (0 Ser + Verbo) (*1 AdjetivosUsadosEnRecomendaciones BARRIER LimiteOracionSimple OR FiniteVerbForms OR GrupoNominal) (2 Que) TO (*3 Verbo + Subjuntivo BARRIER LimiteOracionSimple OR FiniteVerbForms);
-#LATEX T: Asigna la etiqueta R:Func:Expresar:Sugerencias
+ADDRELATION (Func:Sugerencias) Verbo IF (0 Ser + Verbo) (*1 AdjetivosUsadosEnRecomendaciones BARRIER LimiteOracionSimple OR FiniteVerbForms OR GrupoNominal) (2 Que) TO (*3 Verbo + Subjuntivo BARRIER LimiteOracionSimple OR FiniteVerbForms);
+#LATEX T: Asigna la etiqueta R:Func:Sugerencias
 #LATEX E: Usted cree que va a \emph{ser importante} que le enseñen a sus nietos los dos idiomas 
 #LATEX D: NA.
   ## Usted cree que va a <ser importante> que le enseñen a sus nietos los dos idiomas
 
-ADDRELATION (Func:Expresar:Sugerencias) Verbo IF (0 Ser + Verbo) (*1 AdjetivosUsadosEnRecomendaciones BARRIER LimiteOracionSimple OR FiniteVerbForms OR GrupoNominal) TO (*2 Verbo + Infinitive BARRIER LimiteOracionSimple OR FiniteVerbForms LINK NOT 0 Ser);
-#LATEX T: Asigna la etiqueta R:Func:Expresar:Sugerencias
+ADDRELATION (Func:Sugerencias) Verbo IF (0 Ser + Verbo) (*1 AdjetivosUsadosEnRecomendaciones BARRIER LimiteOracionSimple OR FiniteVerbForms OR GrupoNominal) TO (*2 Verbo + Infinitive BARRIER LimiteOracionSimple OR FiniteVerbForms LINK NOT 0 Ser);
+#LATEX T: Asigna la etiqueta R:Func:Sugerencias
 #LATEX E: Ahorita mucha gente lo sabe hablar y \emph{es importante saber} comunicarte con otra gente
 #LATEX D: NA.
   ## Ahorita mucha gente lo sabe hablar y <es importante> saber comunicarte con otra gente
@@ -954,11 +964,11 @@ ADDRELATION (Func:Expresar:Sugerencias) Verbo IF (0 Ser + Verbo) (*1 AdjetivosUs
 #LATEXREM: Existen otros usos de necesitar, más parecidos a requerir como por ejemple (1)  [...] sería muy , muy interesante , pero por ejemplo para ese trabajo ``necesitas ser'' ciudadano , así que es ... es muy importante o (2) [...] yo estoy más que dispuesta a trabajar con usted nada más ``necesito estar'' en casa cuando AISD no tiene clases. Ambas oraciones muestran un uso que no está claro que sea un consejo o una recomendación, especialmente la primera. Ambas son necesidades, requerimientos externos o personales.
 
 #LATEX\section{Expresar objetivos y finalidades con ``para''}
-ADDRELATION (Func:Expresar:Finalidades) Prep IF (0 Para) (1 Verbo + Infinitive) TO (*2 Que BARRIER LimiteOracionSimple OR FiniteVerbForms LINK 1 Verbo + Subjuntivo);
-#LATEX T: R:Func:Expresar:Finalidades
+ADDRELATION (Func:Finalidades) Prep IF (0 Para) (1 Verbo + Infinitive) TO (*2 Que BARRIER LimiteOracionSimple OR FiniteVerbForms LINK 1 Verbo + Subjuntivo);
+#LATEX T: R:Func:Finalidades
 #LATEX E: (...) Yo crecí pensando que para orar o \emph{para pedirle a Dios que hiciera algo} (...)
 #LATEX D: NA.
-    # XXXXX: Yo crecí pensando que para orar o para <pedirle a Dios> que hiciera algo o para confesar mis pecados
+    # Yo crecí pensando que para orar o para <pedirle a Dios> que hiciera algo o para confesar mis pecados
 
 #LATEX\subsection{Estilo indirecto}
 
@@ -984,8 +994,12 @@ ADDRELATION (Func:Expresar:Finalidades) Prep IF (0 Para) (1 Verbo + Infinitive) 
     # ## NO CREER QUE XXX
     # no creo que esté bien <que se burlen 
 
-
-
+#LATEX\section{Expresar necesidades}
+ADDRELATION (Func:Necesidades) Verbo (0 NecesitarLema) TO (**1 SustantivosQueDenotanNecesidades + Nombre BARRIER LimiteOracionSimple OR FiniteVerbForms);
+ADDRELATION (Func:Necesidades) Verbo (0 NecesitarLema) (NOT 0 YaAnotadoComoNecesidad) (NOT -1 Que LINK -1 LoLiteral) TO (1 Infinitive);
+ADDRELATION (Func:Necesidades) LoLiteral (0 LoLiteral) (NOT 0 YaAnotadoComoNecesidad) (1 Que) TO (2 NecesitarLema + Verbo);
+ADDRELATION (Func:Necesidades) TuLiteral (0 TuLiteral) (NOT 0 YaAnotadoComoNecesidad) (1 QueConAcento) TO (2 NecesitarLema + Verbo);
+#XXX
 
 #LATEX\section{Expresar objetivos (con para que)}
     # Tú hiciste/Indi un esfuerzo para <que tus hijos continuaran/Subj> hablando el español 
@@ -1219,8 +1233,19 @@ ADDRELATION (Vocab:Fraseol:VerbPrep) Verbo IF  (0 ("empezar")) TO (*1 Prep BARRI
 
 ADDRELATION (Vocab:Fraseol:LocAdv) PorLiteral IF  (0 PorLiteral) TO (*1 DeODel BARRIER LimiteOracionSimple OR GrupoNominal OR Verbo LINK -1 MedioLiteral);
 # por medio de
+#LATEX T: R:Vocab:Fraseol:LocAdv
+#LATEX E: \emph{por medio de}  
+#LATEX D: NA.
 
-ADDRELATION (Vocab:Fraseol:LocAdv) UnDetLiteral TO (*1 PocoLema BARRIER LimiteOracionSimple OR GrupoNominal OR Verbo LINK 1C Adj);
+ADDRELATION (Vocab:Fraseol:LocAdv) UnDetLiteral TO (*1 PocoLema BARRIER LimiteOracionSimple OR GrupoNominal OR Verbo LINK 1C Adj OR Adverbio);
+#LATEX T: R:Vocab:Fraseol:LocAdv
+#LATEX E: \emph{un poco}  
+#LATEX D: Se trata del uso de ``un poco'' como unidad léxica que modifica a adjetivos o adverbios.
+
+ADDRELATION (Vocab:Fraseol:LocAdv) NadaLema TO (1 MasLiteral) (NOT 1 Adj);
+#LATEX T: R:Vocab:Fraseol:LocAdv
+#LATEX E: \emph{nada más}  
+#LATEX D: Use de ``nada más'' en el sentido de sólo. Recuerda al ``nomás'' oral.
 
 ##AFTER-SECTIONS
 

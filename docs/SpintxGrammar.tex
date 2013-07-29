@@ -47,7 +47,7 @@ More information on the Corpus to Classroom website:\\
 \chapter*{Introducción}
 Este documento describe el proceso de anotación de las transcripciones de los clips del corpus SPinTX (Spanish in Texas) con información pedagógica para facilitar el uso de los mismos en la enseñanza y el aprendizaje de español como lengua extranjera.
 
-DOCU 
+DOCU
 \part{Definición de LIST y SET}
 \chapter{LIST y SET basados en información morfosintáctica}
 \section{Categorías gramaticales}
@@ -64,6 +64,10 @@ Los ``templates'' son un tipo de entidad especial en CG3 que sirve para expresar
 \paragraph*{Rule}
 \fbox{
 \parbox{.9\linewidth}{\texttt{SUBSTITUTE ("por" Adverb ADV) ("por" Preposition PREP) TARGET ("por");}}
+}
+\paragraph*{Rule}
+\fbox{
+\parbox{.9\linewidth}{\texttt{SUBSTITUTE ("por" PDEL) ("por" Preposition PREP) TARGET ("por");}}
 }
 \chapter{Reglas para rectificar errores del análisis morfosintático}
 \paragraph*{Rule}
@@ -155,6 +159,10 @@ Los ``templates'' son un tipo de entidad especial en CG3 que sirve para expresar
 \paragraph*{Rule}
 \fbox{
 \parbox{.9\linewidth}{\texttt{SUBSTITUTE ("erar|ser" Verb VLfin Past Subj Plural 2nd\_or\_3rd) ("ser" Verb VSfin Imp Indi Plural 3rd) TARGET EranLiteral;}}
+}
+\paragraph*{Rule}
+\fbox{
+\parbox{.9\linewidth}{\texttt{SUBSTITUTE ("UNK" Noun NC) ("ser" Verb VSfin Imp Indi Sing 1st\_or\_3rd) TARGET EraMayusLiteral;}}
 }
 \begin{itemize}
 \item ETIQ: Cambia lectura de "eras" y "eran" de lema ambiguo entre erar y ser a sólo lema ser.
@@ -319,6 +327,50 @@ OBSERVACIÓN: Aunque es verdad que ``para'' puede ir seguida de un infinitivo pa
 \item DESC: NA.
 \end{itemize}
 
+\paragraph*{Rule}
+\fbox{
+\parbox{.9\linewidth}{\texttt{SUBSTITUTE ("y" Other ALFS) ("y" Conjunciton CC) TARGET ("<y>") OR ("<Y>");}}
+}
+\paragraph*{Rule}
+\fbox{
+\parbox{.9\linewidth}{\texttt{SUBSTITUTE ("Y" Other ALFS) ("y" Conjunciton CC) TARGET ("<y>") OR ("<Y>");}}
+}
+\paragraph*{Rule}
+\fbox{
+\parbox{.9\linewidth}{\texttt{SUBSTITUTE ("o" Other ALFS) ("o" Conjunciton CC) TARGET ("<o>") OR ("<O>");}}
+}
+\paragraph*{Rule}
+\fbox{
+\parbox{.9\linewidth}{\texttt{SUBSTITUTE ("O" Other ALFS) ("o" Conjunciton CC) TARGET ("<o>") OR ("<O>");}}
+}
+\paragraph*{Rule}
+\fbox{
+\parbox{.9\linewidth}{\texttt{SUBSTITUTE ("a" Other ALFS) ("a" Preposition PREP) TARGET ("<a>") OR ("<A>") (NOT 1 PalabraEnIngles);}}
+}
+\begin{itemize}
+\item ETIQ: TreeTagger asigna la lectura ALFS a palabras como ``y'', ``o'' o ``a''. Estas reglas lo reparan.
+\item EJEM: (...) \emph{y}, \emph{o}, \emph{a} ...
+\item DESC: Todavía quedan algunas letras sueltas que reciben esta etiqueta, pero no he seguido trabajando en ello porque son un número absoluto y relativo bastante bajo.
+\end{itemize}
+
+\paragraph*{Rule}
+\fbox{
+\parbox{.9\linewidth}{\texttt{SUBSTITUTE ("medio" Preposition PDEL) ("medio" Noun NC Singular Masc) TARGET MedioLiteral IF (-1 PorLiteral) (1 PrepContract);}}
+}
+\paragraph*{Rule}
+\fbox{
+\parbox{.9\linewidth}{\texttt{SUBSTITUTE ("medio" Adjective ADJ) ("medio" Determiner QU Singular Masc) TARGET MedioLiteral IF (1C Adj);}}
+}
+\paragraph*{Rule}
+\fbox{
+\parbox{.9\linewidth}{\texttt{SUBSTITUTE ("medio" Noun NC Singular) ("medio" Determiner QU Singular Masc) TARGET MedioLiteral IF (0C MedioLiteral) (NOT 0 DetQU) (*-2 DetCardinales OR UnDetLiteral BARRIER FiniteVerbForms OR Conjuncion OR LimiteOracionSimple) (-1 YLiteral);}}
+}
+\begin{itemize}
+\item ETIQ: Pasa de PDEL a NC a ``medio''. O de NC a QU, según los contextos.
+\item EJEM: (...) \emph{un año y medio}, lo hice \emph{por medio de} su hermana ...
+\item DESC: TreeTagger asigna lecturas curiosas a ``medio''. Entre ellas PDEL en ``por medio de'' o nombre en expresiones como ``un año y medio''. Escribo un pare de reglas para cambiar esto, pero la verdad es que medio es una de esas palabras complicadas a la que cabría prestar atención (junto con el resto de determinantes y los llamados adjetivos pronominales, porque tiene un comportamiento peculiar).
+\end{itemize}
+
 \part{Secciones principales}
 Las reglas de identificación de fenómenmos pedagógicos están ordenadas de más concretas a más generales. Así, por ejemplo, se detectan primero, cuando es posible, los distintos usos de \emph{para} (opinión, intención, destino, etc. como \emph{@Gram:Prep:Para:Opinion}...) y luego se marcan como simplemente \emph{@Gram:Prep:Para} el resto de ocurrencias de \emph{para}. Luego, se hace lo propio con otras preposiciones, hasta el punto que si para una preposición no hay reglas especiales, sus ocurrencias se marcan simplemente como \emph{@Gram:Prep}.
 
@@ -447,12 +499,50 @@ Identificaremos los usos de los artículos definidos \emph{el, la, los, las}, y 
 
 \paragraph*{Rule}
 \fbox{
-\parbox{.9\linewidth}{\texttt{ADDRELATION (Gram:Det:DetCombi) (Determiner) IF (0 DetAllIncluded) TO (1 ListaDeDeterminantesSegurosSiNoEstanEnMasc OR DemasLiteral OR OtroLema LINK NOT 0 Adverbio);}}
+\parbox{.9\linewidth}{\texttt{ADD (@Gram:Det:Pron) DetQU IF (0 AlgoLema) (NOT 1 Adj OR AdvIntensificadorAdjetivos);}}
+}
+\paragraph*{Rule}
+\fbox{
+\parbox{.9\linewidth}{\texttt{ADD (@Gram:Det:Pron) DetQU IF (0 NadaLema) (NOT 1 Adj OR AdvIntensificadorAdjetivos);}}
+}
+\paragraph*{Rule}
+\fbox{
+\parbox{.9\linewidth}{\texttt{ADD (@Gram:Det:Pron) DetQU IF (0 AlgoLema OR NadaLema) (1C Adj);}}
 }
 \begin{itemize}
-\item ETIQ: Asigna @Gram:Det:DetCombi
+\item ETIQ: Asigna @Gram:Det:Pron
+ E: 
+\item DESC: Se aplica a varios usos de ``nada'' y ``algo'', que demuestran que tiene un comportamiento esencialmente pronominal, porque nunca pueden aparecer modificando a un sustantivo.
+\end{itemize}
+
+\paragraph*{Rule}
+\fbox{
+\parbox{.9\linewidth}{\texttt{ADDRELATION (Gram:Det:Combi) (Determiner) IF (0 DetAllIncluded) TO (1 ListaDeDeterminantesSegurosSiNoEstanEnMasc OR DemasLiteral OR OtroLema LINK NOT 0 Adverbio);}}
+}
+\begin{itemize}
+\item ETIQ: Asigna @Gram:Det:Combi
 \item EJEM: (...) \emph{las demás} mamás que estaban fuera, eran como si fueran nuestras propias madres.
 \item DESC: Se aplica sobre combinaciones de determinantes
+\end{itemize}
+
+\paragraph*{Rule}
+\fbox{
+\parbox{.9\linewidth}{\texttt{ADDRELATION (Gram:Det:Combi) (Determiner) IF (0 TodosYTodasLiteral OR TodoYTodaLiteral) TO (1 DetAllIncluded);}}
+}
+\begin{itemize}
+\item ETIQ: Asigna @Gram:Det:Combi
+\item EJEM: Mi papá mudaba todas las cosas, \emph{todos los} muebles los ponía en el barco (...)
+\item DESC: Se aplica sobre combinaciones de determinantes
+\end{itemize}
+
+\paragraph*{Rule}
+\fbox{
+\parbox{.9\linewidth}{\texttt{ADD (@Gram:Det:TodoEsp) (Determiner) IF (0 Todo) (NOT 1 DetAllIncludedNoPosPlural OR Prep OR FiniteVerbForms OR Adverbio OR LimiteOracionSimple OR Puntuacion OR SeLiteral);}}
+}
+\begin{itemize}
+\item ETIQ: Asigna @Gram:Det:TodoEsp
+ E: 
+\item DESC: No se aplica si va seguido de determinante, verbo conjugado o preposición porque entonces se trata de otro tipo de uso (seguramente el pronominal, como en ``se quebró todo'' o el pre-especificador, como en ``se comió todo el arroz'')
 \end{itemize}
 
 \chapter{Género gramatical y artículos}
@@ -1081,40 +1171,40 @@ REM: Esta regla utiliza el operador ``T:''. Esta ``T'' indica que los que sigue 
 \subsection{Expresar recomendaciones y sugerencias}
 \paragraph*{Rule}
 \fbox{
-\parbox{.9\linewidth}{\texttt{ADDRELATION (Func:Expresar:Sugerencias) Verbo IF (0 VerbosExpresarRecomendaciones) (1 Que) TO (*2 Verbo + Subjuntivo BARRIER LimiteOracionSimple OR FiniteVerbForms);}}
+\parbox{.9\linewidth}{\texttt{ADDRELATION (Func:Sugerencias) Verbo IF (0 VerbosExpresarRecomendaciones) (1 Que) TO (*2 Verbo + Subjuntivo BARRIER LimiteOracionSimple OR FiniteVerbForms);}}
 }
 \begin{itemize}
-\item ETIQ: Asigna la etiqueta R:Func:Expresar:Sugerencias
+\item ETIQ: Asigna la etiqueta R:Func:Sugerencias
 \item EJEM: el médico les dice que él \emph{sugiere que apaguen} la máquina de  
 \item DESC: NA.
 \end{itemize}
 
 \paragraph*{Rule}
 \fbox{
-\parbox{.9\linewidth}{\texttt{ADDRELATION (Func:Expresar:Sugerencias) Verbo IF (0 VerbosExpresarRecomendaciones + 2aPers OR VerbosExpresarRecomendaciones + 3aPers) TO (1 Verbo + Infinitive);}}
+\parbox{.9\linewidth}{\texttt{ADDRELATION (Func:Sugerencias) Verbo IF (0 VerbosExpresarRecomendaciones + 2aPers OR VerbosExpresarRecomendaciones + 3aPers) TO (1 Verbo + Infinitive);}}
 }
 \begin{itemize}
-\item ETIQ: Asigna la etiqueta R:Func:Expresar:Sugerencias
+\item ETIQ: Asigna la etiqueta R:Func:Sugerencias
 \item EJEM: mis amigos también fueron muy conscientes de que \emph{necesitaban hablar} un poquito más lento cuando estaban conmigo 
 \item DESC: NA.
 \end{itemize}
 
 \paragraph*{Rule}
 \fbox{
-\parbox{.9\linewidth}{\texttt{ADDRELATION (Func:Expresar:Sugerencias) Verbo IF (0 Ser + Verbo) (*1 AdjetivosUsadosEnRecomendaciones BARRIER LimiteOracionSimple OR FiniteVerbForms OR GrupoNominal) (2 Que) TO (*3 Verbo + Subjuntivo BARRIER LimiteOracionSimple OR FiniteVerbForms);}}
+\parbox{.9\linewidth}{\texttt{ADDRELATION (Func:Sugerencias) Verbo IF (0 Ser + Verbo) (*1 AdjetivosUsadosEnRecomendaciones BARRIER LimiteOracionSimple OR FiniteVerbForms OR GrupoNominal) (2 Que) TO (*3 Verbo + Subjuntivo BARRIER LimiteOracionSimple OR FiniteVerbForms);}}
 }
 \begin{itemize}
-\item ETIQ: Asigna la etiqueta R:Func:Expresar:Sugerencias
+\item ETIQ: Asigna la etiqueta R:Func:Sugerencias
 \item EJEM: Usted cree que va a \emph{ser importante} que le enseñen a sus nietos los dos idiomas 
 \item DESC: NA.
 \end{itemize}
 
 \paragraph*{Rule}
 \fbox{
-\parbox{.9\linewidth}{\texttt{ADDRELATION (Func:Expresar:Sugerencias) Verbo IF (0 Ser + Verbo) (*1 AdjetivosUsadosEnRecomendaciones BARRIER LimiteOracionSimple OR FiniteVerbForms OR GrupoNominal) TO (*2 Verbo + Infinitive BARRIER LimiteOracionSimple OR FiniteVerbForms LINK NOT 0 Ser);}}
+\parbox{.9\linewidth}{\texttt{ADDRELATION (Func:Sugerencias) Verbo IF (0 Ser + Verbo) (*1 AdjetivosUsadosEnRecomendaciones BARRIER LimiteOracionSimple OR FiniteVerbForms OR GrupoNominal) TO (*2 Verbo + Infinitive BARRIER LimiteOracionSimple OR FiniteVerbForms LINK NOT 0 Ser);}}
 }
 \begin{itemize}
-\item ETIQ: Asigna la etiqueta R:Func:Expresar:Sugerencias
+\item ETIQ: Asigna la etiqueta R:Func:Sugerencias
 \item EJEM: Ahorita mucha gente lo sabe hablar y \emph{es importante saber} comunicarte con otra gente
 \item DESC: NA.
 \end{itemize}
@@ -1123,10 +1213,10 @@ REM: Existen otros usos de necesitar, más parecidos a requerir como por ejemple
 \section{Expresar objetivos y finalidades con ``para''}
 \paragraph*{Rule}
 \fbox{
-\parbox{.9\linewidth}{\texttt{ADDRELATION (Func:Expresar:Finalidades) Prep IF (0 Para) (1 Verbo + Infinitive) TO (*2 Que BARRIER LimiteOracionSimple OR FiniteVerbForms LINK 1 Verbo + Subjuntivo);}}
+\parbox{.9\linewidth}{\texttt{ADDRELATION (Func:Finalidades) Prep IF (0 Para) (1 Verbo + Infinitive) TO (*2 Que BARRIER LimiteOracionSimple OR FiniteVerbForms LINK 1 Verbo + Subjuntivo);}}
 }
 \begin{itemize}
-\item ETIQ: R:Func:Expresar:Finalidades
+\item ETIQ: R:Func:Finalidades
 \item EJEM: (...) Yo crecí pensando que para orar o \emph{para pedirle a Dios que hiciera algo} (...)
 \item DESC: NA.
 \end{itemize}
@@ -1134,6 +1224,23 @@ REM: Existen otros usos de necesitar, más parecidos a requerir como por ejemple
 \subsection{Estilo indirecto}
 \subsection{Expresando opiniones}
 \section{Expresar opiniones, dudas}
+\section{Expresar necesidades}
+\paragraph*{Rule}
+\fbox{
+\parbox{.9\linewidth}{\texttt{ADDRELATION (Func:Necesidades) Verbo (0 NecesitarLema) TO (**1 SustantivosQueDenotanNecesidades + Nombre BARRIER LimiteOracionSimple OR FiniteVerbForms);}}
+}
+\paragraph*{Rule}
+\fbox{
+\parbox{.9\linewidth}{\texttt{ADDRELATION (Func:Necesidades) Verbo (0 NecesitarLema) (NOT 0 YaAnotadoComoNecesidad) (NOT -1 Que LINK -1 LoLiteral) TO (1 Infinitive);}}
+}
+\paragraph*{Rule}
+\fbox{
+\parbox{.9\linewidth}{\texttt{ADDRELATION (Func:Necesidades) LoLiteral (0 LoLiteral) (NOT 0 YaAnotadoComoNecesidad) (1 Que) TO (2 NecesitarLema + Verbo);}}
+}
+\paragraph*{Rule}
+\fbox{
+\parbox{.9\linewidth}{\texttt{ADDRELATION (Func:Necesidades) TuLiteral (0 TuLiteral) (NOT 0 YaAnotadoComoNecesidad) (1 QueConAcento) TO (2 NecesitarLema + Verbo);}}
+}
 \section{Expresar objetivos (con para que)}
 OBSERVACIÓN: Oración sacada del corpus. 45388:  que viene a vivir a ? . ¿ Qué le <recomendaría> a un hispano que viene a vivir a o a (...) . Esta frase anterior no es la misma construcción (que la de los deseos con sjubjuntivo) porque el que ``viene a vivir'' es una adjetival de hispano, no una subordinada de recomendar.
 
@@ -1371,6 +1478,10 @@ Incluímos aquí expresiones que mezclan palabras en ambas lenguas, en este caso
 \item DESC: Anota secuencias de un verbo seguid de una o más palabras en inglés. Por ahora lo limitamos a ser, hacer, decir y comer porque TreeTagger anota como verbo algunas palabras que no lo son y no queremos generar ruido para los usuarios.
 \end{itemize}
 
+\paragraph*{Rule}
+\fbox{
+\parbox{.9\linewidth}{\texttt{ADDRELATION (Herit:Contacto:Mixtas) (Determiner) IF (0 DetAllIncluded) TO (**1 PalabraEnIngles BARRIER PalabraEnEspanol);}}
+}
 \section{Usos de inidicativo dónde se esperaría subjuntivo (en español estándard)}
 OBSERVACIÓN: Sección en proceso de implementación.
 
@@ -1391,7 +1502,19 @@ OBSERVACIÓN: Sección en proceso de implementación.
 }
 \paragraph*{Rule}
 \fbox{
+\parbox{.9\linewidth}{\texttt{ADDRELATION (Vocab:Entities:Geo) Nombre IF  (0 ("<Rancho>")) TO (1 ("<Viejo>"));}}
+}
+\paragraph*{Rule}
+\fbox{
 \parbox{.9\linewidth}{\texttt{ADDRELATION (Vocab:Entities:Geo) Adj IF  (0 ("<Buenos>")) TO (1 ("<Aires>"));}}
+}
+\paragraph*{Rule}
+\fbox{
+\parbox{.9\linewidth}{\texttt{ADDRELATION (Vocab:Entities:Geo) Nombre IF  (0 ("<Río>")) TO (1 ("<Grande>") LINK NOT 1 ("<City>")) ;}}
+}
+\paragraph*{Rule}
+\fbox{
+\parbox{.9\linewidth}{\texttt{ADDRELATION (Vocab:Entities:Geo) Nombre IF  (0 ("<Río>")) TO (2 ("<City>") LINK -1 ("<Grande>") ) ;}}
 }
 \begin{itemize}
 \item ETIQ: R:Vocab:Entities:Geo
@@ -1425,10 +1548,32 @@ OBSERVACIÓN: Sección en proceso de implementación.
 \fbox{
 \parbox{.9\linewidth}{\texttt{ADDRELATION (Vocab:Fraseol:LocAdv) PorLiteral IF  (0 PorLiteral) TO (*1 DeODel BARRIER LimiteOracionSimple OR GrupoNominal OR Verbo LINK -1 MedioLiteral);}}
 }
+\begin{itemize}
+\item ETIQ: R:Vocab:Fraseol:LocAdv
+\item EJEM: \emph{por medio de}  
+\item DESC: NA.
+\end{itemize}
+
 \paragraph*{Rule}
 \fbox{
-\parbox{.9\linewidth}{\texttt{ADDRELATION (Vocab:Fraseol:LocAdv) UnDetLiteral TO (*1 PocoLema BARRIER LimiteOracionSimple OR GrupoNominal OR Verbo LINK 1C Adj);}}
+\parbox{.9\linewidth}{\texttt{ADDRELATION (Vocab:Fraseol:LocAdv) UnDetLiteral TO (*1 PocoLema BARRIER LimiteOracionSimple OR GrupoNominal OR Verbo LINK 1C Adj OR Adverbio);}}
 }
+\begin{itemize}
+\item ETIQ: R:Vocab:Fraseol:LocAdv
+\item EJEM: \emph{un poco}  
+\item DESC: Se trata del uso de ``un poco'' como unidad léxica que modifica a adjetivos o adverbios.
+\end{itemize}
+
+\paragraph*{Rule}
+\fbox{
+\parbox{.9\linewidth}{\texttt{ADDRELATION (Vocab:Fraseol:LocAdv) NadaLema TO (1 MasLiteral) (NOT 1 Adj);}}
+}
+\begin{itemize}
+\item ETIQ: R:Vocab:Fraseol:LocAdv
+\item EJEM: \emph{nada más}  
+\item DESC: Use de ``nada más'' en el sentido de sólo. Recuerda al ``nomás'' oral.
+\end{itemize}
+
 \part{Comentarios y observaciones}
 \chapter{Retos en la identificación de ``no''-palabras}
 DOC En ocasiones los hablantes bilingües utilizan palabras que no forma parte de ningún diccionario estándar (en un proceso muy parecido al que realizan los y las aprendices de una segunda lengua). Por ejemplo, en nuestro corpus tenemos a un hablante que dice ``trato de hablar mucho con mis primos me tartudeo (sic) poquito''. Claramente la palabra que quiere utilizar es ``tartajeo'' o ``tartamudeo'', pero le sale otra. Una búsqueda rápida en Google me confirma que algunos pocos hablantes de español usan esta mimsa palabra. En todo caso, es un reto identificar que hay un proceso creativo de formación verbal ``tartadear'' y, por tanto, ``tartadeo''. 

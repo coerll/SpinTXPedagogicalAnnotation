@@ -1,6 +1,12 @@
 Change log
 ==========
 
+JULY 29
+-------
+- Added rules to handle Func:Necesidades
+- Added some more rules for algo and nada
+- Added some more rules to post-edit some of TreeTagger's decisions
+
 JULY 23
 -------
 - New rules annotating code switching
