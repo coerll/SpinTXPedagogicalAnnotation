@@ -371,6 +371,26 @@ OBSERVACIÓN: Aunque es verdad que ``para'' puede ir seguida de un infinitivo pa
 \item DESC: TreeTagger asigna lecturas curiosas a ``medio''. Entre ellas PDEL en ``por medio de'' o nombre en expresiones como ``un año y medio''. Escribo un pare de reglas para cambiar esto, pero la verdad es que medio es una de esas palabras complicadas a la que cabría prestar atención (junto con el resto de determinantes y los llamados adjetivos pronominales, porque tiene un comportamiento peculiar).
 \end{itemize}
 
+\paragraph*{Rule}
+\fbox{
+\parbox{.9\linewidth}{\texttt{SUBSTITUTE ("material" Adjective ADJ Plural) ("material" Noun NC Plural Masc) TARGET ("<materiales>"i) IF (-1 DetAllIncluded) (1 Adj + PL);}}
+}
+\begin{itemize}
+\item ETIQ: Asigna lectura Noun a ``materiales'' en lugar de la adjetivo.
+\item EJEM: (...) \emph{un año y medio}, lo hice \emph{por medio de} su hermana ...
+\item DESC: En contextos en que materiales va precedido por un determinante y seguido de un Adjetivo en plural.
+\end{itemize}
+
+\paragraph*{Rule}
+\fbox{
+\parbox{.9\linewidth}{\texttt{SUBSTITUTE ("gracias" Preposition PREP) ("gracia" Noun NC Plural Fem) TARGET ("<gracias>"i);}}
+}
+\begin{itemize}
+\item ETIQ: Asigna lectura Noun a ``gracias'' incluso si format parte de la locución ``gracias a''.
+\item EJEM: \emph{gracias a} Dios, \emph{gracias a} la tecnología
+\item DESC: Que la locución ``gracias a'' sea prepositiva (o preposicional) no signigica que sus elementos sean todos preposiciones. Esto va contra las reglas de composición de expresiones (lexicalizadas o no) del lenguaje.
+\end{itemize}
+
 \part{Secciones principales}
 Las reglas de identificación de fenómenmos pedagógicos están ordenadas de más concretas a más generales. Así, por ejemplo, se detectan primero, cuando es posible, los distintos usos de \emph{para} (opinión, intención, destino, etc. como \emph{@Gram:Prep:Para:Opinion}...) y luego se marcan como simplemente \emph{@Gram:Prep:Para} el resto de ocurrencias de \emph{para}. Luego, se hace lo propio con otras preposiciones, hasta el punto que si para una preposición no hay reglas especiales, sus ocurrencias se marcan simplemente como \emph{@Gram:Prep}.
 
@@ -1229,18 +1249,158 @@ REM: Existen otros usos de necesitar, más parecidos a requerir como por ejemple
 \fbox{
 \parbox{.9\linewidth}{\texttt{ADDRELATION (Func:Necesidades) Verbo (0 NecesitarLema) TO (**1 SustantivosQueDenotanNecesidades + Nombre BARRIER LimiteOracionSimple OR FiniteVerbForms);}}
 }
+\begin{itemize}
+\item ETIQ: R:Func:Necesidades
+\item EJEM: si \emph{necesitan ayuda} en algo
+\item DESC: NA
+\end{itemize}
+
 \paragraph*{Rule}
 \fbox{
-\parbox{.9\linewidth}{\texttt{ADDRELATION (Func:Necesidades) Verbo (0 NecesitarLema) (NOT 0 YaAnotadoComoNecesidad) (NOT -1 Que LINK -1 LoLiteral) TO (1 Infinitive);}}
+\parbox{.9\linewidth}{\texttt{ADDRELATION (Func:Necesidades) LoLiteral (0 LoLiteral) (NOT 0 YaAnotadoComoNecesidad) (1 Que) TO (2 NecesitarLema + Verbo); }}
+}
+\begin{itemize}
+\item ETIQ: R:Func:Necesidades
+\item EJEM: \emph{lo que necesitaba} yo para
+\item DESC: NA
+\end{itemize}
+
+\paragraph*{Rule}
+\fbox{
+\parbox{.9\linewidth}{\texttt{ADDRELATION (Func:Necesidades) TuLiteral (0 TuLiteral) (NOT 0 YaAnotadoComoNecesidad) (1 QueConAcento) TO (2 NecesitarLema + Verbo); }}
+}
+\begin{itemize}
+\item ETIQ: R:Func:Necesidades
+\item EJEM: \emph{tú qué necesitas}, muchachita
+\item DESC: NA
+\end{itemize}
+
+\paragraph*{Rule}
+\fbox{
+\parbox{.9\linewidth}{\texttt{ADDRELATION (Func:Necesidades) Verbo (0 NecesitarLema) (NOT 0 YaAnotadoComoNecesidad) (1 APrep) TO (*2 DetAllIncluded OR NombrePropio OR Dios BARRIER LimiteOracionSimple OR FiniteVerbForms LINK NOT 0 Articulo);  }}
+}
+\begin{itemize}
+\item ETIQ: R:Func:Necesidades
+\item EJEM: \emph{necesito a Jill} en mi vida.
+\item DESC: NA
+\end{itemize}
+
+\paragraph*{Rule}
+\fbox{
+\parbox{.9\linewidth}{\texttt{ADDRELATION (Func:Necesidades) Verbo (0 NecesitarLema) (NOT 0 YaAnotadoComoNecesidad) (1 APrep) TO (*2 DetAllIncluded BARRIER LimiteOracionSimple OR FiniteVerbForms OR Prep LINK 1 Sustantivo);}}
+}
+\begin{itemize}
+\item ETIQ: R:Func:Necesidades
+\item EJEM: \emph{necesito a un profesor} de inglés.
+\item DESC: NA
+\end{itemize}
+
+\paragraph*{Rule}
+\fbox{
+\parbox{.9\linewidth}{\texttt{ADDRELATION (Func:Necesidades) Verbo (0 NecesitarLema) (NOT 0 YaAnotadoComoNecesidad) TO (*1 DetAllIncluded BARRIER LimiteOracionSimple OR FiniteVerbForms OR Prep LINK 1 Sustantivo); }}
+}
+\begin{itemize}
+\item ETIQ: R:Func:Necesidades
+\item EJEM: ellos \emph{necesitan las persona} a su lado y
+\item EJEM: \emph{necesitas resolver tus problemas}.
+\item DESC: NA
+\end{itemize}
+
+\paragraph*{Rule}
+\fbox{
+\parbox{.9\linewidth}{\texttt{ADDRELATION (Func:Necesidades) Verbo (0 Ser) TO (**1 NecesarioLema BARRIER LimiteOracionSimple OR FiniteVerbForms OR Prep); }}
+}
+\begin{itemize}
+\item ETIQ: R:Func:Necesidades
+\item EJEM: (no) \emph{es algo muy necesario}
+\item DESC: NA
+\end{itemize}
+
+\paragraph*{Rule}
+\fbox{
+\parbox{.9\linewidth}{\texttt{ADDRELATION (Func:Necesidades) (Determiner) (0 DetAllIncluded) (1 Sustantivo) TO (2 NecesarioLema);}}
+}
+\begin{itemize}
+\item ETIQ: R:Func:Necesidades
+\item EJEM: \emph{los materiales necesarios}
+\item DESC: NA
+\end{itemize}
+
+\paragraph*{Rule}
+\fbox{
+\parbox{.9\linewidth}{\texttt{ADDRELATION (Func:Agradecer) (Determiner) (0 MuchoLema) (1 Gracia + PL) TO (2 Por);}}
+}
+\begin{itemize}
+\item ETIQ: R:Func:Agradecer
+\item EJEM: \emph{muchas gracias por}
+\item DESC: NA
+\end{itemize}
+
+\paragraph*{Rule}
+\fbox{
+\parbox{.9\linewidth}{\texttt{ADDRELATION (Func:Agradecer) (Determiner) (0 MuchoLema) (1 Gracia + PL) (2 PuntuacionComa) TO (3 NombrePropio);}}
+}
+\begin{itemize}
+\item ETIQ: R:Func:Agradecer
+\item EJEM: \emph{muchas gracias, Sabrina}
+\item DESC: NA
+\end{itemize}
+
+\paragraph*{Rule}
+\fbox{
+\parbox{.9\linewidth}{\texttt{ADDRELATION (Func:Agradecer) Nombre (0 Gracia + PL) (1 APrep) TO (2 NombrePropio OR PronPersFuerte OR Dios);}}
+}
+\begin{itemize}
+\item ETIQ: R:Func:Agradecer
+\item EJEM: \emph{gracias a Dios}, \emph{gracias a él}
+\item DESC: NA
+\end{itemize}
+
+\paragraph*{Rule}
+\fbox{
+\parbox{.9\linewidth}{\texttt{ADDRELATION (Func:Agradecer) Nombre (0 Gracia + PL) TO (1 APrep LINK T:SintagmaNominalHaciaLaIzda);}}
+}
+\begin{itemize}
+\item ETIQ: R:Func:Agradecer
+\item EJEM: \emph{gracias a la tecnología}
+\item DESC: NA
+\end{itemize}
+
+\paragraph*{Rule}
+\fbox{
+\parbox{.9\linewidth}{\texttt{ADDRELATION (Func:Agradecer) Verbo (0 DarLema + Verbo) TO (**1 Gracia + PL BARRIER LimiteOracionSimple OR FiniteVerbForms OR Prep);}}
+}
+\begin{itemize}
+\item ETIQ: R:Func:Agradecer
+\item EJEM: \emph{damos las gracias}, \emph{darle gracias}
+\item DESC: NA
+\end{itemize}
+
+\paragraph*{Rule}
+\fbox{
+\parbox{.9\linewidth}{\texttt{ADDRELATION (Func:Agradecer) LeLema (0 LeLema) (1 AgradecerLema + Verbo) TO (1 MuchoLema);}}
+}
+\begin{itemize}
+\item ETIQ: R:Func:Agradecer
+\item EJEM: \emph{le agradezco mucho} a ella
+\item DESC: NA
+\end{itemize}
+
+\paragraph*{Rule}
+\fbox{
+\parbox{.9\linewidth}{\texttt{ADDRELATION (Func:Agradecer) PronPersFuerte (0 PronPersFuerte) (1 AgradecerLema + Verbo) TO (2 ArtPronDemo);}}
 }
 \paragraph*{Rule}
 \fbox{
-\parbox{.9\linewidth}{\texttt{ADDRELATION (Func:Necesidades) LoLiteral (0 LoLiteral) (NOT 0 YaAnotadoComoNecesidad) (1 Que) TO (2 NecesitarLema + Verbo);}}
+\parbox{.9\linewidth}{\texttt{ADDRELATION (Func:Agradecer) Verbo (0 AgradecerLema + Gerundio) TO (**2 Que BARRIER LimiteOracionSimple OR FiniteVerbForms OR Prep LINK -1 LoLiteral);}}
 }
-\paragraph*{Rule}
-\fbox{
-\parbox{.9\linewidth}{\texttt{ADDRELATION (Func:Necesidades) TuLiteral (0 TuLiteral) (NOT 0 YaAnotadoComoNecesidad) (1 QueConAcento) TO (2 NecesitarLema + Verbo);}}
-}
+\begin{itemize}
+\item ETIQ: R:Func:Agradecer
+\item EJEM: \emph{yo agradezco eso}
+\item EJEM: \emph{agradeciendo lo que tienes}
+\item DESC: NA
+\end{itemize}
+
 \section{Expresar objetivos (con para que)}
 OBSERVACIÓN: Oración sacada del corpus. 45388:  que viene a vivir a ? . ¿ Qué le <recomendaría> a un hispano que viene a vivir a o a (...) . Esta frase anterior no es la misma construcción (que la de los deseos con sjubjuntivo) porque el que ``viene a vivir'' es una adjetival de hispano, no una subordinada de recomendar.
 
@@ -1358,20 +1518,10 @@ Véase \url{http://www.cs.famaf.unc.edu.ar/~laura/shallowdisc4summ/index.html}.
 
 \paragraph*{Rule}
 \fbox{
-\parbox{.9\linewidth}{\texttt{ADDRELATION (Prag:MarcadoresDisc:Causa) Gracia (0 PL) (NOT 2 Dios) TO (1 APrep);}}
+\parbox{.9\linewidth}{\texttt{ADDRELATION (Prag:MarcadoresDisc:Causa) Nombre (0 Gracia + PL) TO (1 APrep);}}
 }
 \begin{itemize}
 \item ETIQ: R:Prag:MarcadoresDisc:Causa (relación entre el primer i el último elemento de la locución)
-\item DESC: [Espacio para describir con palabras lo que hace la regla.]
-\end{itemize}
-
-\paragraph*{Rule}
-\fbox{
-\parbox{.9\linewidth}{\texttt{ADDRELATION (Prag:MarcadoresDisc:Causa) Gracia (0 PL) (1 APrep) TO (2 Dios);}}
-}
-\begin{itemize}
-\item ETIQ: R:Prag:MarcadoresDisc:Causa (relación entre el primer i el último elemento de la locución)
-\item EJEM: y de ahí fui a la ceremonia y \emph{gracias a dios} me hice ciudadano
 \item DESC: [Espacio para describir con palabras lo que hace la regla.]
 \end{itemize}
 
