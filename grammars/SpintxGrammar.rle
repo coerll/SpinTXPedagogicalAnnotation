@@ -37,6 +37,7 @@ LIST PronombrePersonal = (PPX);
 LIST DetAllByPOS = (ART) (DM) (PPO) ("alguno" QU); # habrá que refinar la definición, p.e., incluye palabras como mío, mía, míos, que claramente son adjetivos y no determinantes (esto viene de TreeTagger)
 LIST DetQU = (Determiner QU); #
 LIST Sustantivo = (NC) (NP) (NMEA) (NMON) ;
+LIST NombrePropio = (NP);
 LIST Articulo = (ART);
 LIST Conjuncion = (Conjunction);
 SET AdjOrPart = Adj OR Part ;
@@ -54,6 +55,7 @@ LIST Imperativo = (Command);
 LIST LimiteOracionSimple = (CC) (CCAD) (CSUBX) (CSUBF) (CQUE) (CSUBI) ; # habrá que refinar la definición
 LIST Puntuacion = (Punctuation);
 LIST DetCardinales = (CARD);
+LIST PuntuacionComa = (Punctuation CM);
 
 #LATEX\section{Rasgos morfosintácticos}
 ## LIST MORPH FEATURES VERBS
@@ -151,6 +153,11 @@ LIST NadaLema = ("nada");
 LIST AdvIntensificadorAdjetivos = ("muy") ("más") ("tan");
 LIST SustantivosQueDenotanNecesidades = ("descanso") ("ayuda") ("baño") ("automóvil") ("leche") ("comida") ("hora") ("tiempo") ("día") ("año") ("dinero") ("plata");
 LIST NecesitarLema = ("necesitar");
+LIST NecesarioLema = ("necesario");
+LIST MuchoLema = ("mucho");
+LIST DarLema = ("dar");
+LIST AgradecerLema = ("agradecer");
+
 #LATEX\section{Los SET}
 SET BuenoOMalo = Bueno OR Malo;
 SET PorOPara = Por OR Para;
@@ -253,6 +260,7 @@ SET EstoEsoAquello = EstoLiteral OR EsoLiteral OR AquelloLiteral;
 LIST GramPrep = (@Gram:Prep:Por) (@Gram:Prep:Por:Locuciones) (@Gram:Prep:Para) (@Gram:Prep:Para:Opinion) (@Gram:Prep:Para:Destinatario) (@Gram:Prep:Para:Habilidad);
 LIST GramPron = (@Gram:Pron:Otros) (@Gram:Pron:ObjetoDoble);
 LIST YaAnotadoComoNecesidad = (R:Func:Necesidades);
+##("<(.*)(ar|er|ir|ír)>"r)
 
 #LATEX\chapter{Definiciones de \emph{templates}}
 
@@ -262,6 +270,7 @@ TEMPLATE VP-VerbosExpresarDeseos = (0 VerbosExpresarDeseos) OR (0 VerbosExpresar
 TEMPLATE IniciadoresDeSubordinadasConQue = (1 Que) OR (1 Adverbio LINK 1 Que) OR (1 MejorLiteral LINK 1 Que);
 TEMPLATE SintagmaNominal-Y-O-Clitico = (-1 Sustantivo OR Adj LINK -1 DetAllIncluded) OR (-1 PronombresCliticosTODOS OR SeLiteral);
 TEMPLATE SintagmaPreposicional = (-1 Sustantivo LINK -1 DetAllIncluded LINK -1 Prep) OR (-1 Sustantivo LINK -1 Prep);
+TEMPLATE SintagmaNominalHaciaLaIzda = (1 DetAllIncluded LINK 1 Sustantivo OR Adj) OR (1 DetAllIncluded LINK 1 Adj LINK 1 Sustantivo);
 
 #LATEX\part{Secciones previas}
 BEFORE-SECTIONS
@@ -406,6 +415,16 @@ SUBSTITUTE ("medio" Noun NC Singular) ("medio" Determiner QU Singular Masc) TARG
 #LATEX T: Pasa de PDEL a NC a ``medio''. O de NC a QU, según los contextos.
 #LATEX E: (...) \emph{un año y medio}, lo hice \emph{por medio de} su hermana ...
 #LATEX D: TreeTagger asigna lecturas curiosas a ``medio''. Entre ellas PDEL en ``por medio de'' o nombre en expresiones como ``un año y medio''. Escribo un pare de reglas para cambiar esto, pero la verdad es que medio es una de esas palabras complicadas a la que cabría prestar atención (junto con el resto de determinantes y los llamados adjetivos pronominales, porque tiene un comportamiento peculiar).
+
+SUBSTITUTE ("material" Adjective ADJ Plural) ("material" Noun NC Plural Masc) TARGET ("<materiales>"i) IF (-1 DetAllIncluded) (1 Adj + PL);
+#LATEX T: Asigna lectura Noun a ``materiales'' en lugar de la adjetivo.
+#LATEX E: (...) \emph{un año y medio}, lo hice \emph{por medio de} su hermana ...
+#LATEX D: En contextos en que materiales va precedido por un determinante y seguido de un Adjetivo en plural.
+
+SUBSTITUTE ("gracias" Preposition PREP) ("gracia" Noun NC Plural Fem) TARGET ("<gracias>"i);
+#LATEX T: Asigna lectura Noun a ``gracias'' incluso si format parte de la locución ``gracias a''.
+#LATEX E: \emph{gracias a} Dios, \emph{gracias a} la tecnología
+#LATEX D: Que la locución ``gracias a'' sea prepositiva (o preposicional) no signigica que sus elementos sean todos preposiciones. Esto va contra las reglas de composición de expresiones (lexicalizadas o no) del lenguaje.
 
 #LATEX\part{Secciones principales}
 
@@ -995,11 +1014,86 @@ ADDRELATION (Func:Finalidades) Prep IF (0 Para) (1 Verbo + Infinitive) TO (*2 Qu
     # no creo que esté bien <que se burlen 
 
 #LATEX\section{Expresar necesidades}
+
 ADDRELATION (Func:Necesidades) Verbo (0 NecesitarLema) TO (**1 SustantivosQueDenotanNecesidades + Nombre BARRIER LimiteOracionSimple OR FiniteVerbForms);
-ADDRELATION (Func:Necesidades) Verbo (0 NecesitarLema) (NOT 0 YaAnotadoComoNecesidad) (NOT -1 Que LINK -1 LoLiteral) TO (1 Infinitive);
-ADDRELATION (Func:Necesidades) LoLiteral (0 LoLiteral) (NOT 0 YaAnotadoComoNecesidad) (1 Que) TO (2 NecesitarLema + Verbo);
-ADDRELATION (Func:Necesidades) TuLiteral (0 TuLiteral) (NOT 0 YaAnotadoComoNecesidad) (1 QueConAcento) TO (2 NecesitarLema + Verbo);
-#XXX
+#LATEX T: R:Func:Necesidades
+#LATEX E: si \emph{necesitan ayuda} en algo
+#LATEX D: NA
+
+## ADDRELATION (Func:Necesidades) Verbo (0 NecesitarLema) (NOT 0 YaAnotadoComoNecesidad) (NOT -1 Que LINK -1 LoLiteral) TO (1 Infinitive);
+
+ADDRELATION (Func:Necesidades) LoLiteral (0 LoLiteral) (NOT 0 YaAnotadoComoNecesidad) (1 Que) TO (2 NecesitarLema + Verbo); 
+#LATEX T: R:Func:Necesidades
+#LATEX E: \emph{lo que necesitaba} yo para
+#LATEX D: NA
+
+ADDRELATION (Func:Necesidades) TuLiteral (0 TuLiteral) (NOT 0 YaAnotadoComoNecesidad) (1 QueConAcento) TO (2 NecesitarLema + Verbo); 
+#LATEX T: R:Func:Necesidades
+#LATEX E: \emph{tú qué necesitas}, muchachita
+#LATEX D: NA
+
+ADDRELATION (Func:Necesidades) Verbo (0 NecesitarLema) (NOT 0 YaAnotadoComoNecesidad) (1 APrep) TO (*2 DetAllIncluded OR NombrePropio OR Dios BARRIER LimiteOracionSimple OR FiniteVerbForms LINK NOT 0 Articulo);  
+#LATEX T: R:Func:Necesidades
+#LATEX E: \emph{necesito a Jill} en mi vida.
+#LATEX D: NA
+
+ADDRELATION (Func:Necesidades) Verbo (0 NecesitarLema) (NOT 0 YaAnotadoComoNecesidad) (1 APrep) TO (*2 DetAllIncluded BARRIER LimiteOracionSimple OR FiniteVerbForms OR Prep LINK 1 Sustantivo);
+#LATEX T: R:Func:Necesidades
+#LATEX E: \emph{necesito a un profesor} de inglés.
+#LATEX D: NA
+
+ADDRELATION (Func:Necesidades) Verbo (0 NecesitarLema) (NOT 0 YaAnotadoComoNecesidad) TO (*1 DetAllIncluded BARRIER LimiteOracionSimple OR FiniteVerbForms OR Prep LINK 1 Sustantivo); 
+#LATEX T: R:Func:Necesidades
+#LATEX E: ellos \emph{necesitan las persona} a su lado y
+#LATEX E: \emph{necesitas resolver tus problemas}.
+#LATEX D: NA
+
+ADDRELATION (Func:Necesidades) Verbo (0 Ser) TO (**1 NecesarioLema BARRIER LimiteOracionSimple OR FiniteVerbForms OR Prep); 
+#LATEX T: R:Func:Necesidades
+#LATEX E: (no) \emph{es algo muy necesario}
+#LATEX D: NA
+
+ADDRELATION (Func:Necesidades) (Determiner) (0 DetAllIncluded) (1 Sustantivo) TO (2 NecesarioLema);
+#LATEX T: R:Func:Necesidades
+#LATEX E: \emph{los materiales necesarios}
+#LATEX D: NA
+ 
+ADDRELATION (Func:Agradecer) (Determiner) (0 MuchoLema) (1 Gracia + PL) TO (2 Por);
+#LATEX T: R:Func:Agradecer
+#LATEX E: \emph{muchas gracias por}
+#LATEX D: NA
+
+ADDRELATION (Func:Agradecer) (Determiner) (0 MuchoLema) (1 Gracia + PL) (2 PuntuacionComa) TO (3 NombrePropio);
+#LATEX T: R:Func:Agradecer
+#LATEX E: \emph{muchas gracias, Sabrina}
+#LATEX D: NA
+
+ADDRELATION (Func:Agradecer) Nombre (0 Gracia + PL) (1 APrep) TO (2 NombrePropio OR PronPersFuerte OR Dios);
+#LATEX T: R:Func:Agradecer
+#LATEX E: \emph{gracias a Dios}, \emph{gracias a él}
+#LATEX D: NA
+
+ADDRELATION (Func:Agradecer) Nombre (0 Gracia + PL) TO (1 APrep LINK T:SintagmaNominalHaciaLaIzda);
+#LATEX T: R:Func:Agradecer
+#LATEX E: \emph{gracias a la tecnología}
+#LATEX D: NA
+
+ADDRELATION (Func:Agradecer) Verbo (0 DarLema + Verbo) TO (**1 Gracia + PL BARRIER LimiteOracionSimple OR FiniteVerbForms OR Prep);
+#LATEX T: R:Func:Agradecer
+#LATEX E: \emph{damos las gracias}, \emph{darle gracias}
+#LATEX D: NA
+
+ADDRELATION (Func:Agradecer) LeLema (0 LeLema) (1 AgradecerLema + Verbo) TO (1 MuchoLema);
+#LATEX T: R:Func:Agradecer
+#LATEX E: \emph{le agradezco mucho} a ella
+#LATEX D: NA
+
+ADDRELATION (Func:Agradecer) PronPersFuerte (0 PronPersFuerte) (1 AgradecerLema + Verbo) TO (2 ArtPronDemo);
+ADDRELATION (Func:Agradecer) Verbo (0 AgradecerLema + Gerundio) TO (**2 Que BARRIER LimiteOracionSimple OR FiniteVerbForms OR Prep LINK -1 LoLiteral);
+#LATEX T: R:Func:Agradecer
+#LATEX E: \emph{yo agradezco eso}
+#LATEX E: \emph{agradeciendo lo que tienes}
+#LATEX D: NA
 
 #LATEX\section{Expresar objetivos (con para que)}
     # Tú hiciste/Indi un esfuerzo para <que tus hijos continuaran/Subj> hablando el español 
@@ -1113,15 +1207,15 @@ ADDRELATION (Prag:MarcadoresDisc:Causa) Debido TO (1 APrep);
 #\LATEX E: (...) mi propio negocio pues \emph{debido a} unas dificultades (...)
 #LATEX D: [Espacio para describir con palabras lo que hace la regla.]
 
-ADDRELATION (Prag:MarcadoresDisc:Causa) Gracia (0 PL) (NOT 2 Dios) TO (1 APrep);
+ADDRELATION (Prag:MarcadoresDisc:Causa) Nombre (0 Gracia + PL) TO (1 APrep);
 #LATEX T: R:Prag:MarcadoresDisc:Causa (relación entre el primer i el último elemento de la locución)
 #\LATEX E: \emph{gracias a} la tecnología este sí conservo amistades (...)
 #LATEX D: [Espacio para describir con palabras lo que hace la regla.]
 
-ADDRELATION (Prag:MarcadoresDisc:Causa) Gracia (0 PL) (1 APrep) TO (2 Dios);
-#LATEX T: R:Prag:MarcadoresDisc:Causa (relación entre el primer i el último elemento de la locución)
-#LATEX E: y de ahí fui a la ceremonia y \emph{gracias a dios} me hice ciudadano
-#LATEX D: [Espacio para describir con palabras lo que hace la regla.]
+###ADDRELATION (Prag:MarcadoresDisc:Causa) Gracia (0 PL) (1 APrep) TO (2 Dios);
+###LATEX T: R:Prag:MarcadoresDisc:Causa (relación entre el primer i el último elemento de la locución)
+###LATEX E: y de ahí fui a la ceremonia y \emph{gracias a dios} me hice ciudadano
+###LATEX D: [Espacio para describir con palabras lo que hace la regla.]
 
 #LATEX\subsection{Marcadores discursivos indicadores de igualdad}
 ## Prag:MarcadoresDisc:Igualdad
