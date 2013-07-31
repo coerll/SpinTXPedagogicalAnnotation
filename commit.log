@@ -1,6 +1,13 @@
 Change log
 ==========
 
+JULY 31 
+-------
+- Added rules to annotate pedir and ofrecer ayuda
+- Added rules to annotate referir palabras (indirect speech)
+- Updated PDF docu
+- Added rule to repair dijo's reading (present indicative to pretérito perfecto)
+
 JULY 30 
 -------
 - Added some more rules to handle Func:Necesidades

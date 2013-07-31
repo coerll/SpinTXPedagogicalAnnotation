@@ -391,6 +391,16 @@ OBSERVACIÓN: Aunque es verdad que ``para'' puede ir seguida de un infinitivo pa
 \item DESC: Que la locución ``gracias a'' sea prepositiva (o preposicional) no signigica que sus elementos sean todos preposiciones. Esto va contra las reglas de composición de expresiones (lexicalizadas o no) del lenguaje.
 \end{itemize}
 
+\paragraph*{Rule}
+\fbox{
+\parbox{.9\linewidth}{\texttt{SUBSTITUTE ("decir" Verb VLfin Pres Indi Sing 1st) ("decir" Verb VLfin Pret Indi Sing 3rd) TARGET ("<dijo>"i);}}
+}
+\begin{itemize}
+\item ETIQ: Asigna lectura de pretérito perfecto en 3a persona a dijo (que originalmente viene como presente de la 1a persona).
+\item EJEM: \emph{dijo}
+\item DESC: NA.
+\end{itemize}
+
 \part{Secciones principales}
 Las reglas de identificación de fenómenmos pedagógicos están ordenadas de más concretas a más generales. Así, por ejemplo, se detectan primero, cuando es posible, los distintos usos de \emph{para} (opinión, intención, destino, etc. como \emph{@Gram:Prep:Para:Opinion}...) y luego se marcan como simplemente \emph{@Gram:Prep:Para} el resto de ocurrencias de \emph{para}. Luego, se hace lo propio con otras preposiciones, hasta el punto que si para una preposición no hay reglas especiales, sus ocurrencias se marcan simplemente como \emph{@Gram:Prep}.
 
@@ -1398,6 +1408,116 @@ REM: Existen otros usos de necesitar, más parecidos a requerir como por ejemple
 \item ETIQ: R:Func:Agradecer
 \item EJEM: \emph{yo agradezco eso}
 \item EJEM: \emph{agradeciendo lo que tienes}
+\item DESC: NA
+\end{itemize}
+
+\section{Expresar ayuda}
+\subsection{Pedir ayuda}
+\paragraph*{Rule}
+\fbox{
+\parbox{.9\linewidth}{\texttt{ADDRELATION (Func:Ayuda:Pedir) PronombreDeObjetoPrimeraPersona (0 PronombreDeObjetoPrimeraPersona) (1 PoderLema + Verbo + 2aPers OR PoderLema + Verbo + 3aPers) TO (**2 AyudarLema + Verbo BARRIER LimiteOracionSimple OR FiniteVerbForms);}}
+}
+\begin{itemize}
+\item ETIQ: R:Func:Ayuda:Pedir
+\item EJEM: \emph{me puedes ayudar} a hacer las tortitas
+\item DESC: NA
+\end{itemize}
+
+\paragraph*{Rule}
+\fbox{
+\parbox{.9\linewidth}{\texttt{ADDRELATION (Func:Ayuda:Pedir) Verbo (NOT -1 PronombreDeObjetoPrimeraPersona) (0 PoderLema + Verbo + 2aPers OR PoderLema + Verbo + 3aPers) TO (**1 AyudarLema + Verbo BARRIER LimiteOracionSimple OR FiniteVerbForms);}}
+}
+\begin{itemize}
+\item ETIQ: R:Func:Ayuda:Ofrecer
+\item EJEM: \emph{Puedes empezar a ayudarnos} a (...)
+\item DESC: NA
+\end{itemize}
+
+\paragraph*{Rule}
+\fbox{
+\parbox{.9\linewidth}{\texttt{ADDRELATION (Func:Ayuda:Pedir) Verbo (0 LemasQueSeAsemejanANecesitar + Verbo) TO (**1 AyudarLema + Verbo BARRIER LimiteOracionSimple OR FiniteVerbForms);}}
+}
+\begin{itemize}
+\item ETIQ: R:Func:Ayuda:Ofrecer
+\item EJEM: si uno \emph{necesita algo ellos mismos nos ayudan}
+\item DESC: NA
+\end{itemize}
+
+\subsection{Ofrecer ayuda}
+\paragraph*{Rule}
+\fbox{
+\parbox{.9\linewidth}{\texttt{ADDRELATION (Func:Ayuda:Ofrecer) Puntuacion (0 InterroganteInicial) TO (**3 InterroganteFinal BARRIER LimiteOracionSimple OR FiniteVerbForms LINK *-1 AyudaLema + Nombre LINK -1 LemasQueSeAsemejanANecesitar + Verbo);}}
+}
+\begin{itemize}
+\item ETIQ: R:Func:Ayuda:Ofrecer
+\item EJEM: \emph{¿necesitas ayuda?}
+\item DESC: NA
+\end{itemize}
+
+\paragraph*{Rule}
+\fbox{
+\parbox{.9\linewidth}{\texttt{ADDRELATION (Func:Ayuda:Ofrecer) Verbo (0 Haber + FiniteVerbForms) (1 LemasQueSeAsemejanANecesitar + Part) TO (**2 AyudaLema + Nombre BARRIER LimiteOracionSimple OR FiniteVerbForms);}}
+}
+\begin{itemize}
+\item ETIQ: R:Func:Ayuda:Ofrecer
+\item EJEM: \emph{ha requerido la ayuda de}
+\item DESC: NA
+\end{itemize}
+
+\section{Referir palabras ya dichas}
+\subsection{Referir palabras propias}
+\paragraph*{Rule}
+\fbox{
+\parbox{.9\linewidth}{\texttt{ADDRELATION (Func:Referir:Propias) PronombresCliticosTODOS (0 PronombresCliticosTODOS) (1 VerbiDicendi + PretPerfSimple + 1aPers) To (2 Que);}}
+}
+\paragraph*{Rule}
+\fbox{
+\parbox{.9\linewidth}{\texttt{ADDRELATION (Func:Referir:Propias) PronombresCliticosTODOS (0 PronombresCliticosTODOS) (1 VerbiDicendiConSi + PretPerfSimple + 1aPers) To (2 SiLema);}}
+}
+\paragraph*{Rule}
+\fbox{
+\parbox{.9\linewidth}{\texttt{ADDRELATION (Func:Referir:Propias) PronombresCliticosTODOS (0 PronombresCliticosTODOS) (1 VerbiDicendiConSi + PretPerfSimple + 1aPers) To (*2 SiLema BARRIER LimiteOracionSimpleMenosQue OR FiniteVerbForms LINK -1 Que);}}
+}
+\paragraph*{Rule}
+\fbox{
+\parbox{.9\linewidth}{\texttt{ADDRELATION (Func:Referir:Propias) Verbo (NOT -1 PronombresCliticosTODOS) (0 VerbiDicendi + PretPerfSimple + 1aPers) To (1 Que);}}
+}
+\paragraph*{Rule}
+\fbox{
+\parbox{.9\linewidth}{\texttt{ADDRELATION (Func:Referir:Propias) Verbo (NOT -1 PronombresCliticosTODOS) (0 VerbiDicendiConSi + PretPerfSimple + 1aPers) To (1 SiLema);}}
+}
+\begin{itemize}
+\item ETIQ: R:Func:Referir:Propias
+\item EJEM: \emph{le dije que si}
+\item EJEM: con la maestra \emph{le pedí que si} (...)
+\item DESC: NA
+\end{itemize}
+
+\subsection{Referir palabras de otros}
+\paragraph*{Rule}
+\fbox{
+\parbox{.9\linewidth}{\texttt{ADDRELATION (Func:Referir:Otros) PronombresCliticosTODOS (0 PronombresCliticosTODOS) (1 VerbiDicendi + PretPerfSimple) (NOT 1 1aPers) To (2 Que);}}
+}
+\paragraph*{Rule}
+\fbox{
+\parbox{.9\linewidth}{\texttt{ADDRELATION (Func:Referir:Otros) PronombresCliticosTODOS (0 PronombresCliticosTODOS) (1 VerbiDicendiConSi + PretPerfSimple) (NOT 1 1aPers) To (2 SiLema);}}
+}
+\paragraph*{Rule}
+\fbox{
+\parbox{.9\linewidth}{\texttt{ADDRELATION (Func:Referir:Otros) PronombresCliticosTODOS (0 PronombresCliticosTODOS) (1 VerbiDicendiConSi + PretPerfSimple) (NOT 1 1aPers) To (*2 SiLema BARRIER LimiteOracionSimpleMenosQue OR FiniteVerbForms LINK -1 Que);}}
+}
+\paragraph*{Rule}
+\fbox{
+\parbox{.9\linewidth}{\texttt{ADDRELATION (Func:Referir:Otros) Verbo (NOT -1 PronombresCliticosTODOS) (0 VerbiDicendi + PretPerfSimple) (NOT 1 1aPers) To (1 Que);}}
+}
+\paragraph*{Rule}
+\fbox{
+\parbox{.9\linewidth}{\texttt{ADDRELATION (Func:Referir:Otros) Verbo (NOT -1 PronombresCliticosTODOS) (0 VerbiDicendiConSi + PretPerfSimple) (NOT 1 1aPers) To (1 SiLema);}}
+}
+\begin{itemize}
+\item ETIQ: R:Func:Referir:Otros
+\item EJEM: \emph{le preguntó que si} quería (...)
+\item EJEM: ¿alguna vez \emph{les dijo que} no mezclaran (...)
 \item DESC: NA
 \end{itemize}
 

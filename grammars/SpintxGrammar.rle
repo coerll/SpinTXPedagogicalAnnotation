@@ -53,6 +53,7 @@ LIST Futuro = (Fut);
 LIST Subjuntivo = (Subj);
 LIST Imperativo = (Command);
 LIST LimiteOracionSimple = (CC) (CCAD) (CSUBX) (CSUBF) (CQUE) (CSUBI) ; # habrá que refinar la definición
+LIST LimiteOracionSimpleMenosQue = (CC) (CCAD) (CSUBX) (CSUBF) (CSUBI) ; # habrá que refinar la definición
 LIST Puntuacion = (Punctuation);
 LIST DetCardinales = (CARD);
 LIST PuntuacionComa = (Punctuation CM);
@@ -157,6 +158,15 @@ LIST NecesarioLema = ("necesario");
 LIST MuchoLema = ("mucho");
 LIST DarLema = ("dar");
 LIST AgradecerLema = ("agradecer");
+LIST PoderLema = ("poder");
+LIST AyudarLema = ("ayudar");
+LIST LemasQueSeAsemejanANecesitar = ("necesitar") ("requerir") ("pedir");
+LIST AyudaLema = ("ayuda");
+LIST InterroganteInicial = ("¿" Punctuation FS);
+LIST InterroganteFinal = ("?" Punctuation FS);
+LIST VerbiDicendi = ("decir") ("aconsejar") ("añadir");
+LIST VerbiDicendiConSi = ("preguntar") ("pedir");
+LIST SiLema = ("si");
 
 #LATEX\section{Los SET}
 SET BuenoOMalo = Bueno OR Malo;
@@ -254,6 +264,7 @@ SET PronPersFuerte = YoLiteral OR TuLiteral OR ElOEllaLiterales OR NosotrosLiter
 SET PronombreDeObjetoNoAmbiguos = Me OR Te OR NosLiteral OR OsLiteral;
 SET PronombresCliticosTODOS = Me OR Te OR NosLiteral OR OsLiteral OR LosLiteral OR LasLiteral OR LaLiteral OR LoLiteral OR LeLema;
 SET EstoEsoAquello = EstoLiteral OR EsoLiteral OR AquelloLiteral;
+SET PronombreDeObjetoPrimeraPersona = Me OR NosLiteral;
 
 #LATEX\chapter{LIST y SET basados en etiquetas pedagógicas}
 ## PEDAGOGICAL TAGS
@@ -425,6 +436,11 @@ SUBSTITUTE ("gracias" Preposition PREP) ("gracia" Noun NC Plural Fem) TARGET ("<
 #LATEX T: Asigna lectura Noun a ``gracias'' incluso si format parte de la locución ``gracias a''.
 #LATEX E: \emph{gracias a} Dios, \emph{gracias a} la tecnología
 #LATEX D: Que la locución ``gracias a'' sea prepositiva (o preposicional) no signigica que sus elementos sean todos preposiciones. Esto va contra las reglas de composición de expresiones (lexicalizadas o no) del lenguaje.
+
+SUBSTITUTE ("decir" Verb VLfin Pres Indi Sing 1st) ("decir" Verb VLfin Pret Indi Sing 3rd) TARGET ("<dijo>"i);
+#LATEX T: Asigna lectura de pretérito perfecto en 3a persona a dijo (que originalmente viene como presente de la 1a persona).
+#LATEX E: \emph{dijo}
+#LATEX D: NA.
 
 #LATEX\part{Secciones principales}
 
@@ -1095,6 +1111,58 @@ ADDRELATION (Func:Agradecer) Verbo (0 AgradecerLema + Gerundio) TO (**2 Que BARR
 #LATEX E: \emph{agradeciendo lo que tienes}
 #LATEX D: NA
 
+#LATEX\section{Expresar ayuda}
+#LATEX\subsection{Pedir ayuda}
+ADDRELATION (Func:Ayuda:Pedir) PronombreDeObjetoPrimeraPersona (0 PronombreDeObjetoPrimeraPersona) (1 PoderLema + Verbo + 2aPers OR PoderLema + Verbo + 3aPers) TO (**2 AyudarLema + Verbo BARRIER LimiteOracionSimple OR FiniteVerbForms);
+#LATEX T: R:Func:Ayuda:Pedir
+#LATEX E: \emph{me puedes ayudar} a hacer las tortitas
+#LATEX D: NA
+
+ADDRELATION (Func:Ayuda:Pedir) Verbo (NOT -1 PronombreDeObjetoPrimeraPersona) (0 PoderLema + Verbo + 2aPers OR PoderLema + Verbo + 3aPers) TO (**1 AyudarLema + Verbo BARRIER LimiteOracionSimple OR FiniteVerbForms);
+#LATEX T: R:Func:Ayuda:Ofrecer
+#LATEX E: \emph{Puedes empezar a ayudarnos} a (...)
+#LATEX D: NA
+
+ADDRELATION (Func:Ayuda:Pedir) Verbo (0 LemasQueSeAsemejanANecesitar + Verbo) TO (**1 AyudarLema + Verbo BARRIER LimiteOracionSimple OR FiniteVerbForms);
+#LATEX T: R:Func:Ayuda:Ofrecer
+#LATEX E: si uno \emph{necesita algo ellos mismos nos ayudan}
+#LATEX D: NA
+
+#LATEX\subsection{Ofrecer ayuda}
+ADDRELATION (Func:Ayuda:Ofrecer) Puntuacion (0 InterroganteInicial) TO (**3 InterroganteFinal BARRIER LimiteOracionSimple OR FiniteVerbForms LINK *-1 AyudaLema + Nombre LINK -1 LemasQueSeAsemejanANecesitar + Verbo);
+#LATEX T: R:Func:Ayuda:Ofrecer
+#LATEX E: \emph{¿necesitas ayuda?}
+#LATEX D: NA
+
+ADDRELATION (Func:Ayuda:Ofrecer) Verbo (0 Haber + FiniteVerbForms) (1 LemasQueSeAsemejanANecesitar + Part) TO (**2 AyudaLema + Nombre BARRIER LimiteOracionSimple OR FiniteVerbForms);
+#LATEX T: R:Func:Ayuda:Ofrecer
+#LATEX E: \emph{ha requerido la ayuda de}
+#LATEX D: NA
+
+#LATEX\section{Referir palabras ya dichas}
+
+#LATEX\subsection{Referir palabras propias}
+ADDRELATION (Func:Referir:Propias) PronombresCliticosTODOS (0 PronombresCliticosTODOS) (1 VerbiDicendi + PretPerfSimple + 1aPers) To (2 Que);
+ADDRELATION (Func:Referir:Propias) PronombresCliticosTODOS (0 PronombresCliticosTODOS) (1 VerbiDicendiConSi + PretPerfSimple + 1aPers) To (2 SiLema);
+ADDRELATION (Func:Referir:Propias) PronombresCliticosTODOS (0 PronombresCliticosTODOS) (1 VerbiDicendiConSi + PretPerfSimple + 1aPers) To (*2 SiLema BARRIER LimiteOracionSimpleMenosQue OR FiniteVerbForms LINK -1 Que);
+ADDRELATION (Func:Referir:Propias) Verbo (NOT -1 PronombresCliticosTODOS) (0 VerbiDicendi + PretPerfSimple + 1aPers) To (1 Que);
+ADDRELATION (Func:Referir:Propias) Verbo (NOT -1 PronombresCliticosTODOS) (0 VerbiDicendiConSi + PretPerfSimple + 1aPers) To (1 SiLema);
+#LATEX T: R:Func:Referir:Propias
+#LATEX E: \emph{le dije que si}
+#LATEX E: con la maestra \emph{le pedí que si} (...)
+#LATEX D: NA
+
+#LATEX\subsection{Referir palabras de otros}
+ADDRELATION (Func:Referir:Otros) PronombresCliticosTODOS (0 PronombresCliticosTODOS) (1 VerbiDicendi + PretPerfSimple) (NOT 1 1aPers) To (2 Que);
+ADDRELATION (Func:Referir:Otros) PronombresCliticosTODOS (0 PronombresCliticosTODOS) (1 VerbiDicendiConSi + PretPerfSimple) (NOT 1 1aPers) To (2 SiLema);
+ADDRELATION (Func:Referir:Otros) PronombresCliticosTODOS (0 PronombresCliticosTODOS) (1 VerbiDicendiConSi + PretPerfSimple) (NOT 1 1aPers) To (*2 SiLema BARRIER LimiteOracionSimpleMenosQue OR FiniteVerbForms LINK -1 Que);
+ADDRELATION (Func:Referir:Otros) Verbo (NOT -1 PronombresCliticosTODOS) (0 VerbiDicendi + PretPerfSimple) (NOT 1 1aPers) To (1 Que);
+ADDRELATION (Func:Referir:Otros) Verbo (NOT -1 PronombresCliticosTODOS) (0 VerbiDicendiConSi + PretPerfSimple) (NOT 1 1aPers) To (1 SiLema);
+#LATEX T: R:Func:Referir:Otros
+#LATEX E: \emph{le preguntó que si} quería (...)
+#LATEX E: ¿alguna vez \emph{les dijo que} no mezclaran (...)
+#LATEX D: NA
+ 
 #LATEX\section{Expresar objetivos (con para que)}
     # Tú hiciste/Indi un esfuerzo para <que tus hijos continuaran/Subj> hablando el español 
     # para <que él tuviera que venderlas>
