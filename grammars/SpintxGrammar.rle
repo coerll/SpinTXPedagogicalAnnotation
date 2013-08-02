@@ -27,6 +27,7 @@ LIST FiniteVerbForms = (VLfin) (VEfin) (VHfin) (VSfin) (VMfin) ;
 LIST FiniteFormsInPast = (VLfin Indi Pret) (VEfin Indi Pret) ;
 LIST PretImperfSimple = (Imp Indi) ;
 LIST PretPerfSimple = (Pret Indi) ;
+SET PasadoIndicativo = (PretImperfSimple) OR (PretPerfSimple);
 LIST Adj = (ADJ) (ORD) ;
 LIST AdjOrd = (ORD) ;
 LIST Part = (VLadj) (VSadj);
@@ -54,9 +55,13 @@ LIST Subjuntivo = (Subj);
 LIST Imperativo = (Command);
 LIST LimiteOracionSimple = (CC) (CCAD) (CSUBX) (CSUBF) (CQUE) (CSUBI) ; # habrá que refinar la definición
 LIST LimiteOracionSimpleMenosQue = (CC) (CCAD) (CSUBX) (CSUBF) (CSUBI) ; # habrá que refinar la definición
+LIST LimiteOracionSimpleMenosCSUBX = (CC) (CCAD) (CSUBF) (CQUE) (CSUBI) ; # habrá que refinar la definición
 LIST Puntuacion = (Punctuation);
 LIST DetCardinales = (CARD);
 LIST PuntuacionComa = (Punctuation CM);
+LIST ConjuncionsCSUBXMenosComo = ("porque" CSUBX) ("cuando" CSUBX) ("si" CSUBX) ("así" CSUBX) ("aunque" CSUBX) ("mientras" CSUBX) ("que" CSUBX);
+SET LimiteOracionSimpleMenosComo = LimiteOracionSimpleMenosCSUBX OR ConjuncionsCSUBXMenosComo;
+
 
 #LATEX\section{Rasgos morfosintácticos}
 ## LIST MORPH FEATURES VERBS
@@ -138,7 +143,6 @@ LIST VerbosExpresarDeseos = ("esperar") ("pedir") ("gustar") ("encantar");
 LIST NombresExpresarDeseos = ("esperanza") ("necesidad") ("petición") ("demanda") ;
 LIST VerbosExpresarRecomendaciones = ("recomendar") ("sugerir") ("aconsejar") ("necesitar");
 LIST LemaIr = ("ir");
-LIST AdjetivosUsadosEnRecomendaciones = ("importante") ("bueno");
 LIST LemasQueNoSonDetQUStandard = ("todo") ("nada") ("cualquier") ("tal") ("cada") ;
 LIST QuizasConOSinEse = ("quizás") ("quizá");
 LIST ListaDeDeterminantesSeguros = ("cualquier") ("cada") ("ambos") ("alguno") ("tal") ("ninguno");
@@ -167,6 +171,11 @@ LIST InterroganteFinal = ("?" Punctuation FS);
 LIST VerbiDicendi = ("decir") ("aconsejar") ("añadir");
 LIST VerbiDicendiConSi = ("preguntar") ("pedir");
 LIST SiLema = ("si");
+LIST PuntoLema = ("punto");
+LIST ComoLema = ("como");
+LIST CreerLema = ("creer");
+LIST VerbosOpinionLema = ("creer") ("pensar");
+LIST TanLema = ("tan");
 
 #LATEX\section{Los SET}
 SET BuenoOMalo = Bueno OR Malo;
@@ -209,12 +218,18 @@ LIST LiteralPrimero = ("<primero>") ("<PRIMERO>") ("<Primero>");
 LIST LiteralTercero = ("<tercero>") ("<TERCERO>") ("<Tercero>");
 LIST UnoLiteral = ("<uno>") ("<UNO>") ("<Uno>");
 LIST MejorLiteral = ("<mejor>") ("<MEJOR>") ("<Mejor>");
+LIST BuenoLiteral = ("<bueno>") ("<BUENO>") ("<Bueno>");
+LIST MaloLiteral = ("<malo>") ("<MALO>") ("<Malo>");
+SET AdjetivosExpresarOpiniones = BuenoLiteral OR MaloLiteral;
 LIST PorLiteral = ("<por>") ("<POR>") ("<Por>");
 LIST MedioLiteral = ("<medio>") ("<MEDIO>") ("<Medio>");
 LIST DemasLiteral = ("<demás>") ("<DEMÁS>") ("<Demás>");
 LIST MasLiteral = ("<más>") ("<MÁS>") ("<Más>");
 LIST YLiteral = ("y") ("Y");
 SET LiteralPrimeroOrTercero = LiteralTercero OR LiteralPrimero;
+LIST ComoAcento = ("<cómo>") ("<Cómo>") ("<CÓMO>");
+
+SET AdjetivosUsadosEnRecomendaciones = ("importante") OR MejorLiteral;
 
 LIST MiSingLiteral = ("<mi>") ("<MI>") ("<Mi>");
 LIST MiPluLiteral = ("<mis>") ("<MIS>") ("<Mis>");
@@ -238,6 +253,7 @@ SET DetPosFemPlu = NuestraPluLiteral OR VuestraPluLiteral;
 SET DetPosMascPlu =  NuestroPluLiteral OR VuestroPluLiteral;
 SET DetPosFemSing = NuestraPluLiteral OR VuestraPluLiteral;
 SET DetPosMascSing =  NuestroPluLiteral OR VuestroPluLiteral;
+SET DetPosSingTODOS = DetPosSing OR DetPosMascSing;
 
 SET DetAllIncluded = DetAllByPOS OR DetPosSing OR DetPosPlu OR DetPosFemPlu OR DetPosMascPlu OR DetPosFemSing OR DetPosMascSing;
 
@@ -245,6 +261,7 @@ SET DetAllIncludedNoPosPlural = DetAllByPOS OR DetPosSing OR DetPosFemSing OR De
 
 SET GrupoNominal = Sustantivo OR Adj OR DetAllIncluded; # habrá que refinar la definición de grupo nominal
 
+LIST VistaLiteral = ("<vista>") ("<VISTA>") ("<Vista>");
 LIST ElLiteralMayusc = ("<El>");
 LIST PasoLiteralMayusc = ("<Paso>");
 LIST EstadosLiteralMayusc = ("<Estados>");
@@ -987,7 +1004,7 @@ ADDRELATION (Func:Sugerencias) Verbo IF (0 Ser + Verbo) (*1 AdjetivosUsadosEnRec
 #LATEX D: NA.
   ## Usted cree que va a <ser importante> que le enseñen a sus nietos los dos idiomas
 
-ADDRELATION (Func:Sugerencias) Verbo IF (0 Ser + Verbo) (*1 AdjetivosUsadosEnRecomendaciones BARRIER LimiteOracionSimple OR FiniteVerbForms OR GrupoNominal) TO (*2 Verbo + Infinitive BARRIER LimiteOracionSimple OR FiniteVerbForms LINK NOT 0 Ser);
+ADDRELATION (Func:Sugerencias) Verbo IF (NOT -1 Que LINK -1 VerbosOpinionLema + 2aPers) (0 Ser + Verbo) (*1 AdjetivosUsadosEnRecomendaciones BARRIER LimiteOracionSimple OR FiniteVerbForms OR GrupoNominal) TO (*2 Verbo + Infinitive BARRIER LimiteOracionSimple OR FiniteVerbForms LINK NOT 0 Ser);
 #LATEX T: Asigna la etiqueta R:Func:Sugerencias
 #LATEX E: Ahorita mucha gente lo sabe hablar y \emph{es importante saber} comunicarte con otra gente
 #LATEX D: NA.
@@ -1016,6 +1033,27 @@ ADDRELATION (Func:Finalidades) Prep IF (0 Para) (1 Verbo + Infinitive) TO (*2 Qu
     
 #LATEX\subsection{Expresando opiniones}
 
+#LATEX\subsection{Dar opiniones}
+ADDRELATION (Func:Opiniones:Dar) DetPosSingTODOS IF (0 DetPosSingTODOS) (1 PuntoLema) (2 De) TO (3 VistaLiteral);
+ADDRELATION (Func:Opiniones:Dar) (No) IF (0 No) (1 Ser + Verbo) (2 TanLema) (3 Adj) TO (**5 VerbosOpinionLema + Verbo + PasadoIndicativo BARRIER FiniteVerbForms OR LimiteOracionSimpleMenosComo LINK -1 ComoLema);
+ADDRELATION (Func:Opiniones:Dar) Verbo IF (0 Ser + Verbo) (*1 AdjetivosExpresarOpiniones BARRIER LimiteOracionSimple OR FiniteVerbForms OR GrupoNominal) TO (*2 Verbo + Infinitive BARRIER LimiteOracionSimple OR FiniteVerbForms LINK NOT 0 Ser);
+#LATEX T: R:Func:Opinion:Dar
+#LATEX E: (...) está mal, en mi ... en \emph{mi punto de vista}, porque se va perdiendo (...)
+#LATEX D: NA.
+
+#LATEX\subsection{Pedir opiniones}
+ADDRELATION (Func:Opiniones:Pedir) (PPX) IF (0 TuLiteral) (1 VerbosOpinionLema + Verbo + 2aPers) TO (2 Que);
+ADDRELATION (Func:Opiniones:Pedir) Adverbio IF (0 ComoAcento) (1 VerbosOpinionLema + Verbo + 2aPers) TO (2 Que);
+ADDRELATION (Func:Opiniones:Pedir) Puntuacion IF (0 InterroganteInicial) (1 VerbosOpinionLema + Verbo + 2aPers) TO (2 Que);
+ADDRELATION (Func:Opiniones:Pedir) (CC) IF (0 YLiteral OR ConjLetraO) (1 VerbosOpinionLema + Verbo + 2aPers) TO (2 Que);
+ADDRELATION (Func:Opiniones:Pedir) (NEG) IF (0 No) (1 VerbosOpinionLema + Verbo + 2aPers) TO (2 Que);
+
+#LATEX\subsection{Expresando sorpresa}
+ADDRELATION (Func:Sorpresa) No IF (0 No) (1 PoderLema + Verbo) (2 CreerLema) TO (3 Que);
+ADDRELATION (Func:Sorpresa) No IF (0 No) (1 LoLiteral) (2 PoderLema + Verbo) TO (3 CreerLema);
+#LATEX T: R:Func:Sorpresa
+#LATEX E: (...) \emph{no puedo creer que}, porque se va perdiendo (...)
+#LATEX D: NA.
     # ## ES (MUY) ADJ QUE SUBJUNTIVO
     # 9657:  hacer los ... para que hagamos . , yo digo <que es muy bueno que sepan> l0s dos idiomas . ¿ Dónde trabajas ? En K-
 
