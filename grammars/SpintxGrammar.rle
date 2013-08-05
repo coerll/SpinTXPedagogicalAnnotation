@@ -100,7 +100,8 @@ LIST Os = ("vosotros" PPX);
 LIST LeLema = ("él" PPC);
 LIST PretPerfRelations = (r:PretPerifAux) (r:PretPerifMain);
 LIST Que = ("que");
-LIST QueConAcento = ("qué" INT);
+LIST QueConAcento = ("qué");
+LIST CualConAcento = ("cuál");
 LIST UstedLema = ("usted");
 LIST ConjLetraO = ("o");
 LIST MarcDiscRevision = ("pero") ("aunque") ("exepto");
@@ -155,7 +156,6 @@ LIST OtroLema = ("otro");
 LIST PocoLema = ("poco");
 LIST AlgoLema = ("algo");
 LIST NadaLema = ("nada");
-LIST AdvIntensificadorAdjetivos = ("muy") ("más") ("tan");
 LIST SustantivosQueDenotanNecesidades = ("descanso") ("ayuda") ("baño") ("automóvil") ("leche") ("comida") ("hora") ("tiempo") ("día") ("año") ("dinero") ("plata");
 LIST NecesitarLema = ("necesitar");
 LIST NecesarioLema = ("necesario");
@@ -174,8 +174,12 @@ LIST SiLema = ("si");
 LIST PuntoLema = ("punto");
 LIST ComoLema = ("como");
 LIST CreerLema = ("creer");
-LIST VerbosOpinionLema = ("creer") ("pensar");
+LIST VerbosOpinionLema = ("creer") ("pensar") ("opinar") ("creer|crear");
 LIST TanLema = ("tan");
+
+LIST AdjetivosParaDescribirCaracterPersonas = ("ambicioso") ("pesado") ("discutidor") ("malhumorado") ("creído") ("engreído") ("valiente") ("interesado") ("cascarrabias") ("despreocupado") ("descuidado") ("prudente") ("cauteloso") ("cauto") ("presumido") ("conservador") ("convencional") ("cobarde") ("loco") ("chiflado") ("cruel") ("encantador") ("alegre") ("jovial") ("soso") ("aburrido") ("coqueto") ("coqueta") ("amigable") ("simpático") ("agradable") ("generoso") ("trabajador") ("honesto") ("amable") ("tranquilo") ("relajado") ("perezoso") ("vago") ("fiel") ("tacaño") ("modesto") ("ingenuo") ("inocente") ("inocentón") ("malo") ("travieso") ("intolerante") ("cortés") ("educado") ("orgulloso") ("fiable") ("confiable") ("egoísta") ("sensato") ("prudente") ("sensible") ("tímido") ("vergonzoso") ("introvertido") ("estricto") ("severo") ("riguroso") ("terco") ("testarudo") ("tozudo") ("comprensivo") ("conversador") ("hablador") ("falso") ("extraño") ("servicial") ("sencillo");
+## Quito  ("raro") de la lista porque se usa mucho para mostrar sorpresa, extrañeza
+LIST VerbosQueEnParticipioPuedenDescribirCaracteres = ("callar") ("interesar");
 
 #LATEX\section{Los SET}
 SET BuenoOMalo = Bueno OR Malo;
@@ -230,6 +234,7 @@ SET LiteralPrimeroOrTercero = LiteralTercero OR LiteralPrimero;
 LIST ComoAcento = ("<cómo>") ("<Cómo>") ("<CÓMO>");
 
 SET AdjetivosUsadosEnRecomendaciones = ("importante") OR MejorLiteral;
+SET AdvIntensificadorAdjetivos = ("muy") OR ("más") OR ("tan") OR MejorLiteral;
 
 LIST MiSingLiteral = ("<mi>") ("<MI>") ("<Mi>");
 LIST MiPluLiteral = ("<mis>") ("<MIS>") ("<Mis>");
@@ -246,6 +251,7 @@ LIST NuestraPluLiteral = ("<nuestras>") ("<NUESTRAS>") ("<Nuestras>");
 LIST VuestraSingLiteral = ("<vuestra>") ("<VUESTRA>") ("<Vuestra>");
 LIST VuestraPluLiteral = ("<vuestras>") ("<VUESTRAS>") ("<Vuestras>");
 
+LIST ReferenciaALugar = ("aquí") ("acá") ("allá") ("ahí");
 
 SET DetPosSing = MiSingLiteral OR TuSingLiteral OR SuSingLiteral;
 SET DetPosPlu = MiPluLiteral OR TuPluLiteral OR SuPluLiteral;
@@ -458,6 +464,11 @@ SUBSTITUTE ("decir" Verb VLfin Pres Indi Sing 1st) ("decir" Verb VLfin Pret Indi
 #LATEX T: Asigna lectura de pretérito perfecto en 3a persona a dijo (que originalmente viene como presente de la 1a persona).
 #LATEX E: \emph{dijo}
 #LATEX D: NA.
+
+SUBSTITUTE ("crear|creer" Verb VLfin Pres Indi Sing 2nd) ("creer" Verb VLfin Pres Indi Sing 2nd) TARGET ("<crees>"i) IF (1 Que);
+
+SUBSTITUTE ("en" Adverb ADV) ("en" Preposition PREP) TARGET ("<en>"i);
+SUBSTITUTE ("realidad" Adverb ADV) ("realidad" Noun NC Singular Fem) TARGET ("<realidad>"i);
 
 #LATEX\part{Secciones principales}
 
@@ -1035,15 +1046,17 @@ ADDRELATION (Func:Finalidades) Prep IF (0 Para) (1 Verbo + Infinitive) TO (*2 Qu
 
 #LATEX\subsection{Dar opiniones}
 ADDRELATION (Func:Opiniones:Dar) DetPosSingTODOS IF (0 DetPosSingTODOS) (1 PuntoLema) (2 De) TO (3 VistaLiteral);
-ADDRELATION (Func:Opiniones:Dar) (No) IF (0 No) (1 Ser + Verbo) (2 TanLema) (3 Adj) TO (**5 VerbosOpinionLema + Verbo + PasadoIndicativo BARRIER FiniteVerbForms OR LimiteOracionSimpleMenosComo LINK -1 ComoLema);
-ADDRELATION (Func:Opiniones:Dar) Verbo IF (0 Ser + Verbo) (*1 AdjetivosExpresarOpiniones BARRIER LimiteOracionSimple OR FiniteVerbForms OR GrupoNominal) TO (*2 Verbo + Infinitive BARRIER LimiteOracionSimple OR FiniteVerbForms LINK NOT 0 Ser);
+ADDRELATION (Func:Opiniones:Dar) (NEG) IF (0 No) (1 Ser + Verbo) (2 TanLema) (3 Adj) TO (**5 VerbosOpinionLema + Verbo + PasadoIndicativo BARRIER FiniteVerbForms OR LimiteOracionSimpleMenosComo LINK -1 ComoLema);
+ADDRELATION (Func:Opiniones:Dar) Verbo IF (NOT -1 QueConAcento) (0 Ser + Verbo) (*1 AdjetivosExpresarOpiniones BARRIER LimiteOracionSimple OR FiniteVerbForms OR GrupoNominal) TO (*2 Verbo + Infinitive BARRIER LimiteOracionSimple OR FiniteVerbForms LINK NOT 0 Ser);
+ADDRELATION (Func:Opiniones:Dar) (CQUE) IF (0 Que) (1 VerbosOpinionLema) TO (2 Que);
 #LATEX T: R:Func:Opinion:Dar
 #LATEX E: (...) está mal, en mi ... en \emph{mi punto de vista}, porque se va perdiendo (...)
 #LATEX D: NA.
 
 #LATEX\subsection{Pedir opiniones}
 ADDRELATION (Func:Opiniones:Pedir) (PPX) IF (0 TuLiteral) (1 VerbosOpinionLema + Verbo + 2aPers) TO (2 Que);
-ADDRELATION (Func:Opiniones:Pedir) Adverbio IF (0 ComoAcento) (1 VerbosOpinionLema + Verbo + 2aPers) TO (2 Que);
+ADDRELATION (Func:Opiniones:Pedir) Adverbio IF (0 ComoAcento OR ("<entonces>"i)) (1 VerbosOpinionLema + Verbo + 2aPers) TO (2 Que);
+ADDRELATION (Func:Opiniones:Pedir) (INT) IF (0 QueConAcento OR CualConAcento) (1 VerbosOpinionLema + Verbo + 2aPers) TO (2 Que);
 ADDRELATION (Func:Opiniones:Pedir) Puntuacion IF (0 InterroganteInicial) (1 VerbosOpinionLema + Verbo + 2aPers) TO (2 Que);
 ADDRELATION (Func:Opiniones:Pedir) (CC) IF (0 YLiteral OR ConjLetraO) (1 VerbosOpinionLema + Verbo + 2aPers) TO (2 Que);
 ADDRELATION (Func:Opiniones:Pedir) (NEG) IF (0 No) (1 VerbosOpinionLema + Verbo + 2aPers) TO (2 Que);
@@ -1446,6 +1459,16 @@ ADDRELATION (Vocab:Fraseol:LocAdv) NadaLema TO (1 MasLiteral) (NOT 1 Adj);
 #LATEX T: R:Vocab:Fraseol:LocAdv
 #LATEX E: \emph{nada más}  
 #LATEX D: Use de ``nada más'' en el sentido de sólo. Recuerda al ``nomás'' oral.
+
+
+ADDRELATION (Func:DescribirPersonas:FormaDeSer) Verbo (0 VerboEstar OR Ser) TO (1 AdvIntensificadorAdjetivos LINK 1 AdjetivosParaDescribirCaracterPersonas LINK NOT 1 ReferenciaALugar);
+ADDRELATION (Func:DescribirPersonas:FormaDeSer) Verbo (0 VerboEstar OR Ser) TO (1 AdjetivosParaDescribirCaracterPersonas LINK NOT 1 ReferenciaALugar);
+ADDRELATION (Func:DescribirPersonas:FormaDeSer) Adj (0 AdjetivosParaDescribirCaracterPersonas OR VerbosQueEnParticipioPuedenDescribirCaracteres + Part) (1 PuntuacionComa) TO (2 AdjetivosParaDescribirCaracterPersonas OR VerbosQueEnParticipioPuedenDescribirCaracteres + Part);
+ADDRELATION (Func:DescribirPersonas:FormaDeSer) DetAllIncluded (0 DetAllIncluded) TO (1 AdvIntensificadorAdjetivos LINK 1 AdjetivosParaDescribirCaracterPersonas);
+
+### alerta amb malos/ no es tan malo ser americano
+
+ADD (Func:DescribirPersonas:ASaco) Adj (0 AdjetivosParaDescribirCaracterPersonas);
 
 ##AFTER-SECTIONS
 
