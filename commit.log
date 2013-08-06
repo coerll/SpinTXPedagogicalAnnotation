@@ -1,7 +1,13 @@
 Change log
 ==========
 
-AUG 2
+AUG 6 
+-----
+- Tuned up rules to annotate describir personas (carácter)
+- Added some rules to correct (post-edit) some of tree-tagger's decisions
+- Updated PDF grammar documentation
+
+AUG 5
 -----
 - Tuned up rules to handle dar and pedir opiniones in progress
 - Started working annotating describir personas (carácter) but needs a lot of tunning up yet

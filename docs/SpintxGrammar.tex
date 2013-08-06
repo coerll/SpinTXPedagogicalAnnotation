@@ -401,6 +401,64 @@ OBSERVACIÓN: Aunque es verdad que ``para'' puede ir seguida de un infinitivo pa
 \item DESC: NA.
 \end{itemize}
 
+\paragraph*{Rule}
+\fbox{
+\parbox{.9\linewidth}{\texttt{SUBSTITUTE ("crear|creer" Verb VLfin Pres Indi Sing 2nd) ("creer" Verb VLfin Pres Indi Sing 2nd) TARGET ("<crees>"i) IF (1 Que);}}
+}
+\begin{itemize}
+\item ETIQ: Desambiguar el lema de ``crees'' para `creer' y o `crear'.
+\item EJEM: \emph{crees}
+\item DESC: Seguido de un `que'.
+\end{itemize}
+
+\paragraph*{Rule}
+\fbox{
+\parbox{.9\linewidth}{\texttt{SUBSTITUTE ("en" Adverb ADV) ("en" Preposition PREP) TARGET ("<en>"i);}}
+}
+\begin{itemize}
+\item ETIQ: Asignar siempre PREP a ``en'' aunque forme parte de una locución.
+\item EJEM: \emph{en}
+\item DESC: NA.
+\end{itemize}
+
+\paragraph*{Rule}
+\fbox{
+\parbox{.9\linewidth}{\texttt{SUBSTITUTE ("realidad" Adverb ADV) ("realidad" Noun NC Singular Fem) TARGET ("<realidad>"i);}}
+}
+\begin{itemize}
+\item ETIQ: Asignar siempre Noun a ``realidad'' aunque forme parte de una locución.
+\item EJEM: \emph{realidad}
+\item DESC: NA.
+\end{itemize}
+
+\paragraph*{Rule}
+\fbox{
+\parbox{.9\linewidth}{\texttt{SUBSTITUTE ("afuera" Noun NP Singular) ("afuera" Adverb ADV) TARGET ("<afuera>"i);}}
+}
+\begin{itemize}
+\item ETIQ: Asignar siempre ADV a ``afuera''.
+\item EJEM: \emph{afuera}
+\item DESC: NA.
+\end{itemize}
+
+\paragraph*{Rule}
+\fbox{
+\parbox{.9\linewidth}{\texttt{SUBSTITUTE ("UNK" Adjective ADJ Singular) ("chistoso" Adjective ADJ Singular Fem) TARGET ("<chistosa>"i);}}
+}
+\paragraph*{Rule}
+\fbox{
+\parbox{.9\linewidth}{\texttt{SUBSTITUTE ("UNK" Adjective ADJ Plural) ("chistoso" Adjective ADJ Plural Fem) TARGET ("<chistosas>"i);}}
+}
+\paragraph*{Rule}
+\fbox{
+\parbox{.9\linewidth}{\texttt{SUBSTITUTE ("UNK" Adjective ADJ Plural) ("chistoso" Adjective ADJ Plural Masc) TARGET ("<chistosos>"i);}}
+}
+\begin{itemize}
+\item ETIQ: Asignar lema y rasgos morfosintácticos a las formas marcadas de chistoso.
+\item EJEM: \emph{chistosa, chistosas, chistosos}
+\item DESC: NA.
+\end{itemize}
+
 \part{Secciones principales}
 Las reglas de identificación de fenómenmos pedagógicos están ordenadas de más concretas a más generales. Así, por ejemplo, se detectan primero, cuando es posible, los distintos usos de \emph{para} (opinión, intención, destino, etc. como \emph{@Gram:Prep:Para:Opinion}...) y luego se marcan como simplemente \emph{@Gram:Prep:Para} el resto de ocurrencias de \emph{para}. Luego, se hace lo propio con otras preposiciones, hasta el punto que si para una preposición no hay reglas especiales, sus ocurrencias se marcan simplemente como \emph{@Gram:Prep}.
 
@@ -774,6 +832,14 @@ Veáse \url{http://dev.coerll.utexas.edu/spanishtx/spe/html/adv11.html}.
 \paragraph*{Rule}
 \fbox{
 \parbox{.9\linewidth}{\texttt{ADD (@Gram:Pron:Sujeto) UnoLiteral IF (*1 Adverbio BARRIER GrupoNominal OR LimiteOracionSimple LINK 1 SeLiteral LINK 1 FiniteVerbForms) ;}}
+}
+\paragraph*{Rule}
+\fbox{
+\parbox{.9\linewidth}{\texttt{ADD (@Gram:Pron:Sujeto) UnoLiteral IF (-1 Infinitive) (NOT -1 VerboTransitivoParaReglaUno) ;}}
+}
+\paragraph*{Rule}
+\fbox{
+\parbox{.9\linewidth}{\texttt{ADD (@Gram:Pron:Sujeto) UnoLiteral IF (-1 Infinitive) (2 ConLema) (*3 OtroLema + PL BARRIER GrupoNominal OR LimiteOracionSimple) ;}}
 }
 \begin{itemize}
 \item ETIQ: Asigna @Gram:Pron:Sujeto.
@@ -1231,7 +1297,7 @@ REM: Esta regla utiliza el operador ``T:''. Esta ``T'' indica que los que sigue 
 
 \paragraph*{Rule}
 \fbox{
-\parbox{.9\linewidth}{\texttt{ADDRELATION (Func:Sugerencias) Verbo IF (0 Ser + Verbo) (*1 AdjetivosUsadosEnRecomendaciones BARRIER LimiteOracionSimple OR FiniteVerbForms OR GrupoNominal) TO (*2 Verbo + Infinitive BARRIER LimiteOracionSimple OR FiniteVerbForms LINK NOT 0 Ser);}}
+\parbox{.9\linewidth}{\texttt{ADDRELATION (Func:Sugerencias) Verbo IF (NOT -1 Que LINK -1 VerbosOpinionLema + 2aPers) (0 Ser + Verbo) (*1 AdjetivosUsadosEnRecomendaciones BARRIER LimiteOracionSimple OR FiniteVerbForms OR GrupoNominal) TO (*2 Verbo + Infinitive BARRIER LimiteOracionSimple OR FiniteVerbForms LINK NOT 0 Ser);}}
 }
 \begin{itemize}
 \item ETIQ: Asigna la etiqueta R:Func:Sugerencias
@@ -1253,6 +1319,69 @@ REM: Existen otros usos de necesitar, más parecidos a requerir como por ejemple
 
 \subsection{Estilo indirecto}
 \subsection{Expresando opiniones}
+\subsection{Dar opiniones}
+\paragraph*{Rule}
+\fbox{
+\parbox{.9\linewidth}{\texttt{ADDRELATION (Func:Opiniones:Dar) DetPosSingTODOS IF (0 DetPosSingTODOS) (1 PuntoLema) (2 De) TO (3 VistaLiteral);}}
+}
+\paragraph*{Rule}
+\fbox{
+\parbox{.9\linewidth}{\texttt{ADDRELATION (Func:Opiniones:Dar) (NEG) IF (0 No) (1 Ser + Verbo) (2 TanLema) (3 Adj) TO (**5 VerbosOpinionLema + Verbo + PasadoIndicativo BARRIER FiniteVerbForms OR LimiteOracionSimpleMenosComo LINK -1 ComoLema);}}
+}
+\paragraph*{Rule}
+\fbox{
+\parbox{.9\linewidth}{\texttt{ADDRELATION (Func:Opiniones:Dar) Verbo IF (NOT -1 QueConAcento) (0 Ser + Verbo) (*1 AdjetivosExpresarOpiniones BARRIER LimiteOracionSimple OR FiniteVerbForms OR GrupoNominal) TO (*2 Verbo + Infinitive BARRIER LimiteOracionSimple OR FiniteVerbForms LINK NOT 0 Ser);}}
+}
+\paragraph*{Rule}
+\fbox{
+\parbox{.9\linewidth}{\texttt{ADDRELATION (Func:Opiniones:Dar) (CQUE) IF (0 Que) (1 VerbosOpinionLema) TO (2 Que);}}
+}
+\begin{itemize}
+\item ETIQ: R:Func:Opinion:Dar
+\item EJEM: (...) está mal, en mi ... en \emph{mi punto de vista}, porque se va perdiendo (...)
+\item DESC: NA.
+\end{itemize}
+
+\subsection{Pedir opiniones}
+\paragraph*{Rule}
+\fbox{
+\parbox{.9\linewidth}{\texttt{ADDRELATION (Func:Opiniones:Pedir) (PPX) IF (0 TuLiteral) (1 VerbosOpinionLema + Verbo + 2aPers) TO (2 Que);}}
+}
+\paragraph*{Rule}
+\fbox{
+\parbox{.9\linewidth}{\texttt{ADDRELATION (Func:Opiniones:Pedir) Adverbio IF (0 ComoAcento OR ("<entonces>"i)) (1 VerbosOpinionLema + Verbo + 2aPers) TO (2 Que);}}
+}
+\paragraph*{Rule}
+\fbox{
+\parbox{.9\linewidth}{\texttt{ADDRELATION (Func:Opiniones:Pedir) (INT) IF (0 QueConAcento OR CualConAcento) (1 VerbosOpinionLema + Verbo + 2aPers) TO (2 Que);}}
+}
+\paragraph*{Rule}
+\fbox{
+\parbox{.9\linewidth}{\texttt{ADDRELATION (Func:Opiniones:Pedir) Puntuacion IF (0 InterroganteInicial) (1 VerbosOpinionLema + Verbo + 2aPers) TO (2 Que);}}
+}
+\paragraph*{Rule}
+\fbox{
+\parbox{.9\linewidth}{\texttt{ADDRELATION (Func:Opiniones:Pedir) (CC) IF (0 YLiteral OR ConjLetraO) (1 VerbosOpinionLema + Verbo + 2aPers) TO (2 Que);}}
+}
+\paragraph*{Rule}
+\fbox{
+\parbox{.9\linewidth}{\texttt{ADDRELATION (Func:Opiniones:Pedir) (NEG) IF (0 No) (1 VerbosOpinionLema + Verbo + 2aPers) TO (2 Que);}}
+}
+\subsection{Expresando sorpresa}
+\paragraph*{Rule}
+\fbox{
+\parbox{.9\linewidth}{\texttt{ADDRELATION (Func:Sorpresa) No IF (0 No) (1 PoderLema + Verbo) (2 CreerLema) TO (3 Que);}}
+}
+\paragraph*{Rule}
+\fbox{
+\parbox{.9\linewidth}{\texttt{ADDRELATION (Func:Sorpresa) No IF (0 No) (1 LoLiteral) (2 PoderLema + Verbo) TO (3 CreerLema);}}
+}
+\begin{itemize}
+\item ETIQ: R:Func:Sorpresa
+\item EJEM: (...) \emph{no puedo creer que}, porque se va perdiendo (...)
+\item DESC: NA.
+\end{itemize}
+
 \section{Expresar opiniones, dudas}
 \section{Expresar necesidades}
 \paragraph*{Rule}
@@ -1468,26 +1597,26 @@ REM: Existen otros usos de necesitar, más parecidos a requerir como por ejemple
 \subsection{Referir palabras propias}
 \paragraph*{Rule}
 \fbox{
-\parbox{.9\linewidth}{\texttt{ADDRELATION (Func:Referir:Propias) PronombresCliticosTODOS (0 PronombresCliticosTODOS) (1 VerbiDicendi + PretPerfSimple + 1aPers) To (2 Que);}}
+\parbox{.9\linewidth}{\texttt{ADDRELATION (Func:Referir) PronombresCliticosTODOS (0 PronombresCliticosTODOS) (1 VerbiDicendi + PretPerfSimple + 1aPers) To (2 Que);}}
 }
 \paragraph*{Rule}
 \fbox{
-\parbox{.9\linewidth}{\texttt{ADDRELATION (Func:Referir:Propias) PronombresCliticosTODOS (0 PronombresCliticosTODOS) (1 VerbiDicendiConSi + PretPerfSimple + 1aPers) To (2 SiLema);}}
+\parbox{.9\linewidth}{\texttt{ADDRELATION (Func:Referir) PronombresCliticosTODOS (0 PronombresCliticosTODOS) (1 VerbiDicendiConSi + PretPerfSimple + 1aPers) To (2 SiLema);}}
 }
 \paragraph*{Rule}
 \fbox{
-\parbox{.9\linewidth}{\texttt{ADDRELATION (Func:Referir:Propias) PronombresCliticosTODOS (0 PronombresCliticosTODOS) (1 VerbiDicendiConSi + PretPerfSimple + 1aPers) To (*2 SiLema BARRIER LimiteOracionSimpleMenosQue OR FiniteVerbForms LINK -1 Que);}}
+\parbox{.9\linewidth}{\texttt{ADDRELATION (Func:Referir) PronombresCliticosTODOS (0 PronombresCliticosTODOS) (1 VerbiDicendiConSi + PretPerfSimple + 1aPers) To (*2 SiLema BARRIER LimiteOracionSimpleMenosQue OR FiniteVerbForms LINK -1 Que);}}
 }
 \paragraph*{Rule}
 \fbox{
-\parbox{.9\linewidth}{\texttt{ADDRELATION (Func:Referir:Propias) Verbo (NOT -1 PronombresCliticosTODOS) (0 VerbiDicendi + PretPerfSimple + 1aPers) To (1 Que);}}
+\parbox{.9\linewidth}{\texttt{ADDRELATION (Func:Referir) Verbo (NOT -1 PronombresCliticosTODOS) (0 VerbiDicendi + PretPerfSimple + 1aPers) To (1 Que);}}
 }
 \paragraph*{Rule}
 \fbox{
-\parbox{.9\linewidth}{\texttt{ADDRELATION (Func:Referir:Propias) Verbo (NOT -1 PronombresCliticosTODOS) (0 VerbiDicendiConSi + PretPerfSimple + 1aPers) To (1 SiLema);}}
+\parbox{.9\linewidth}{\texttt{ADDRELATION (Func:Referir) Verbo (NOT -1 PronombresCliticosTODOS) (0 VerbiDicendiConSi + PretPerfSimple + 1aPers) To (1 SiLema);}}
 }
 \begin{itemize}
-\item ETIQ: R:Func:Referir:Propias
+\item ETIQ: R:Func:Referir
 \item EJEM: \emph{le dije que si}
 \item EJEM: con la maestra \emph{le pedí que si} (...)
 \item DESC: NA
@@ -1496,29 +1625,72 @@ REM: Existen otros usos de necesitar, más parecidos a requerir como por ejemple
 \subsection{Referir palabras de otros}
 \paragraph*{Rule}
 \fbox{
-\parbox{.9\linewidth}{\texttt{ADDRELATION (Func:Referir:Otros) PronombresCliticosTODOS (0 PronombresCliticosTODOS) (1 VerbiDicendi + PretPerfSimple) (NOT 1 1aPers) To (2 Que);}}
+\parbox{.9\linewidth}{\texttt{ADDRELATION (Func:Referir) PronombresCliticosTODOS (0 PronombresCliticosTODOS) (1 VerbiDicendi + PretPerfSimple) (NOT 1 1aPers) To (2 Que);}}
 }
 \paragraph*{Rule}
 \fbox{
-\parbox{.9\linewidth}{\texttt{ADDRELATION (Func:Referir:Otros) PronombresCliticosTODOS (0 PronombresCliticosTODOS) (1 VerbiDicendiConSi + PretPerfSimple) (NOT 1 1aPers) To (2 SiLema);}}
+\parbox{.9\linewidth}{\texttt{ADDRELATION (Func:Referir) PronombresCliticosTODOS (0 PronombresCliticosTODOS) (1 VerbiDicendiConSi + PretPerfSimple) (NOT 1 1aPers) To (2 SiLema);}}
 }
 \paragraph*{Rule}
 \fbox{
-\parbox{.9\linewidth}{\texttt{ADDRELATION (Func:Referir:Otros) PronombresCliticosTODOS (0 PronombresCliticosTODOS) (1 VerbiDicendiConSi + PretPerfSimple) (NOT 1 1aPers) To (*2 SiLema BARRIER LimiteOracionSimpleMenosQue OR FiniteVerbForms LINK -1 Que);}}
+\parbox{.9\linewidth}{\texttt{ADDRELATION (Func:Referir) PronombresCliticosTODOS (0 PronombresCliticosTODOS) (1 VerbiDicendiConSi + PretPerfSimple) (NOT 1 1aPers) To (*2 SiLema BARRIER LimiteOracionSimpleMenosQue OR FiniteVerbForms LINK -1 Que);}}
 }
 \paragraph*{Rule}
 \fbox{
-\parbox{.9\linewidth}{\texttt{ADDRELATION (Func:Referir:Otros) Verbo (NOT -1 PronombresCliticosTODOS) (0 VerbiDicendi + PretPerfSimple) (NOT 1 1aPers) To (1 Que);}}
+\parbox{.9\linewidth}{\texttt{ADDRELATION (Func:Referir) Verbo (NOT -1 PronombresCliticosTODOS) (0 VerbiDicendi + PretPerfSimple) (NOT 1 1aPers) To (1 Que);}}
 }
 \paragraph*{Rule}
 \fbox{
-\parbox{.9\linewidth}{\texttt{ADDRELATION (Func:Referir:Otros) Verbo (NOT -1 PronombresCliticosTODOS) (0 VerbiDicendiConSi + PretPerfSimple) (NOT 1 1aPers) To (1 SiLema);}}
+\parbox{.9\linewidth}{\texttt{ADDRELATION (Func:Referir) Verbo (NOT -1 PronombresCliticosTODOS) (0 VerbiDicendiConSi + PretPerfSimple) (NOT 1 1aPers) To (1 SiLema);}}
 }
 \begin{itemize}
-\item ETIQ: R:Func:Referir:Otros
+\item ETIQ: R:Func:Referir
 \item EJEM: \emph{le preguntó que si} quería (...)
 \item EJEM: ¿alguna vez \emph{les dijo que} no mezclaran (...)
 \item DESC: NA
+\end{itemize}
+
+\section{Describir personas}
+\section{Describir el caràcter de las personas}
+\paragraph*{Rule}
+\fbox{
+\parbox{.9\linewidth}{\texttt{ADDRELATION (Func:DescribirPersonas:FormaDeSer) Verbo (0 VerboEstar OR Ser) TO (*1 AdvIntensificadorAdjetivos BARRIER LimiteOracionSimple OR Verbo OR NombresNoDePersonalidad OR Prep LINK 1 AdjetivosParaDescribirCaracterPersonas OR VerbosQueEnParticipioPuedenDescribirCaracteres + Part LINK NOT 0 MaloLiteral LINK NOT 1 ReferenciaALugar OR PronDemoNeutro);}}
+}
+\begin{itemize}
+\item ETIQ: R:Func:DescribirPersonas:FormaDeSer
+\item EJEM: \emph{era la más tímida}
+\item DESC: NA
+\end{itemize}
+
+\paragraph*{Rule}
+\fbox{
+\parbox{.9\linewidth}{\texttt{ADDRELATION (Func:DescribirPersonas:FormaDeSer) Verbo (0 VerboEstar OR Ser) (NOT -1 QueConAcento) TO (1 AdjetivosParaDescribirCaracterPersonas OR VerbosQueEnParticipioPuedenDescribirCaracteres + Part LINK NOT 0 MaloLiteral LINK NOT 1 ReferenciaALugar OR PronDemoNeutro);}}
+}
+\begin{itemize}
+\item ETIQ: R:Func:DescribirPersonas:FormaDeSer
+\item EJEM: yo \emph{he sido callada} y reservada
+\item EJEM: \emph{Era trabajadora} y reservada
+\item DESC: NA
+\end{itemize}
+
+\paragraph*{Rule}
+\fbox{
+\parbox{.9\linewidth}{\texttt{ADDRELATION (Func:DescribirPersonas:FormaDeSer) AdjOrPart (0 AdjetivosParaDescribirCaracterPersonas OR VerbosQueEnParticipioPuedenDescribirCaracteres + Part) (1 PuntuacionComa OR YLiteral) TO (2 AdjetivosParaDescribirCaracterPersonas OR VerbosQueEnParticipioPuedenDescribirCaracteres + Part);}}
+}
+\begin{itemize}
+\item ETIQ: R:Func:DescribirPersonas:FormaDeSer
+\item EJEM: en cierto punto \emph{callada, amigable} (...)
+\item DESC: NA
+\end{itemize}
+
+\paragraph*{Rule}
+\fbox{
+\parbox{.9\linewidth}{\texttt{ADDRELATION (Func:DescribirPersonas:FormaDeSer) DetAllIncluded (0 DetAllIncluded) (NOT 0 LoLiteral) TO (1 AdvIntensificadorAdjetivos LINK 1 AdjetivosParaDescribirCaracterPersonas OR VerbosQueEnParticipioPuedenDescribirCaracteres + Part);}}
+}
+\begin{itemize}
+\item ETIQ: R:Func:DescribirPersonas:FormaDeSer
+\item EJEM: \emph{la más tímida}
+\item DESC: No precedido de ser o estar.
 \end{itemize}
 
 \section{Expresar objetivos (con para que)}

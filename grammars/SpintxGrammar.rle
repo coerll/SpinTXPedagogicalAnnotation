@@ -177,9 +177,11 @@ LIST CreerLema = ("creer");
 LIST VerbosOpinionLema = ("creer") ("pensar") ("opinar") ("creer|crear");
 LIST TanLema = ("tan");
 
-LIST AdjetivosParaDescribirCaracterPersonas = ("ambicioso") ("pesado") ("discutidor") ("malhumorado") ("creído") ("engreído") ("valiente") ("interesado") ("cascarrabias") ("despreocupado") ("descuidado") ("prudente") ("cauteloso") ("cauto") ("presumido") ("conservador") ("convencional") ("cobarde") ("loco") ("chiflado") ("cruel") ("encantador") ("alegre") ("jovial") ("soso") ("aburrido") ("coqueto") ("coqueta") ("amigable") ("simpático") ("agradable") ("generoso") ("trabajador") ("honesto") ("amable") ("tranquilo") ("relajado") ("perezoso") ("vago") ("fiel") ("tacaño") ("modesto") ("ingenuo") ("inocente") ("inocentón") ("malo") ("travieso") ("intolerante") ("cortés") ("educado") ("orgulloso") ("fiable") ("confiable") ("egoísta") ("sensato") ("prudente") ("sensible") ("tímido") ("vergonzoso") ("introvertido") ("estricto") ("severo") ("riguroso") ("terco") ("testarudo") ("tozudo") ("comprensivo") ("conversador") ("hablador") ("falso") ("extraño") ("servicial") ("sencillo");
+LIST AdjetivosParaDescribirCaracterPersonas = ("ambicioso") ("pesado") ("discutidor") ("malhumorado") ("creído") ("engreído") ("valiente") ("interesado") ("cascarrabias") ("despreocupado") ("descuidado") ("prudente") ("cauteloso") ("cauto") ("presumido") ("conservador") ("convencional") ("cobarde") ("loco") ("chistoso") ("chiflado") ("cruel") ("encantador") ("alegre") ("jovial") ("soso") ("aburrido") ("coqueto") ("coqueta") ("amigable") ("simpático") ("agradable") ("generoso") ("trabajador") ("honesto") ("amable") ("tranquilo") ("relajado") ("perezoso") ("vago") ("fiel") ("tacaño") ("modesto") ("ingenuo") ("inocente") ("inocentón") ("malo") ("travieso") ("intolerante") ("cortés") ("educado") ("orgulloso") ("fiable") ("confiable") ("egoísta") ("sensato") ("prudente") ("sensible") ("tímido") ("vergonzoso") ("introvertido") ("estricto") ("severo") ("riguroso") ("terco") ("testarudo") ("tozudo") ("comprensivo") ("conversador") ("hablador") ("falso") ("extraño") ("servicial") ("sencillo");
 ## Quito  ("raro") de la lista porque se usa mucho para mostrar sorpresa, extrañeza
 LIST VerbosQueEnParticipioPuedenDescribirCaracteres = ("callar") ("interesar");
+
+LIST VerboTransitivoParaReglaUno = ("hablar");
 
 #LATEX\section{Los SET}
 SET BuenoOMalo = Bueno OR Malo;
@@ -252,7 +254,8 @@ LIST VuestraSingLiteral = ("<vuestra>") ("<VUESTRA>") ("<Vuestra>");
 LIST VuestraPluLiteral = ("<vuestras>") ("<VUESTRAS>") ("<Vuestras>");
 
 LIST ReferenciaALugar = ("aquí") ("acá") ("allá") ("ahí");
-
+LIST NombresNoDePersonalidad = ("lugar") ("ciudad") ("barrio") ("país") ("expresión") ("actitud");
+LIST PronDemoNeutro = ("<esto>"i) ("<eso>"i) ("<aquello>"i);
 SET DetPosSing = MiSingLiteral OR TuSingLiteral OR SuSingLiteral;
 SET DetPosPlu = MiPluLiteral OR TuPluLiteral OR SuPluLiteral;
 SET DetPosFemPlu = NuestraPluLiteral OR VuestraPluLiteral;
@@ -466,9 +469,31 @@ SUBSTITUTE ("decir" Verb VLfin Pres Indi Sing 1st) ("decir" Verb VLfin Pret Indi
 #LATEX D: NA.
 
 SUBSTITUTE ("crear|creer" Verb VLfin Pres Indi Sing 2nd) ("creer" Verb VLfin Pres Indi Sing 2nd) TARGET ("<crees>"i) IF (1 Que);
+#LATEX T: Desambiguar el lema de ``crees'' para `creer' y o `crear'.
+#LATEX E: \emph{crees}
+#LATEX D: Seguido de un `que'.
 
 SUBSTITUTE ("en" Adverb ADV) ("en" Preposition PREP) TARGET ("<en>"i);
+#LATEX T: Asignar siempre PREP a ``en'' aunque forme parte de una locución.
+#LATEX E: \emph{en}
+#LATEX D: NA.
+
 SUBSTITUTE ("realidad" Adverb ADV) ("realidad" Noun NC Singular Fem) TARGET ("<realidad>"i);
+#LATEX T: Asignar siempre Noun a ``realidad'' aunque forme parte de una locución.
+#LATEX E: \emph{realidad}
+#LATEX D: NA.
+
+SUBSTITUTE ("afuera" Noun NP Singular) ("afuera" Adverb ADV) TARGET ("<afuera>"i);
+#LATEX T: Asignar siempre ADV a ``afuera''.
+#LATEX E: \emph{afuera}
+#LATEX D: NA.
+
+SUBSTITUTE ("UNK" Adjective ADJ Singular) ("chistoso" Adjective ADJ Singular Fem) TARGET ("<chistosa>"i);
+SUBSTITUTE ("UNK" Adjective ADJ Plural) ("chistoso" Adjective ADJ Plural Fem) TARGET ("<chistosas>"i);
+SUBSTITUTE ("UNK" Adjective ADJ Plural) ("chistoso" Adjective ADJ Plural Masc) TARGET ("<chistosos>"i);
+#LATEX T: Asignar lema y rasgos morfosintácticos a las formas marcadas de chistoso.
+#LATEX E: \emph{chistosa, chistosas, chistosos}
+#LATEX D: NA.
 
 #LATEX\part{Secciones principales}
 
@@ -706,6 +731,8 @@ ADD (@Gram:Pron:Sujeto) UnoLiteral IF (1 FiniteVerbForms) ;
 ADD (@Gram:Pron:Sujeto) UnoLiteral IF (-2 NoAdv OR PronombresCliticosTODOS OR Adverbio) (-1 Verbo);
 ADD (@Gram:Pron:Sujeto) UnoLiteral IF (*1 Adverbio BARRIER GrupoNominal OR LimiteOracionSimple LINK 1 FiniteVerbForms) ;
 ADD (@Gram:Pron:Sujeto) UnoLiteral IF (*1 Adverbio BARRIER GrupoNominal OR LimiteOracionSimple LINK 1 SeLiteral LINK 1 FiniteVerbForms) ;
+ADD (@Gram:Pron:Sujeto) UnoLiteral IF (-1 Infinitive) (NOT -1 VerboTransitivoParaReglaUno) ;
+ADD (@Gram:Pron:Sujeto) UnoLiteral IF (-1 Infinitive) (2 ConLema) (*3 OtroLema + PL BARRIER GrupoNominal OR LimiteOracionSimple) ;
 #LATEX T: Asigna @Gram:Pron:Sujeto.
 #LATEX E: Cuando aquí en los Estados Unidos \emph{uno creció} con las lavadoras, ¿verdad? 
 #LATEX E: (...) \emph{uno} ya sabe si hablan el español
@@ -1193,27 +1220,51 @@ ADDRELATION (Func:Ayuda:Ofrecer) Verbo (0 Haber + FiniteVerbForms) (1 LemasQueSe
 #LATEX\section{Referir palabras ya dichas}
 
 #LATEX\subsection{Referir palabras propias}
-ADDRELATION (Func:Referir:Propias) PronombresCliticosTODOS (0 PronombresCliticosTODOS) (1 VerbiDicendi + PretPerfSimple + 1aPers) To (2 Que);
-ADDRELATION (Func:Referir:Propias) PronombresCliticosTODOS (0 PronombresCliticosTODOS) (1 VerbiDicendiConSi + PretPerfSimple + 1aPers) To (2 SiLema);
-ADDRELATION (Func:Referir:Propias) PronombresCliticosTODOS (0 PronombresCliticosTODOS) (1 VerbiDicendiConSi + PretPerfSimple + 1aPers) To (*2 SiLema BARRIER LimiteOracionSimpleMenosQue OR FiniteVerbForms LINK -1 Que);
-ADDRELATION (Func:Referir:Propias) Verbo (NOT -1 PronombresCliticosTODOS) (0 VerbiDicendi + PretPerfSimple + 1aPers) To (1 Que);
-ADDRELATION (Func:Referir:Propias) Verbo (NOT -1 PronombresCliticosTODOS) (0 VerbiDicendiConSi + PretPerfSimple + 1aPers) To (1 SiLema);
-#LATEX T: R:Func:Referir:Propias
+ADDRELATION (Func:Referir) PronombresCliticosTODOS (0 PronombresCliticosTODOS) (1 VerbiDicendi + PretPerfSimple + 1aPers) To (2 Que);
+ADDRELATION (Func:Referir) PronombresCliticosTODOS (0 PronombresCliticosTODOS) (1 VerbiDicendiConSi + PretPerfSimple + 1aPers) To (2 SiLema);
+ADDRELATION (Func:Referir) PronombresCliticosTODOS (0 PronombresCliticosTODOS) (1 VerbiDicendiConSi + PretPerfSimple + 1aPers) To (*2 SiLema BARRIER LimiteOracionSimpleMenosQue OR FiniteVerbForms LINK -1 Que);
+ADDRELATION (Func:Referir) Verbo (NOT -1 PronombresCliticosTODOS) (0 VerbiDicendi + PretPerfSimple + 1aPers) To (1 Que);
+ADDRELATION (Func:Referir) Verbo (NOT -1 PronombresCliticosTODOS) (0 VerbiDicendiConSi + PretPerfSimple + 1aPers) To (1 SiLema);
+#LATEX T: R:Func:Referir
 #LATEX E: \emph{le dije que si}
 #LATEX E: con la maestra \emph{le pedí que si} (...)
 #LATEX D: NA
 
 #LATEX\subsection{Referir palabras de otros}
-ADDRELATION (Func:Referir:Otros) PronombresCliticosTODOS (0 PronombresCliticosTODOS) (1 VerbiDicendi + PretPerfSimple) (NOT 1 1aPers) To (2 Que);
-ADDRELATION (Func:Referir:Otros) PronombresCliticosTODOS (0 PronombresCliticosTODOS) (1 VerbiDicendiConSi + PretPerfSimple) (NOT 1 1aPers) To (2 SiLema);
-ADDRELATION (Func:Referir:Otros) PronombresCliticosTODOS (0 PronombresCliticosTODOS) (1 VerbiDicendiConSi + PretPerfSimple) (NOT 1 1aPers) To (*2 SiLema BARRIER LimiteOracionSimpleMenosQue OR FiniteVerbForms LINK -1 Que);
-ADDRELATION (Func:Referir:Otros) Verbo (NOT -1 PronombresCliticosTODOS) (0 VerbiDicendi + PretPerfSimple) (NOT 1 1aPers) To (1 Que);
-ADDRELATION (Func:Referir:Otros) Verbo (NOT -1 PronombresCliticosTODOS) (0 VerbiDicendiConSi + PretPerfSimple) (NOT 1 1aPers) To (1 SiLema);
-#LATEX T: R:Func:Referir:Otros
+ADDRELATION (Func:Referir) PronombresCliticosTODOS (0 PronombresCliticosTODOS) (1 VerbiDicendi + PretPerfSimple) (NOT 1 1aPers) To (2 Que);
+ADDRELATION (Func:Referir) PronombresCliticosTODOS (0 PronombresCliticosTODOS) (1 VerbiDicendiConSi + PretPerfSimple) (NOT 1 1aPers) To (2 SiLema);
+ADDRELATION (Func:Referir) PronombresCliticosTODOS (0 PronombresCliticosTODOS) (1 VerbiDicendiConSi + PretPerfSimple) (NOT 1 1aPers) To (*2 SiLema BARRIER LimiteOracionSimpleMenosQue OR FiniteVerbForms LINK -1 Que);
+ADDRELATION (Func:Referir) Verbo (NOT -1 PronombresCliticosTODOS) (0 VerbiDicendi + PretPerfSimple) (NOT 1 1aPers) To (1 Que);
+ADDRELATION (Func:Referir) Verbo (NOT -1 PronombresCliticosTODOS) (0 VerbiDicendiConSi + PretPerfSimple) (NOT 1 1aPers) To (1 SiLema);
+#LATEX T: R:Func:Referir
 #LATEX E: \emph{le preguntó que si} quería (...)
 #LATEX E: ¿alguna vez \emph{les dijo que} no mezclaran (...)
 #LATEX D: NA
- 
+
+#LATEX\section{Describir personas}
+#LATEX\section{Describir el caràcter de las personas}
+
+ADDRELATION (Func:DescribirPersonas:FormaDeSer) Verbo (0 VerboEstar OR Ser) TO (*1 AdvIntensificadorAdjetivos BARRIER LimiteOracionSimple OR Verbo OR NombresNoDePersonalidad OR Prep LINK 1 AdjetivosParaDescribirCaracterPersonas OR VerbosQueEnParticipioPuedenDescribirCaracteres + Part LINK NOT 0 MaloLiteral LINK NOT 1 ReferenciaALugar OR PronDemoNeutro);
+#LATEX T: R:Func:DescribirPersonas:FormaDeSer
+#LATEX E: \emph{era la más tímida}
+#LATEX D: NA
+
+ADDRELATION (Func:DescribirPersonas:FormaDeSer) Verbo (0 VerboEstar OR Ser) (NOT -1 QueConAcento) TO (1 AdjetivosParaDescribirCaracterPersonas OR VerbosQueEnParticipioPuedenDescribirCaracteres + Part LINK NOT 0 MaloLiteral LINK NOT 1 ReferenciaALugar OR PronDemoNeutro);
+#LATEX T: R:Func:DescribirPersonas:FormaDeSer
+#LATEX E: yo \emph{he sido callada} y reservada
+#LATEX E: \emph{Era trabajadora} y reservada
+#LATEX D: NA
+
+ADDRELATION (Func:DescribirPersonas:FormaDeSer) AdjOrPart (0 AdjetivosParaDescribirCaracterPersonas OR VerbosQueEnParticipioPuedenDescribirCaracteres + Part) (1 PuntuacionComa OR YLiteral) TO (2 AdjetivosParaDescribirCaracterPersonas OR VerbosQueEnParticipioPuedenDescribirCaracteres + Part);
+#LATEX T: R:Func:DescribirPersonas:FormaDeSer
+#LATEX E: en cierto punto \emph{callada, amigable} (...)
+#LATEX D: NA
+
+ADDRELATION (Func:DescribirPersonas:FormaDeSer) DetAllIncluded (0 DetAllIncluded) (NOT 0 LoLiteral) TO (1 AdvIntensificadorAdjetivos LINK 1 AdjetivosParaDescribirCaracterPersonas OR VerbosQueEnParticipioPuedenDescribirCaracteres + Part);
+#LATEX T: R:Func:DescribirPersonas:FormaDeSer
+#LATEX E: \emph{la más tímida}
+#LATEX D: No precedido de ser o estar.
+
 #LATEX\section{Expresar objetivos (con para que)}
     # Tú hiciste/Indi un esfuerzo para <que tus hijos continuaran/Subj> hablando el español 
     # para <que él tuviera que venderlas>
@@ -1459,27 +1510,6 @@ ADDRELATION (Vocab:Fraseol:LocAdv) NadaLema TO (1 MasLiteral) (NOT 1 Adj);
 #LATEX T: R:Vocab:Fraseol:LocAdv
 #LATEX E: \emph{nada más}  
 #LATEX D: Use de ``nada más'' en el sentido de sólo. Recuerda al ``nomás'' oral.
-
-
-ADDRELATION (Func:DescribirPersonas:FormaDeSer) Verbo (0 VerboEstar OR Ser) TO (1 AdvIntensificadorAdjetivos LINK 1 AdjetivosParaDescribirCaracterPersonas LINK NOT 1 ReferenciaALugar);
-ADDRELATION (Func:DescribirPersonas:FormaDeSer) Verbo (0 VerboEstar OR Ser) TO (1 AdjetivosParaDescribirCaracterPersonas LINK NOT 1 ReferenciaALugar);
-ADDRELATION (Func:DescribirPersonas:FormaDeSer) Adj (0 AdjetivosParaDescribirCaracterPersonas OR VerbosQueEnParticipioPuedenDescribirCaracteres + Part) (1 PuntuacionComa) TO (2 AdjetivosParaDescribirCaracterPersonas OR VerbosQueEnParticipioPuedenDescribirCaracteres + Part);
-ADDRELATION (Func:DescribirPersonas:FormaDeSer) DetAllIncluded (0 DetAllIncluded) TO (1 AdvIntensificadorAdjetivos LINK 1 AdjetivosParaDescribirCaracterPersonas);
-
-### alerta amb malos/ no es tan malo ser americano
-
-ADD (Func:DescribirPersonas:ASaco) Adj (0 AdjetivosParaDescribirCaracterPersonas);
-
-##AFTER-SECTIONS
-
-
-#ADD (@Gram:Prep:Por:Locuciones) Prep IF (0 Por) (1 FormasFrecEnLocPor);
-
-
-#ADDRELATION (Gram:PerfPerif) VerboConjugado (0 Haber) TO (1 Participio);
-
-
-#ADD (@Gram:Det:Art) Articulo IF (0 Lo) (*1 Adj BARRIER NPBoundary);
 
 #LATEX\part{Comentarios y observaciones}
 
