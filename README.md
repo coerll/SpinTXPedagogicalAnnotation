@@ -1,12 +1,13 @@
 PAToS -- Pedagogical Annotation Tools for Spanish
 =================================================
 
-PAToS is an set of Natural Language Processing and PERL scripts developed for the pedagogical
-annotation of Spanish texts. PAToS assumes as input a file (or files) annotated with lemma and
-POS tags including a series of informations such as language (for texts written including words
-in languages other than Spanish), morphosyntactic features and starting and ending times for
-transcripts of audiovisual documents (since it is originally designed for the annotation of 
-interview transcripts obtained through the SPinTX project).
+PAToS is a set PERL scripts and a CG3 (Constraint Grammar 3, VISLCG3) developed for 
+the pedagogical annotation of Spanish texts. PAToS assumes as input a file (or files) 
+annotated with lemma and POS tags including a series of informations such as language 
+(for texts written including words in languages other than Spanish), morphosyntactic 
+features and starting and ending times for transcripts of audiovisual documents.
+The scripts have been originally designed for the annotation of 
+video interview transcripts of the SPinTX project.
 
 The PAToS package provides with the following functionalities:
 

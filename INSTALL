@@ -3,7 +3,7 @@ PAToS INSTALLATION GUIDE
 
 Requirments
 -----------
-To use PATOs, the following is required:
+To use PAToS, the following is required:
 
 - PERL (I used version 5.12.4)
 - VISLCG3 (a.k.a. CG3; use the latest version, see 
@@ -41,10 +41,15 @@ run source .profile or restart the terminal window.
 
 4) Create a directory called "corpus" in $SPINTX_HOME, sister to "spintxPedagogicalAnntotation".
 
-    mkdir corpus
+    mkdir data
 
-Under corpus create the following folders too:
+Under $SPINTX_HOME/data create the following folders too:
 
-    mkdir ori cg3 cqp out wla stats
+    mkdir ClipCQP ClipTags ClipWLA ClipPedagogicalTags cg3 ClipWLA stats
+
+Note: alternatively you can download the files this project was developed for
+from github. See https://github.com/coerll/SpinTXCorpusData. If you do this
+you will still need to create the cg3 and the stats folder for PAToS
+to run properly.
 
 5) See USAGE file.

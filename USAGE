@@ -5,17 +5,20 @@ See docs/PATos-DataFlowDiagram.odg for a graphical representation of
 PAToS data flow.
 
 NOTE: before executing any script you need to be sure that the folder
- $SPINTX_HOME/corpus/ori contains at least one *.txt file using the 
- latest SPinTX project format for tagged and lemmatized files.
+ $SPINTX_HOME/data/ClipTags contains at least one *.txt file using the 
+ latest SPinTX project format for tagged and lemmatized files. See
+ https://github.com/coerll/SpinTXCorpusData
 
 ProcessSPinTX.sh
 ----------------
 This script executes all the scripts and processess needed to generate:
-   a) the pedagogically annotated files ($SPINTX_HOME/corpus/out)
+   a) the pedagogically annotated files ($SPINTX_HOME/data/ClipPedagogicalTags)
    b) the clip (or file) level breakdown of occurring pedagogical phenomena
-     ($SPINTX_HOME/corpus/stats)
+     ($SPINTX_HOME/data/stats)
    c) the word level stand-off annotations list in JSON format
-     ($SPINTX_HOME/corpus/ClipsWLA)
+     ($SPINTX_HOME/data/ClipsWLA)
+   d) It also generate a series of tables in *.tsv format that include in one
+     single file the information generated for the clip and the word level
 
  - EXECUTION
    command_line$ ProcessSPinTX.sh help
@@ -24,17 +27,23 @@ This script executes all the scripts and processess needed to generate:
    command_line$ ProcessSPinTX.sh all
     -> executes all processess
 
+   command_line$ ProcessSPinTX.sh cg3 (or cg3trace)
+    -> executes only vislcg3 with SpintxGrammar.rle in $SPINTX_HOME/tools/grammar
+    -> cg3 orders simple, standard execution
+    -> cg3trace keeps track of which rules are being applied for each annotation (this
+       is useful for grammar developers)
+
  - OUTPUT (it has several output files and these can be obtained upon demand,
    but these are the most useful):
     
     WORD LEVEL - one file per clip
-	- *.cg3 files in $SPINTX_HOME/corpus/cg3/ folder
+	- *.cg3 files in $SPINTX_HOME/data/cg3/ folder
 	  These are the files that are the actual input to the whole process. 
 	  They are SPinTX tree-tagged files in CG3 format.
-	- *.out files in $SPINTX_HOME/corpus/out/ folder
+	- *.out files in $SPINTX_HOME/data/ClipPedagogicalTags/ folder
 	  These are the files that result from applying our CG3-based pedagogical 
 	  annotation grammar to the *.cg3 files
-	- *.wla.json files in $SPINTX_HOME/corpus/ClipsWLA folder
+	- *.wla.json files in $SPINTX_HOME/data/ClipsWLA folder
 	  These are the files for the visual/activity enhancment of clip transcriptions
 	  (or in general texts) in the Corpus to Classroom website of the SPinTX project
     
@@ -66,6 +75,9 @@ ttagger2OtherFormats.pl
   Execute the following command line to obtain some help:
 
    command_line$ ttagger2OtherFormats.pl -help
+   (common execution orders)
+   command_line$ ttagger2OtherFormats.pl -outformat cg3
+   command_line$ ttagger2OtherFormats.pl -outformat cqp
 
 wordLevelPedagogAnnotations.pl
 ------------------------------

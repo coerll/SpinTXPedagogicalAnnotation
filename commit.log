@@ -1,6 +1,11 @@
 Change log
 ==========
 
+AUG 7 
+-----
+- Udpdated README.md, INSTALL, USAGE and EXTENDING
+- Updated $SPINTX_HOME/docs/PAToS-DataFlowDiagram.odg 
+
 AUG 6 
 -----
 - Tuned up rules to annotate describir personas (carácter)
