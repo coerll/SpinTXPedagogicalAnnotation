@@ -85,7 +85,7 @@ fi
 if [[ "$1" == "all" ]] || [[ "$1" = "counts" ]]; then
   echo "Counting/Adding up clip level information..."
   cd "$OUTDIR"
-  countPedagogicalFeatures.pl -outformat pla *.out
+  countPedagogicalFeatures.pl -outformat nopla *.out
 fi
 
 if [[ "$1" == "all" ]] || [[ "$1" = "json" ]]; then

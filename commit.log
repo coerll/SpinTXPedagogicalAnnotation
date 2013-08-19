@@ -1,6 +1,10 @@
 Change log
 ==========
 
+AUG 19
+------
+- Added comments to countPedagogicalFeatures.pl and to wordLevelPedagogAnnotations.pl
+
 AUG 7 
 -----
 - Udpdated README.md, INSTALL, USAGE and EXTENDING

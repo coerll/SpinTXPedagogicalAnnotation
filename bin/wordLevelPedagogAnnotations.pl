@@ -1,16 +1,19 @@
 #!/usr/bin/perl
 
+# ---------------------------------------;
+# REQUIRED LIBS
+# ---------------------------------------;
 use utf8;
 use strict;
 use File::Basename;
 use warnings;
 use JSON;
-
 use Getopt::Long;
 use Time::localtime;
 
 # ---------------------------------------;
 # Reading configuration paths from the enviroment variable $SPINTX_HOME as set in ~/.profile (in unix-like OS)
+# ---------------------------------------;
 my $OutputDir = $ENV{SPINTX_HOME} . "data/SpinTXCorpusData/";
 
 my $OutputDirWLA = $OutputDir . "ClipWLA/"; #we will dump results in the wla folder under corpus/ClipTags
@@ -24,54 +27,55 @@ my $StatsFileVocab = $OutputDirStats . timestamp() . "_SpintxVocabMetadata" . ".
 
 # ---------------------------------------;
 # VARIABLE DEFINITION
+# ---------------------------------------;
 
-my @POSFilterForVocabListGeneration = ("Adjective","Noun","Verb");
-my @ListOfStopWords = ("UNK|Noun","UNK|Adjective");
-my @VocabList;
-#my %StopWordList = map { $_ => 1 } @ListOfStopWords;
-
-# -- VARIABLE DEFINITION
 
 ## -- To control program execution modes
+# ---------------------------------------;
 my %opts;
 my $DebugLevel;
 my $OutputFormat; #to store the format in which the output file will be printed
 
-# variables to handle file names, paths and contents
+# -- File names, paths and contents
+# ---------------------------------------;
 my $CG3File; # input file name
 my $OutFile; # output file name (one output file for all input files)
 my ($name,$path,$suffix); # name, path and suffix of input file
 my $file; # input file name including path and extention (to be opened by script)
 my $Text; # input file contents
 
-
-# Variables to control initial lines in files to be processed, often special lines
-my (@ALLLINES); # array with all the lines in a file to be processed
-
 # Variable where all processed contents (and result of transformation) is stored and eventually printed.
-my $ToPrint = ""; # where the output string is being concatenated and printed at the end in each transcript output file
-my $ToPrintAtTheEnd = ""; # where the output string is being concatenated and printed in the data summarisation output file
-my $ToPrintAtTheEndIncremental = "";
-my $FileLineCounter = 0;
-my %FeatureCounter; #hash where pedagogical feature counts are stored
-my %FeatureCounterAllFiles; #hash where pedagogical feature counts are stored
-my %LemmaList;
-my %LemmaTypeCounter;
+# ---------------------------------------;
+my (@ALLLINES); # array with all the lines in a file to be processed
+my $ToPrint = ""; # string to store and print at the end of each transcript
+my $ToPrintAtTheEnd = ""; # String to store the a final print per script that will be part of the corpus summarisation
+my $ToPrintAtTheEndIncremental = ""; # String that is actually the corpus summary (the whole corpus)
+my $FileLineCounter = 0; # file line counter
+my %FeatureCounter; # hash where pedagogical feature counts are stored script-wise
+my %FeatureCounterAllFiles; #hash where pedagogical feature counts are stored corpus-wise
 my $BooleanInWord = "FALSE";
-my (@WordReadings);
-##my (@OneWordAnnotations,@MultiWordAnnotations,@CompletionInfo);
+my @WordReadings;
 
-my %HashForJSON; #this is a silly hash used to generate data in JSON format for compatibility with DRUPAL/solr
-my %HashForJSONTwoLevels; #this is a silly hash used to generate data in JSON format for compatibility with DRUPAL/solr
-my @JSONStringsWholeCorpus; # this is a scalar to store the JSON data at the corpus level printed in a file at the very end of the process
-my @CSVStringsWholeCorpus; # this is a scalar to store the JSON data at the corpus level printed in a file at the very end of the process
-my @JSONStringsWholeFileArray;
-my @CSVStringsWholeFileArray;
+## THIS HANDLES NON-VOCAB INFORMATION
+# ---------------------------------------;
+my %HashForJSON; #this hash stores the data for each particular annotation instance in JSON format in compliance with SpinTX hide/show functionalities on the web
+my %HashForJSONTwoLevels; #this hash stores the same data as the previous one but if the annotation has a main and a subtype class it stores and concatenates them using a colon (e.g. Det:Demo)
+my @JSONStringsWholeFileArray; # Array to store and then print the TRANSCRIPT annotations in JSON format
+my @CSVStringsWholeFileArray; # Array to store and then print the TRANSCRIPT annotations in CSV format
+my @JSONStringsWholeCorpus; # Array to store and then print the CORPUS annotations in JSON format
+my @CSVStringsWholeCorpus; # Array to store and then print the CORPUS annotations in CSV format
+
+## THIS HANDLES VOCAB INFORMATION
+# ---------------------------------------;
+my %LemmaList; #
+my %LemmaTypeCounter;
+my @POSFilterForVocabListGeneration = ("Adjective","Noun","Verb"); #LIST of simple POS tags used in SpinTX used to filter out the word classes included in the one-word Vocab lists (just concept words)
+my @VocabList; # Array to store the list of words that will be included in the vocab list per file/script
 my $VocabListSingleFileForWholeCorpusToPrint = "clip_id\tvocab_tags\n";
 my @ForVocabListSingleFileForWholeCorpus;
 
-# TEST
 
+# ---------------------------------------;
 my @ResultingAnnotationRecords;
 my @PendingAnnotationRecords;
 my @MultiwordRecordCompletionInfo;
