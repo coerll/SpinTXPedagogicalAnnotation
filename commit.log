@@ -1,6 +1,11 @@
 Change log
 ==========
 
+AUG 20 
+------
+- Added comments to wordLevelPedagogAnnotations.pl
+- Trying to optimize the process
+
 AUG 19
 ------
 - Added comments to countPedagogicalFeatures.pl and to wordLevelPedagogAnnotations.pl

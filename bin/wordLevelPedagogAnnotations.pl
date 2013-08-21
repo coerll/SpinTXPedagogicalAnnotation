@@ -114,139 +114,245 @@ else{
 # ---------------------------------------;
 
 # -- STARTING EXECUTION OF CONVERSION
+
+# -- We remove older *.json and and *.tsv files, in case there were old versions with different file names
 print STDERR " First: removing old files...\n";
-system ("rm $OutputDirWLA/*.json");
-system ("rm $OutputDirWLA/*.tsv");
+system ("rm $OutputDirWLA/*.json"); # json files
+system ("rm $OutputDirWLA/*.tsv"); # tsv files
 
 
-
+# -- We start processing one file at a time
+# -- It is assumed that each file corresponds to one transcript of one video clip
 foreach $file (@ARGV) {
     
-    #debug levels, have to be controlled later
+    # In DL 1 we inform of files being read
     if ($DebugLevel == 1) {
         print STDERR "DL1: Reading new file...\n";
     }
+    # In DL 2 we give the file's name
     if ($DebugLevel > 1) {
         print STDERR "DL2: Current file " . $file . " read.\n";
     }
-    # filling/reading filename, file path and file suffix variable
+    # parsing the file's name to separate name, path and suffix information
     ($name,$path,$suffix) = fileparse($file, qw/out/);
     
-    # working only with files with 'txt' as extension
+    # working only with files with *.out
+    # *.out files are CG3 formatted files with pedagogical annotations (assigned by SptinxGrammar.rle
     if ($suffix eq "out") {
         
-        # debug level 3
+        # In DL2 we inform of the file processing being started.
         if ($DebugLevel > 1) {
             print STDERR "DL2: File " . $file . " will be proccessed.\n";
         }
 
-        $OutFile = $OutputDirWLA.$name."wla.json"; # *.wla, word level annotations file
+        # We give the json output file a name (including the path, which assumes a $SPINTX_HOME environment variable
+        # (see above section starting "Reading configuration paths from the enviroment variable $SPINTX_HOME...")
+        # WLA stands for Word Level Annotation (as opposed to Clip Level Annotation information)
+        $OutFile = $OutputDirWLA.$name."wla.json";
         
         
-        # reading contents of the file to be processed
+        # Reading contents of the file to be processed
         open (FILE,"$file");
         sysread(FILE,$Text,(-s FILE));
         close (FILE);
         
-        # split file contents into line. each line is an annotated token
+        # Split file contents into line.
+        # Each line is an HTML tag, a word form or a word reading with lemma and a series of annotations
         @ALLLINES = split(/\n/,$Text);
+        # Example:
+        #        "<Nací>"
+        #           "nacer" Verb VLfin Pret Indi Sing 1st lang:es 00:00:05 00:00:12 tt-38 AF002_1989_EP_SU2011_AD_01
+        #        "<aquí>"
+        #           "aquí" Adverb ADV lang:es 00:00:05 00:00:12 tt-39 AF002_1989_EP_SU2011_AD_01
+        #        "<en>"
+        #           "en" Preposition PREP lang:es 00:00:05 00:00:12 tt-40 AF002_1989_EP_SU2011_AD_01 @Gram:Prep
+        #        "<El>"
+        #           "el" Determiner ART Singular Masc lang:es 00:00:05 00:00:12 tt-41 AF002_1989_EP_SU2011_AD_01 @Gram:Det:Art ID:26 R:Vocab:Entities:Geo:27
+        #        "<Paso>"
+        #           "paso" Noun NC Singular lang:es 00:00:05 00:00:12 tt-42 AF002_1989_EP_SU2011_AD_01 ID:27
         
+        # Set file-specific variables to zero or empty them
         $FileLineCounter = 0;
         undef @ResultingAnnotationRecords;
         undef @PendingAnnotationRecords;
         undef @MultiwordRecordCompletionInfo;
         
+        # We process the file contents line-wise
+        # This process extracts all the relevant info at the level of word readings and the associated annoations
         foreach my $CG3Line (@ALLLINES) {
             
+            # Add one to the file line counter
             $FileLineCounter++;
             
+            # GENERAL: we basically ignore everything that is not a reading line containing a lemma
+            # - We use a boolean to know whether we are in a word or not, since this will determine
+            # whether the line processing/formatting process has to take place or not
+            
+            # - Case 1: we are in an HTML-like line an we ARE NOT in a word
             if ($CG3Line =~ m/^<[^>]>$/ & $BooleanInWord eq "FALSE"){
-                if ($DebugLevel > 2) {
-                    print STDERR "DL3: Current line is an SGML tag. Will be ignored.\n";
-                    print STDERR "DL3: Line number: " . $FileLineCounter . "\n";
-                }
-                next;
-            }
-            elsif ($CG3Line =~ m/^<[^>]>$/ & $BooleanInWord eq "TRUE"){
+                
+                # In DL3 we inform of the line being igored
                 if ($DebugLevel > 2) {
                     print STDERR "DL3: Current line is an SGML tag. Will be ignored.\n";
                     print STDERR "DL3: Line number: " . $FileLineCounter . "\n";
                 }
 
+                # Go on to the next line
+                next;
+            }
+            
+            # - Case 2: we are in an HTML-like line an we ARE in a word
+            elsif ($CG3Line =~ m/^<[^>]>$/ & $BooleanInWord eq "TRUE"){
+
+                # In DL3 we inform of the SGML tag line being ignored
+                if ($DebugLevel > 2) {
+                    print STDERR "DL3: Current line is an SGML tag. Will be ignored.\n";
+                    print STDERR "DL3: Line number: " . $FileLineCounter . "\n";
+                }
+
+                # - This is just a gotcha strategy in case we are in a line that has no readings
+                # It should not happen, or at least not very often, but here it is
                 if (scalar(@WordReadings) == 0)
                 {
+                    # We are no longer in a word (a new word should start, since HTML tags cannot be
+                    # in the middle of a word's readings
                     $BooleanInWord = "FALSE";
                 }
+                
+                # - If the array with readings is full we process it
                 else{
+                    
+                    # In DL3 we inform of the line being processed before going on
                     if ($DebugLevel > 2) {
                         print STDERR "DL3: Previous one will be processed before going on.\n";
                     }
-                 
+              
+                    # - This line sends the array to a subroutine that processes it
                     &ProcessReadingsForPreviousWord(@WordReadings);
+                    
+                    # We are no longer in a word (a new word should start, since HTML tags cannot be
+                    # in the middle of a word's readings
                     $BooleanInWord = "FALSE";
+                    
+                    # We empty the array with the word's readings
                     undef @WordReadings;
                 }
+
+                # Go on to the next line
                 next;
             }
+            
+            # - Case 3: we are in word-form line and we WERE NOT in a word before (not consuming word readings)
             elsif ($CG3Line =~ m/^\"<.*>\"$/ & $BooleanInWord eq "FALSE"){
+                
+                # In DL3 we inform that the line being processed is a word form
                 if ($DebugLevel > 2) {
                     print STDERR "DL3: Current line is word form.\n";
                     print STDERR "DL3: Line number: " . $FileLineCounter . "\n";
                 }
+                
+                # We set the boolean to TRUE (we are entering a word with readings, at least one reading)
                 $BooleanInWord = "TRUE";
+                
+                # Go to the next line
                 next;
             }
+            
+            # - Case 4: we are in word-form line and we WERE ALREADY in a word before (consuming word readings)
             elsif ($CG3Line =~ m/^\"<.*>\"$/ & $BooleanInWord eq "TRUE"){
 
+                # In DL3 we inform that there is a new word (word change)
                 if ($DebugLevel > 2) {
                     print STDERR "DL3: Current line is new word.\n";
                     print STDERR "DL3: Line number: " . $FileLineCounter . "\n";
                 }
 
+                # Again, just a safety measure in case there are words with no readings at all
                 if (scalar(@WordReadings) == 0)
                 {
                     $BooleanInWord = "FALSE";
                 }
+
+                # The *previous* word has readings
                 else{
                     
+                    # In DL3 we inform that the *previous* word will be processed
                     if ($DebugLevel > 2) {
                         print STDERR "DL3: Previous one will be processed before going on.\n";
                     }
 
+                    # - This line sends the array to a subroutine that processes it
                     &ProcessReadingsForPreviousWord(@WordReadings);
+                    
+                    # We are STILL in a word
+                    # BUG? MQM Aug 20: shouldn't the following line be $BooleanInWord = "TRUE";
                     $BooleanInWord = "FALSE";
+                    
+                    # We empty the array with the word's readings
                     undef @WordReadings;
                 }
+                # Go to the next line
                 next;
             }
+            
+            # - Case 5: we are in word readings line (starting with a lemma in between double quotes)
             elsif ($CG3Line =~ m/^\t\".*$/){
+                
+                # In DL 3 we inform of what we are reading
                 if ($DebugLevel > 2) {
                     print STDERR "DL3: Current line is a reading.\n";
                     print STDERR "DL3: Line number: " . $FileLineCounter . "\n";
                 }
+                
+                # Add the reading to the list of possible readings for that word
+                # In SpinTX usually each word has only one reading, or at least one single line
+                # but still, we foresee the possibility that there is more than one
                 push(@WordReadings,$CG3Line);
             }
 
         } #end of foreach $CG3Line
         
+        # In DL2 we inform of the line processing being ended and of the starting of the formatting
+        if ($DebugLevel > 1) {
+            print STDERR "DL2: Lines for file " . $file . " have been proccessed.\n";
+            print STDERR "DL2: Now generating JSON and tsv formats for output.\n";
+        }
+
+        # The line processing generates a series of arrays with either complete info or half complete info
+        # Info coming from R:-tags is stored in two arrays:
+        # a) @MultiwordRecordCompletionInfo: contains start token (id) of pedagogical annotations using an R:-tag
+        # b) @PendingAnnotationRecords: contains end token (id) of pedagogical annotations using an R:-tag
+        # To learn what the difference between @-tags and R:-tags are take a look at the documentation of CG3
+        # and check the post in the Corpus to classroom project site
+        # http://sites.la.utexas.edu/corpus-to-classroom/2013/07/18/using-vislcg-to-pedagogically-annotate-oral-text/
+        # post by Martí Q.
+        
+        # We start looking into the array with the end id inomcplete
         foreach my $a (@MultiwordRecordCompletionInfo) {
-            my $TTIdTemp; 
+            
+            # Two temporary variables to store the token id and relation id used by CG3
+            # token ids are required by SpinTX, RelIds are required/used by CG3
+            my $TTIdTemp;
             my $RelIdTemp;
 
-            if ($DebugLevel > 1) {
-                print STDERR "\n XXX $a";
+            # In DL3 we inform of the annotation instance whose format is being compelted
+            if ($DebugLevel > 2) {
+                print STDERR "\n DL3: the annotation instance to be completed is ". $a;
             }            
 
+            # We split the annotation info in token id and rel id
             if ($a =~ m/^(tt-[0-9]+)_ID:([0-9]+)$/) {
                 $TTIdTemp = $1; 
                 $RelIdTemp = $2;
                 
-                if ($DebugLevel > 1) {
-                    print STDERR "\n Temp ttid $TTIdTemp";
-                    print STDERR "\n Temp RelId $TTIdTemp \n";
+                # In DL4 we inform of the token id and the rel id being processed
+                if ($DebugLevel > 3) {
+                    print STDERR "\n DL4: Temp ttid $TTIdTemp";
+                    print STDERR "\n DL4: Temp RelId $TTIdTemp \n";
                 }
             }
             
+            #
             foreach my $b (@PendingAnnotationRecords) {
                 if ($b =~ m/^([^,]+),(tt-[0-9]+),R:([^0-9]*):$RelIdTemp,(.*)$/) {
                     $b = $1 . "," . $2 . "," . $TTIdTemp . "," . $3;
@@ -597,33 +703,46 @@ sub ProcessReadingsForPreviousWord {
             print STDERR "clipID: " . $ClipId . "\n";
         }
         
-        #This filter is to exclude punctuation from the list of unigram lemmas that will be part of the vocabulary tab in the transcript
+        
+        # We exclude punctuation from the list of unigram lemma for the vocabulary tab in SpinTX
         if ($POSTag eq "Punctuation") {
-            if ($DebugLevel > 2) {
+            
+            # In DL 3 we inform a line is being ignored
+            if ($DebugLevel > 3) {
                 print STDERR "punct token, reading ignored\n";
                 print STDERR $Reading;
                 print STDERR "\n";
             }
+            
+            # BUG? MQM Aug 20: Should there be a next; here?
         }
+        
+        # Case 2: a reading has a Vocab type (that is it is a multiword to appear as Vocab)
         elsif ($Reading =~ m/R\:Vocab/) {
-            if ($DebugLevel > 2) {
+            
+            if ($DebugLevel > 3) {
                 print STDERR "bigram vocab token, reading ignored\n";
                 print STDERR $Reading;
                 print STDERR "\n";
             }
+            
             $IDToRemoveFromVocabListFromUnigrams = $Reading;
-            #            $IDToRemoveFromVocabListFromUnigrams =~ s/([0-9]+)/$1/ig;
+
             if ($Reading =~ m/R:[^0-9]*\:([0-9]+)/) {
                 $IDToRemoveFromVocabListFromUnigrams = $1;
             }
+            
             $IDToRemoveFromVocabListFromUnigrams = "ID:".$IDToRemoveFromVocabListFromUnigrams;
+            
             if ($DebugLevel > 2) {
                 print STDERR "ID to be removed from one-word vocab list\n";
                 print STDERR $IDToRemoveFromVocabListFromUnigrams;
                 print STDERR "\n";
             }
+            
             # TO DO: recollir el ID number de la relació del token exclòs i usar-lo per excloure també l'altre token (només funcionarà per bigrames no per tri-grames i superiors)
         }
+        
         else {
             if ($Reading =~ m/$IDToRemoveFromVocabListFromUnigrams/) {
                 if ($DebugLevel > 2) {
@@ -716,16 +835,3 @@ sub timestamp {
     $t->year + 1900, $t->mon + 1, $t->mday,
     $t->hour, $t->min, $t->sec );
 }
-
-## SAMPLE USAGE
-##print '[' . timestamp() . ']: my message'. "\n";
-
-
-
-########################
-## SUBROUTINE TO ORDER HASH VALUES IN DESCENDING ORDER
-########################
-
-#sub hashValueDescendingNum {
-#    $grades{$b} <=> $grades{$a};
-#}
